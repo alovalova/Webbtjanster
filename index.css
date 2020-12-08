@@ -1,8 +1,73 @@
-body {
-    background-color: lightblue;
-  }
-  
-  h1 {
-    color: navy;
-    margin-left: 20px;
-  }
+body{
+  margin: auto;
+  font-family: 'Francois One', sans-serif;
+  background-color: whitesmoke;
+}
+
+/*CONTENT*/
+#content{
+  /*background-image: url(/static/index-image.png);*/
+  /*background-repeat: no-repeat;*/
+  /*background-position: center;*/
+  /*height: 1552px;*/
+  width: auto;
+  height: auto;
+}
+
+/*FLASHMEDDELANDEN*/
+/*#content > #success-message{
+  display: flex; 
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  margin-right: 500px;
+  margin-left: 500px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: orangered;
+  border-radius: 5px; 
+  border: none; 
+  font-size: 16px;
+}*/
+
+/*HEADER*/
+#content > header{
+  background-color: whitesmoke;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  text-align: center;
+  color: orangered;
+  font-size: 100px;
+  text-decoration-line: none;
+}
+
+/*NAV*/
+#content > nav > #menu-options{
+  padding-bottom: 20px;
+  padding: 15px;
+  text-align: center;
+  padding-left: 180px;
+  font-size: 20px;
+  border-top-style: solid;
+  border-bottom-style: solid;
+  border-color: lightgrey;
+  border-width: thin;
+}
+
+/*FOOTER*/
+footer{
+  grid-area: footer;
+  background-color: whitesmoke;
+  border-top-style: solid;
+  border-color: lightgrey;
+  border-width: thin;
+  padding-bottom: 1px;
+  display: block;
+}
+
+footer > p{
+  text-align: center;
+  color: orangered;
+  margin: 16px 0;
+}
+
