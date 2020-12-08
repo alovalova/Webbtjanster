@@ -1,4 +1,4 @@
-# Webbtjanster
+# Package race
 
 This is a project made in the course "Storskaliga Webbtjänster" from Malmö university. On our website you can measure how long it takes you to fly to a place while waiting for PostNord to deliver a package from place A to place B.
 
