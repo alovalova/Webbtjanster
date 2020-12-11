@@ -54,6 +54,37 @@ body{
   border-width: thin;
 }
 
+#content > nav a{
+  color: white;
+}
+
+#content > main > .beskrivning {
+  width: 65%;
+  margin: 0 auto;
+  text-align: center;
+  border-bottom: 1px solid #333;
+  margin-bottom: 25px;
+}
+
+#content > main > #form {
+  width: 65%;
+  display: block;
+  margin: 0 auto;
+  
+}
+
+/* Centrerar formuläret i diven */
+#content > main > #form > div {
+  margin: 0 auto;
+}
+
+/* Margin mellan fält i formuläret */
+#content > main input#from_zip, input#to_zip, #date, button#submit {
+  margin-bottom: 25px;
+}
+
+
+
 /*FOOTER*/
 footer{
   grid-area: footer;
