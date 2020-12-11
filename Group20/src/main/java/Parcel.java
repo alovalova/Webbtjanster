@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
  * @created 09/12/2020
  * @project Group20
  */
-public class Package {
-    LocalDateTime packageDepartureTime;
-    LocalDateTime packageArrivalTime;
+public class Parcel {
+    LocalDateTime parcelDepartureTime;
+    LocalDateTime parcelArrivalTime;
     String departureCountry;
     String arrivalCountry;
     String departureZip;
@@ -15,12 +15,12 @@ public class Package {
     String departureCity;
     String arrivalCity;
 
-    public Package(){
+    public Parcel(){
 
     }
 
-    public Package(LocalDateTime packageDepartureTime, String departureCountry, String arrivalCountry, String departureZip, String arrivalZip, String departureCity, String arrivalCity) {
-        this.packageDepartureTime = packageDepartureTime;
+    public Parcel(LocalDateTime parcelDepartureTime, String departureCountry, String arrivalCountry, String departureZip, String arrivalZip, String departureCity, String arrivalCity) {
+        this.parcelDepartureTime = parcelDepartureTime;
         this.departureCountry = departureCountry;
         this.arrivalCountry = arrivalCountry;
         this.departureZip = departureZip;
@@ -29,20 +29,20 @@ public class Package {
         this.arrivalCity = arrivalCity;
     }
 
-    public LocalDateTime getPackageDepartureTime() {
-        return packageDepartureTime;
+    public LocalDateTime getParcelDepartureTime() {
+        return parcelDepartureTime;
     }
 
-    public void setPackageDepartureTime(LocalDateTime packageDepartureTime) {
-        this.packageDepartureTime = packageDepartureTime;
+    public void setParcelDepartureTime(LocalDateTime parcelDepartureTime) {
+        this.parcelDepartureTime = parcelDepartureTime;
     }
 
-    public LocalDateTime getPackageArrivalTime() {
-        return packageArrivalTime;
+    public LocalDateTime getParcelArrivalTime() {
+        return parcelArrivalTime;
     }
 
-    public void setPackageArrivalTime(LocalDateTime packageArrivalTime) {
-        this.packageArrivalTime = packageArrivalTime;
+    public void setParcelArrivalTime(LocalDateTime parcelArrivalTime) {
+        this.parcelArrivalTime = parcelArrivalTime;
     }
 
     public String getDepartureCountry() {
