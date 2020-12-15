@@ -6,20 +6,26 @@ import java.time.LocalDateTime;
  * @project Group20
  */
 public class Parcel {
-    LocalDateTime parcelDepartureTime;
-    LocalDateTime parcelArrivalTime;
+    String parcelDepartureTime;
     String departureCountry;
-    String arrivalCountry;
     String departureZip;
-    String arrivalZip;
     String departureCity;
+
+    String parcelArrivalTime;
+    String arrivalCountry;
+    String arrivalZip;
     String arrivalCity;
 
-    public Parcel(){
+    public Parcel() {
+        parcelDepartureTime = "2020-12-15";
+        departureCountry = "SE";
+        departureZip = "24136";
 
+        arrivalCountry = "SE";
+        arrivalZip = "75260";
     }
 
-    public Parcel(LocalDateTime parcelDepartureTime, String departureCountry, String arrivalCountry, String departureZip, String arrivalZip, String departureCity, String arrivalCity) {
+    public Parcel(String parcelDepartureTime, String departureCountry, String arrivalCountry, String departureZip, String arrivalZip, String departureCity, String arrivalCity) {
         this.parcelDepartureTime = parcelDepartureTime;
         this.departureCountry = departureCountry;
         this.arrivalCountry = arrivalCountry;
@@ -29,19 +35,19 @@ public class Parcel {
         this.arrivalCity = arrivalCity;
     }
 
-    public LocalDateTime getParcelDepartureTime() {
+    public String getParcelDepartureTime() {
         return parcelDepartureTime;
     }
 
-    public void setParcelDepartureTime(LocalDateTime parcelDepartureTime) {
+    public void setParcelDepartureTime(String parcelDepartureTime) {
         this.parcelDepartureTime = parcelDepartureTime;
     }
 
-    public LocalDateTime getParcelArrivalTime() {
+    public String getParcelArrivalTime() {
         return parcelArrivalTime;
     }
 
-    public void setParcelArrivalTime(LocalDateTime parcelArrivalTime) {
+    public void setParcelArrivalTime(String parcelArrivalTime) {
         this.parcelArrivalTime = parcelArrivalTime;
     }
 
