@@ -1,10 +1,6 @@
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-
-import static spark.Spark.*;
+import static spark.Spark.get;
 
 /**
  * @author
@@ -15,8 +11,6 @@ public class APIRunner {
     public static void main(String[] args) {
 
         JsonParser parser = new JsonParser();
-
-
 
         get("api.amadeus.com/v1/shopping/flight-destinations", (request, response) ->{
                     return "";
