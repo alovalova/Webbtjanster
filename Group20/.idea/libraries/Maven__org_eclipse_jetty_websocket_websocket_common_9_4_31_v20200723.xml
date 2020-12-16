@@ -3,9 +3,6 @@
     <properties maven-id="org.eclipse.jetty.websocket:websocket-common:9.4.31.v20200723" />
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/websocket/websocket-common/9.4.31.v20200723/websocket-common-9.4.31.v20200723.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/websocket/websocket-api/9.4.31.v20200723/websocket-api-9.4.31.v20200723.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-util/9.4.31.v20200723/jetty-util-9.4.31.v20200723.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-io/9.4.31.v20200723/jetty-io-9.4.31.v20200723.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/websocket/websocket-common/9.4.31.v20200723/websocket-common-9.4.31.v20200723-javadoc.jar!/" />

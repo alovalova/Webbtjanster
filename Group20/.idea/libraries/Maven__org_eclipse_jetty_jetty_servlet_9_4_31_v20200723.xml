@@ -3,12 +3,6 @@
     <properties maven-id="org.eclipse.jetty:jetty-servlet:9.4.31.v20200723" />
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-servlet/9.4.31.v20200723/jetty-servlet-9.4.31.v20200723.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-security/9.4.31.v20200723/jetty-security-9.4.31.v20200723.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-server/9.4.31.v20200723/jetty-server-9.4.31.v20200723.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/javax/servlet/javax.servlet-api/3.1.0/javax.servlet-api-3.1.0.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-http/9.4.31.v20200723/jetty-http-9.4.31.v20200723.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-util/9.4.31.v20200723/jetty-util-9.4.31.v20200723.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-io/9.4.31.v20200723/jetty-io-9.4.31.v20200723.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/jetty/jetty-servlet/9.4.31.v20200723/jetty-servlet-9.4.31.v20200723-javadoc.jar!/" />
