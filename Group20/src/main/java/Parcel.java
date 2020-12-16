@@ -1,4 +1,5 @@
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.Period;
 
 /**
  * @author
@@ -6,18 +7,20 @@ import java.time.LocalDateTime;
  * @project Group20
  */
 public class Parcel {
-    String parcelDepartureTime;
+    String parcelDepartureDate;
     String departureCountry;
     String departureZip;
     String departureCity;
 
     String parcelArrivalTime;
+    String parcelArrivalDate;
     String arrivalCountry;
     String arrivalZip;
-    String arrivalCity;
+    String arrivalAddress;
+
 
     public Parcel() {
-        parcelDepartureTime = "2020-12-15";
+        parcelDepartureDate = "2020-12-15";
         departureCountry = "SE";
         departureZip = "24136";
 
@@ -25,22 +28,22 @@ public class Parcel {
         arrivalZip = "75260";
     }
 
-    public Parcel(String parcelDepartureTime, String departureCountry, String arrivalCountry, String departureZip, String arrivalZip, String departureCity, String arrivalCity) {
-        this.parcelDepartureTime = parcelDepartureTime;
+    public Parcel(String parcelDepartureDate, String departureCountry, String arrivalCountry, String departureZip, String arrivalZip, String departureCity, String arrivalAddress) {
+        this.parcelDepartureDate = parcelDepartureDate;
         this.departureCountry = departureCountry;
         this.arrivalCountry = arrivalCountry;
         this.departureZip = departureZip;
         this.arrivalZip = arrivalZip;
         this.departureCity = departureCity;
-        this.arrivalCity = arrivalCity;
+        this.arrivalAddress = arrivalAddress;
     }
 
-    public String getParcelDepartureTime() {
-        return parcelDepartureTime;
+    public String getParcelDepartureDate() {
+        return parcelDepartureDate;
     }
 
-    public void setParcelDepartureTime(String parcelDepartureTime) {
-        this.parcelDepartureTime = parcelDepartureTime;
+    public void setParcelDepartureDate(String parcelDepartureDate) {
+        this.parcelDepartureDate = parcelDepartureDate;
     }
 
     public String getParcelArrivalTime() {
@@ -91,11 +94,36 @@ public class Parcel {
         this.departureCity = departureCity;
     }
 
-    public String getArrivalCity() {
-        return arrivalCity;
+    public String getArrivalAddress() {
+        return arrivalAddress;
     }
 
-    public void setArrivalCity(String arrivalCity) {
-        this.arrivalCity = arrivalCity;
+    public void setArrivalAddress(String arrivalAddress) {
+        this.arrivalAddress = arrivalAddress;
     }
+
+    public String getParcelArrivalDate() {
+        return parcelArrivalDate;
+    }
+
+    public void setParcelArrivalDate(String parcelArrivalDate) {
+        this.parcelArrivalDate = parcelArrivalDate;
+    }
+
+    public int getTransitTime() {
+        int transitTime = 0;
+
+        // create date instances
+        LocalDate localDate1 = LocalDate.parse(parcelDepartureDate);
+        LocalDate localDate2 = LocalDate.parse(parcelArrivalDate);
+
+        // calculate difference
+        int days = Period.between(localDate1, localDate2).getDays();
+
+        // print days
+        System.out.println("Days between " + localDate1 + " and " + localDate2 + ": " + days);
+
+        return transitTime;
+    }
+
 }
