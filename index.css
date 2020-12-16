@@ -66,7 +66,7 @@ body{
   margin-bottom: 25px;
 }
 
-#content > main > #form {
+#content > main > #parcelForm {
   width: 65%;
   display: block;
   margin: 0 auto;
@@ -74,7 +74,7 @@ body{
 }
 
 /* Centrerar formuläret i diven */
-#content > main > #form > div {
+#content > main > #parcelForm > div {
   margin: 0 auto;
 }
 
