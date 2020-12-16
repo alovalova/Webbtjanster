@@ -7,36 +7,35 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="text/javascript">
       function getDestinations() {
-        return function() {
         var form_data = {}
-        form_data.departureCountry = $("#departureCountry select[name=departureCountry]").val();
-        form_data.departureCity = $("#departureAddress input[name=departureAddress]").val();
-        form_data.departureZip = $("departureZip input[name=departureCity]").val();
-        form_data.arrivalCountry = $("#arrivalCountry input[name=arrivalCountry]").val();
-        form_data.arrivalCity = $("#arrivalAddress input[name=arrivalAddress]").val();
-        form_data.arrivalZip = $("#arrivalZip input[name=arrivalZip]").val();
-        form_data.departureDate = $("#departureDate input[name=departureDate]").val();
-        
+        form_data.departureCountry = $("select[name=departureCountry]").val();
+        form_data.departureCity = $("input[name=departureAddress]").val();
+        form_data.departureZip = $("input[name=departureCity]").val();
+        form_data.arrivalCountry = $("input[name=arrivalCountry]").val();
+        form_data.arrivalCity = $("input[name=arrivalAddress]").val();
+        form_data.arrivalZip = $("input[name=arrivalZip]").val();
+        form_data.departureDate = $("input[name=departureDate]").val();
+        console.log(form_data);
         /* Anrop till APIet för att hämta ut data */
         $.ajax({
           method: "GET",
           // Till en route på vår server där vi kommer åt APIet
-          url: "localhost/v1/packageraces",
+          url: "http://localhost:5000",
           // Gör om datan från formuläret till JSON
-          form_data: JSON.stringify(form_data),
+          data: form_data,
           // Berättar för APIet att vi vill ha JSON tillbaka
-          headers: {"Accept": "application/json"}  
+          headers: {"Accept": "application/json"},
+          crossOrigin: true
         })
         /* Denna funktion anropas när informationen hämtamts. Inladdad information går att nå via variabeln "form_data" */
-        .done(function(form_data) {
-          console.log(form_data)
+        .done(function(response) {
+          console.log(response)
         });
-      }
     }
 
       $(document).ready(function () {
         // När man klickar på "Skicka" i formuläret så körs funktionen getDestinations
-        $('#submitForm').click(getDestinations())
+        $('#submitForm').click(getDestinations)
 
       });
 
@@ -105,7 +104,7 @@
                   </div>
 
                 <div class="col-6">
-                  <button type="submit" class="btn btn-primary" id="submitForm">Skicka</button>
+                  <button type="button" class="btn btn-primary" id="submitForm">Skicka</button>
                 </div>
               </form>
         </main>

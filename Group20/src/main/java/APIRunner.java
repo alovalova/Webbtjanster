@@ -5,10 +5,11 @@ import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
+import spark.Filter;
 
 import java.util.Calendar;
 
-import static spark.Spark.get;
+import static spark.Spark.*;
 
 /**
  * @author Chanon Borgström % Sofia Hallberg
@@ -22,7 +23,15 @@ public class APIRunner {
     APIController controller = new APIController();
 
     public static void main(String[] args) {
+        port(5000);
         APIRunner runner = new APIRunner();
+        // staticFiles.location("/public"); // Static files
+        after((Filter) (request, response) -> {
+            response.header("Access-Control-Allow-Origin", "*");
+            response.header("Access-Control-Allow-Methods", "GET");
+        });
+
+
 
         get("/", (request, response) -> {
             System.out.println("Are we there yet?");
@@ -33,8 +42,8 @@ public class APIRunner {
 //            if(parcelCreated){
 //                //do something
 //            }
-
-            return "";
+            response.type("application/json");
+            return "{}";
 
         });
 
