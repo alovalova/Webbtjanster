@@ -69,7 +69,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.APIRunner">
+  <component name="RunManager" selected="Application.TestClass">
     <configuration name="APIRunner" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="APIRunner" />
       <module name="Group20" />
@@ -84,8 +84,16 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="TestClass" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="TestClass" />
+      <module name="java-backend" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.TestClass" />
         <item itemvalue="Application.APIRunner" />
         <item itemvalue="Application.Package" />
       </list>

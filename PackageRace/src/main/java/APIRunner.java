@@ -18,7 +18,7 @@ public class APIRunner {
     public static void main(String[] args) {
         port(5000);
         APIRunner runner = new APIRunner();
-        runner.controller.createPostNordAPIGetRequest(aPackage);
+       // runner.controller.createPostNordAPIGetRequest(aPackage);
         //staticFiles.location("/public"); // Static files
         // När man skickar en förfrågan till en server vill inte servern ta emot förfrågan utam måste först kolla om klienten är ok
         after((Filter) (request, response) -> {
@@ -28,7 +28,7 @@ public class APIRunner {
 
         get("/", (request, response) -> {
 
-            boolean parcelCreated = runner.controller.createPackage();
+           // boolean parcelCreated = runner.controller.createPackage();
 //            if(parcelCreated){
 //                //do something
 //            }

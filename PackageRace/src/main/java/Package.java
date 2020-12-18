@@ -118,12 +118,15 @@ public class Package {
         int transitTime = 0;
 
         String dateStart = "01-14-2012 09:29:58";
-        String dateStop = "01-15-2012 08:31:48";
+        String dateStop = "01-17-2012 08:31:48";
 
         SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
 
         Date d1 = null;
         Date d2 = null;
+        int days = 0;
+        int hours = 0;
+        int minutes = 0;
 
         try {
             d1 = format.parse(dateStart);
@@ -132,22 +135,30 @@ public class Package {
             DateTime dt1 = new DateTime(d1);
             DateTime dt2 = new DateTime(d2);
 
-            System.out.print(Days.daysBetween(dt1, dt2).getDays() + " days, ");
-            System.out.print(Hours.hoursBetween(dt1, dt2).getHours() % 24 + " hours, ");
-            System.out.print(Minutes.minutesBetween(dt1, dt2).getMinutes() % 60 + " minutes, ");
-            System.out.print(Seconds.secondsBetween(dt1, dt2).getSeconds() % 60 + " seconds.");
-
+            days = Days.daysBetween(dt1, dt2).getDays();
+            hours = Hours.hoursBetween(dt1, dt2).getHours() % 24;
+            minutes = Minutes.minutesBetween(dt1, dt2).getMinutes() % 60;
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-
-        // create date instances
-        LocalDate localDate1 = LocalDate.parse(packageDepartureDate);
-        LocalDate localDate2 = LocalDate.parse(packageArrivalDate);
-
+        transitTime = countTransitTime(days, hours, minutes);
         return transitTime;
+    }
+
+    public int countTransitTime(int days, int hours, int minutes) {
+        int transitHours=0;
+        int addToHours=0;
+
+        if(minutes<30) {
+            addToHours = 0;
+        }
+        else
+            addToHours = 1;
+
+        transitHours=days*24+hours+addToHours;
+
+        return transitHours;
     }
 
 }
