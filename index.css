@@ -102,3 +102,9 @@ footer > p{
   margin: 16px 0;
 }
 
+
+
+#departureAddress {
+  color: red;
+  font-weight: bold;
+}

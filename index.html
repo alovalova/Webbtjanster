@@ -6,32 +6,47 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="text/javascript">
+    // Dagens datum
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var year = doay.getFullYear
+      // Funktionen som skickar iväg formuläret
       function getDestinations() {
+        var formValidate = true
         var form_data = {}
         form_data.departureCountry = $("select[name=departureCountry]").val();
         form_data.departureCity = $("input[name=departureAddress]").val();
+        if (form_data.departureCity === "") {
+          $("#departureAddress").text("Du skrev fel ditt smuts");
+          formValidate = false
+        }
         form_data.departureZip = $("input[name=departureCity]").val();
         form_data.arrivalCountry = $("input[name=arrivalCountry]").val();
         form_data.arrivalCity = $("input[name=arrivalAddress]").val();
         form_data.arrivalZip = $("input[name=arrivalZip]").val();
         form_data.departureDate = $("input[name=departureDate]").val();
-        console.log(form_data);
+        // console.log(form_data);
         /* Anrop till APIet för att hämta ut data */
-        $.ajax({
-          method: "GET",
-          // Till en route på vår server där vi kommer åt APIet
-          url: "http://localhost:5000",
-          // Gör om datan från formuläret till JSON
-          data: form_data,
-          // Berättar för APIet att vi vill ha JSON tillbaka
-          headers: {"Accept": "application/json"},
-          crossOrigin: true
-        })
-        /* Denna funktion anropas när informationen hämtamts. Inladdad information går att nå via variabeln "form_data" */
-        .done(function(response) {
-          console.log(response)
-        });
-    }
+        if (formValidate == true) {
+          $.ajax({
+            method: "GET",
+            // Till en route på vår server där vi kommer åt APIet
+            url: "http://localhost:5000",
+            // Gör om datan från formuläret till JSON
+            data: form_data,
+            // Berättar för APIet att vi vill ha JSON tillbaka
+            headers: {"Accept": "application/json"},
+            crossOrigin: true
+          })
+          /* Denna funktion anropas när informationen hämtamts. Inladdad information går att nå via variabeln "form_data" */
+          .done(function(response) {
+            console.log(response);
+          });
+        } 
+        else {
+          alert("Formuläret skickades inte, vänligen kontrollera angivna fel!");
+        }
+      }
 
       $(document).ready(function () {
         // När man klickar på "Skicka" i formuläret så körs funktionen getDestinations
@@ -57,50 +72,52 @@
                 <div class="col-md-6">
                     <label for="departureCountry" class="form-label">Från land</label>
                     <select name="departureCountry" class="form-select">
-                      <option selected>Från land...</option>
-                      <option>Sverige</option>
-                      <option>Norge</option>
-                      <option>Finland</option>
-                      <option>Danmark</option>
-                      <option>Island</option>
-                      <option>Åland</option>
-                      <option>Tyskland</option>
+                      <option value="SE">Sverige</option>
+                      <option value="NO">Norge</option>
+                      <option value="FI">Finland</option>
+                      <option value="DK">Danmark</option>
+                      <option value="IS">Island</option>
+                      <option value="AX">Åland</option>
+                      <option value="DE">Tyskland</option>
                     </select>
                   </div>
                   <div class="col-6">
                     <label for="departureAddress" class="form-label">Från adress</label>
                     <input type="text" class="form-control" name="departureAddress" placeholder="Kirsebergsgatan 1337...">
+                    <p id="departureAddress"></p>
                   </div>
                   <div class="col-md-6">
                     <label for="departureZip" class="form-label">Från postnummer</label>
                     <input type="text" class="form-control" name="departureZip">
+                    <p id="departureZip"></p>
                   </div>
 
                   <div class="col-md-6">
                     <label for="arrivalCountry" class="form-label">Till land</label>
                     <select name="arrivalCountry" class="form-select">
-                      <option selected>Till land...</option>
-                      <option>Sverige</option>
-                      <option>Norge</option>
-                      <option>Finland</option>
-                      <option>Danmark</option>
-                      <option>Island</option>
-                      <option>Åland</option>
-                      <option>Tyskland</option>
+                      <option value="SE">Sverige</option>
+                      <option value="NO">Norge</option>
+                      <option value="FI">Finland</option>
+                      <option value="DK">Danmark</option>
+                      <option value="IS">Island</option>
+                      <option value="AX">Åland</option>
+                      <option value="DE">Tyskland</option>
                     </select>
                   </div>
                   <div class="col-6">
                     <label for="arrivalAddress" class="form-label">Till adress</label>
                     <input type="text" class="form-control" name="arrivalAddress" placeholder="Rönnblomsgatan 11...">
+                    <p id="arrivalAddress"></p>
                   </div>
                   <div class="col-md-6">
                     <label for="arrivalZip" class="form-label">Till postnummer</label>
                     <input type="text" class="form-control" name="arrivalZip">
+                    <p id="arrivalZip"></p>
                   </div>
 
                   <div class="col-md-6">
                     <label for="date" class="form-label">Datum när paketet ska skickas</label>
-                    <input type="date" class="form-control" name="departureDate">
+                    <input type="date" class="form-control" name="departureDate" value="YYYY-MM-DD">">
                   </div>
 
                 <div class="col-6">
