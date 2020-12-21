@@ -61,18 +61,29 @@
           $("#arrivalZip").text("");
         }
 
+        console.log(form_data);
+
         /* Anrop till APIet för att hämta ut data */
         if (formValidate == true) {
           // Visas när formuläret validerat och skickas
           $("#formSent").text("Formulär skickat!");
           $("#formSent").show();
 
+          // Skicka med vår form_data som request parameter
           $.ajax({
             method: "GET",
             // Till en route på vår server där vi kommer åt APIet
             url: "http://localhost:5000",
-            // Gör om datan från formuläret till JSON
-            data: form_data,
+            // Datan från formuläret skickas
+            data: {
+              departureCountry: $("select[name=departureCountry]").val(),
+              departureAddress: $("input[name=departureAddress]").val(),
+              departureZip: $("input[name=departureZip]").val(),
+              arrivalCountry: $("select[name=arrivalCountry]").val(),
+              arrivalAddress: $("input[name=arrivalAddress]").val(),
+              arrivalZip: $("input[name=arrivalZip]").val(),
+              departureDate: $("input[name=departureDate]").val()
+            },
             // Berättar för APIet att vi vill ha JSON tillbaka
             headers: {"Accept": "application/json"},
             crossOrigin: true
