@@ -27,11 +27,24 @@ public class APIRunner {
         });
 
         get("/", (request, response) -> {
+            String packageDepartureDate= request.params("departureDate");
+            String departureCountry= request.params("departureDate");
+            String departureZip= request.params("departureZip");
+            String arrivalCountry= request.params("arrivalCountry");
+            String arrivalZip= request.params("arrivalZip");
 
-           // boolean parcelCreated = runner.controller.createPackage();
-//            if(parcelCreated){
-//                //do something
-//            }
+            Package newPackage = runner.controller.createPackage(packageDepartureDate, departureCountry, departureZip, arrivalCountry, arrivalZip);
+            if (newPackage != null) {
+                runner.controller.createPostNordAPIGetRequest(newPackage);
+            }
+
+            if(newPackage.isPostNordResponse()){
+                runner.controller.createNewFlightDestination(newPackage);
+            }
+
+            if(newPackage.isFlightDestinationResponse()){
+
+            }
             response.type("application/json");
             return "{}";
 

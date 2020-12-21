@@ -1,6 +1,8 @@
 public class TestClass {
     public static void main(String[] args) {
         Package testPackage=new Package();
-        System.out.println(testPackage.getTransitTime());
+        APIController controller=new APIController();
+        controller.createNewFlightDestination(testPackage);
+        //System.out.println(testPackage.getTransitTime());
     }
 }
