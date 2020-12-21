@@ -1,3 +1,4 @@
+import com.amadeus.Amadeus;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 import spark.Filter;
@@ -18,7 +19,7 @@ public class APIRunner {
     public static void main(String[] args) {
         port(5000);
         APIRunner runner = new APIRunner();
-       // runner.controller.createPostNordAPIGetRequest(aPackage);
+        // runner.controller.createPostNordAPIGetRequest(aPackage);
         //staticFiles.location("/public"); // Static files
         // När man skickar en förfrågan till en server vill inte servern ta emot förfrågan utam måste först kolla om klienten är ok
         after((Filter) (request, response) -> {
@@ -27,24 +28,23 @@ public class APIRunner {
         });
 
         get("/", (request, response) -> {
-            String packageDepartureDate= request.params("departureDate");
-            String departureCountry= request.params("departureDate");
-            String departureZip= request.params("departureZip");
-            String arrivalCountry= request.params("arrivalCountry");
-            String arrivalZip= request.params("arrivalZip");
 
-            Package newPackage = runner.controller.createPackage(packageDepartureDate, departureCountry, departureZip, arrivalCountry, arrivalZip);
-            if (newPackage != null) {
+            System.out.println(request.queryParams("departureDate"));
+            String packageDepartureDate = request.queryParams("departureDate");
+            String departureCountry = request.queryParams("departureCountry");
+            String departureZip = request.queryParams("departureZip");
+            String arrivalCountry = request.queryParams("arrivalCountry");
+            String arrivalZip = request.queryParams("arrivalZip");
+
+            Package newPackage = null;
+            try {
+                newPackage = runner.controller.createPackage(packageDepartureDate, departureCountry, departureZip, arrivalCountry, arrivalZip);
                 runner.controller.createPostNordAPIGetRequest(newPackage);
-            }
-
-            if(newPackage.isPostNordResponse()){
                 runner.controller.createNewFlightDestination(newPackage);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-            if(newPackage.isFlightDestinationResponse()){
-
-            }
             response.type("application/json");
             return "{}";
 
