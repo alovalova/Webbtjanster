@@ -14,14 +14,15 @@ public class Package {
     private String packageDepartureDate;
     private String departureCountry;
     private String departureZip;
-    private String departureCity;
 
     private String packageArrivalTime;
     private String packageArrivalDate;
     private String arrivalCountry;
     private String arrivalZip;
-    private String arrivalAddress;
 
+    private boolean postNordResponse=false;
+    private boolean flightDestinationResponse=false;
+    private boolean flightArrivalTimeResponse=false;
 
     public Package() {
         packageDepartureDate = "2020-12-15";
@@ -32,14 +33,12 @@ public class Package {
         arrivalZip = "75260";
     }
 
-    public Package(String packageDepartureDate, String departureCountry, String arrivalCountry, String departureZip, String arrivalZip, String departureCity, String arrivalAddress) {
+    public Package(String packageDepartureDate, String departureCountry, String arrivalCountry, String departureZip, String arrivalZip) {
         this.packageDepartureDate = packageDepartureDate;
         this.departureCountry = departureCountry;
         this.arrivalCountry = arrivalCountry;
         this.departureZip = departureZip;
         this.arrivalZip = arrivalZip;
-        this.departureCity = departureCity;
-        this.arrivalAddress = arrivalAddress;
     }
 
     public String getPackageDepartureDate() {
@@ -88,22 +87,6 @@ public class Package {
 
     public void setArrivalZip(String arrivalZip) {
         this.arrivalZip = arrivalZip;
-    }
-
-    public String getDepartureCity() {
-        return departureCity;
-    }
-
-    public void setDepartureCity(String departureCity) {
-        this.departureCity = departureCity;
-    }
-
-    public String getArrivalAddress() {
-        return arrivalAddress;
-    }
-
-    public void setArrivalAddress(String arrivalAddress) {
-        this.arrivalAddress = arrivalAddress;
     }
 
     public String getPackageArrivalDate() {
@@ -159,6 +142,28 @@ public class Package {
         transitHours=days*24+hours+addToHours;
 
         return transitHours;
+    }    public boolean isPostNordResponse() {
+        return postNordResponse;
+    }
+
+    public void setPostNordResponse(boolean postNordResponse) {
+        this.postNordResponse = postNordResponse;
+    }
+
+    public boolean isFlightDestinationResponse() {
+        return flightDestinationResponse;
+    }
+
+    public void setFlightDestinationResponse(boolean flightDestinationResponse) {
+        this.flightDestinationResponse = flightDestinationResponse;
+    }
+
+    public boolean isFlightArrivalTimeResponse() {
+        return flightArrivalTimeResponse;
+    }
+
+    public void setFlightArrivalTimeResponse(boolean flightArrivalTimeResponse) {
+        this.flightArrivalTimeResponse = flightArrivalTimeResponse;
     }
 
 }

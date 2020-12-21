@@ -16,6 +16,7 @@ public class APIController {
 
     Flight flight;
     Flights flights;
+    Package aPackage;
     int flightTransitTime = 0;
 
     public APIController() {
@@ -38,15 +39,14 @@ public class APIController {
      *
      * @return
      */
-    public boolean createPackage(String packageDepartureDate, String departureCountry, String arrivalCountry, String departureZip, String arrivalZip, String departureCity, String arrivalCity) {
-        boolean isCreated = false;
-
-        Package aPackage = new Package(packageDepartureDate, departureCountry, arrivalCountry, departureZip, arrivalZip, departureCity, arrivalCity);
+    public Package createPackage(String packageDepartureDate, String departureCountry, String arrivalCountry, String departureZip, String arrivalZip) {
+        aPackage = new Package(packageDepartureDate, departureCountry,departureZip, arrivalCountry, arrivalZip);
         if (checkPackage(aPackage)) {
-            createPostNordAPIGetRequest(aPackage);
+            System.out.println("APIController.createPackage: "+"Package "+aPackage+" is created");
+            return aPackage;
         }
-
-        return isCreated;
+        System.out.println("APIController.createPackage: "+"Package is not created");
+        return null;
     }
 
     public boolean checkPackage(Package aPackage) {
@@ -58,7 +58,7 @@ public class APIController {
     }
 
     public void createPostNordAPIGetRequest(Package aPackage) {
-        Unirest.config().defaultBaseUrl("http://api2.postnord.com/rest/transport"); // för anrop till andras APIer.
+        Unirest.config().defaultBaseUrl("http://api2.postnord.com/rest/transport"); // för anrop till Post Nords API
 
         HttpResponse<JsonNode> res = Unirest.get("/v1/transittime/getTransitTimeInformation.json")
                 .queryString("apikey", "673d1dcaedbcd206cf3130c3cd01bb7d")
@@ -90,6 +90,7 @@ public class APIController {
         aPackage.setPackageArrivalDate(deliveryDate.toString());
 
         countTransitTime(aPackage);
+        aPackage.setPostNordResponse(true);
     }
 
     /**
@@ -104,7 +105,7 @@ public class APIController {
         int parcelTransitTime = aPackage.getTransitTime();
 
         while (flightTransitTime < parcelTransitTime) {
-            createNewFlightDestination();
+          //  createNewFlightDestination();
 
         }
         areWeThereYet = true;
@@ -113,7 +114,27 @@ public class APIController {
         return areWeThereYet;
     }
 
-    public void createNewFlightDestination() {
+    public void createNewFlightDestination(Package aPackage) {
+        Unirest.config().defaultBaseUrl("http://test.api.amadeus.com/v1"); // för anrop till andras APIer.
+        curl "https://test.api.amadeus.com/v1/security/oauth2/token" \
+        -H "Content-Type: application/x-www-form-urlencoded" \
+        -d "grant_type=client_credentials&client_id={client_id}&client_secret={client_secret}"
+
+
+        HttpResponse<JsonNode> res = Unirest.get("/shopping/flight-destinations")
+                .queryString("key", "A7JmGIf5KhiJRPHI2w4syqghle0P581l")
+                .queryString("origin", "CPH") // fixa flygplatskoderna
+                .queryString("departuraDate", aPackage.getPackageDepartureDate())
+                .queryString("oneWay", "true")
+                .queryString("nonStop", "true")
+
+                .header("Accept", "application/json")
+                .asJson();
+        System.out.println("First response: " + res.getBody());
+
+    }
+
+    public void createNewFlightArrivalTime() {
 
 
 
