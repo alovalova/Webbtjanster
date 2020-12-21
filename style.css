@@ -6,29 +6,9 @@ body{
 
 /*CONTENT*/
 #content{
-  /*background-image: url(/static/index-image.png);*/
-  /*background-repeat: no-repeat;*/
-  /*background-position: center;*/
-  /*height: 1552px;*/
   width: auto;
   height: auto;
 }
-
-/*FLASHMEDDELANDEN*/
-/*#content > #success-message{
-  display: flex; 
-  flex-direction: column;
-  align-items: center;
-  padding: 10px;
-  margin-right: 500px;
-  margin-left: 500px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  color: orangered;
-  border-radius: 5px; 
-  border: none; 
-  font-size: 16px;
-}*/
 
 /*HEADER*/
 #content > header{
@@ -41,23 +21,7 @@ body{
   text-decoration-line: none;
 }
 
-/*NAV*/
-#content > nav > #menu-options{
-  padding-bottom: 20px;
-  padding: 15px;
-  text-align: center;
-  padding-left: 180px;
-  font-size: 20px;
-  border-top-style: solid;
-  border-bottom-style: solid;
-  border-color: lightgrey;
-  border-width: thin;
-}
-
-#content > nav a{
-  color: white;
-}
-
+/* Beskrivning ovanför formuläret */
 #content > main > .beskrivning {
   width: 65%;
   margin: 0 auto;
@@ -66,11 +30,11 @@ body{
   margin-bottom: 25px;
 }
 
+/* Formuläret */
 #content > main > #parcelForm {
   width: 65%;
   display: block;
   margin: 0 auto;
-  
 }
 
 /* Centrerar formuläret i diven */
@@ -78,12 +42,27 @@ body{
   margin: 0 auto;
 }
 
+/* De olika fälten i formuläret (utom datum och knapp) */
+#content > main > #parcelForm input[type=text], select[class=form-select] {
+  margin-bottom: 15px;
+}
+
 /* Margin mellan fält i formuläret */
-#content > main input#from_zip, input#to_zip, #date, button#submit {
+#content > main #submitForm {
+  margin-top: 25px;
   margin-bottom: 25px;
 }
 
+/* Felmeddelande som visas om ett fält inte är ifyllt */
+.formValidation {
+  color: red;
+}
 
+/* Meddelande som visas om formuläret validerat och skickas */
+#formSent {
+  color: green;
+  margin-left: 25px;
+}
 
 /*FOOTER*/
 footer{
@@ -100,11 +79,4 @@ footer > p{
   text-align: center;
   color: orangered;
   margin: 16px 0;
-}
-
-
-
-#departureAddress {
-  color: red;
-  font-weight: bold;
 }

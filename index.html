@@ -2,32 +2,71 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="text/javascript">
-    // Dagens datum
-    var today = new Date();
-    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-    var year = doay.getFullYear
-      // Funktionen som skickar iväg formuläret
+      $(document).ready(function () {
+        // Funktionen som skickar iväg formuläret
       function getDestinations() {
+        // Döljer "formulär skickat"
+        $("#formSent").hide();
+
+        // Används för att välja när formuläret ska skickas iväg
         var formValidate = true
+
+        // Skapar ett objekt för att lägga till värdena från formuläret
         var form_data = {}
         form_data.departureCountry = $("select[name=departureCountry]").val();
-        form_data.departureCity = $("input[name=departureAddress]").val();
-        if (form_data.departureCity === "") {
-          $("#departureAddress").text("Du skrev fel ditt smuts");
-          formValidate = false
-        }
-        form_data.departureZip = $("input[name=departureCity]").val();
-        form_data.arrivalCountry = $("input[name=arrivalCountry]").val();
-        form_data.arrivalCity = $("input[name=arrivalAddress]").val();
+        form_data.departureAddress = $("input[name=departureAddress]").val();
+        form_data.departureZip = $("input[name=departureZip]").val();
+        form_data.arrivalCountry = $("select[name=arrivalCountry]").val();
+        form_data.arrivalAddress = $("input[name=arrivalAddress]").val();
         form_data.arrivalZip = $("input[name=arrivalZip]").val();
         form_data.departureDate = $("input[name=departureDate]").val();
-        // console.log(form_data);
+      
+        /* 
+        Validering för formuläret. Om ett fält är tomt, skriv ut felmeddelande och sätt
+        formValidate till false så att formuläret inte skickas iväg 
+        */
+        if (form_data.departureAddress == "") {
+          $("#departureAddress").text("Du måste ange en adress!");
+          formValidate = false;
+        }
+        else {
+          $("#departureAddress").text("");
+          console.log("departureAddress");
+        }
+
+        if (form_data.departureZip === "") {
+          $("#departureZip").text("Du måste ange ett postnummer!");
+          formValidate = false;
+        }
+        else {
+          $("#departureZip").text("");
+        }
+
+        if (form_data.arrivalAddress === "") {
+          $("#arrivalAddress").text("Du måste ange en adress!");
+          formValidate = false
+        }
+        else {
+          $("#arrivalAddress").text("");
+        }
+        if (form_data.arrivalZip === "") {
+          $("#arrivalZip").text("Du måste ange ett postnummer!");
+          formValidate = false
+        }
+        else {
+          $("#arrivalZip").text("");
+        }
+
         /* Anrop till APIet för att hämta ut data */
         if (formValidate == true) {
+          // Visas när formuläret validerat och skickas
+          $("#formSent").text("Formulär skickat!");
+          $("#formSent").show();
+
           $.ajax({
             method: "GET",
             // Till en route på vår server där vi kommer åt APIet
@@ -38,23 +77,25 @@
             headers: {"Accept": "application/json"},
             crossOrigin: true
           })
-          /* Denna funktion anropas när informationen hämtamts. Inladdad information går att nå via variabeln "form_data" */
+
+          /* Denna funktion anropas när informationen hämtamts. Inladdad information går att nå via variabeln "response" */
           .done(function(response) {
             console.log(response);
           });
         } 
         else {
-          alert("Formuläret skickades inte, vänligen kontrollera angivna fel!");
+          console.log("Alert");
+          //alert("Formuläret skickades inte, vänligen kontrollera angivna fel!");
         }
       }
-
-      $(document).ready(function () {
-        // När man klickar på "Skicka" i formuläret så körs funktionen getDestinations
-        $('#submitForm').click(getDestinations)
-
+      // När man klickar på "Skicka" i formuläret så körs funktionen getDestinations
+      $('#submitForm').click(getDestinations)
+      
+      // Hämtar ut dagens datum YYYY-MM-DD och gör om till en sträng
+      var date = new Date().toISOString().substring(0, 10);
+      // Fyller i datumfältet automatiskt med dagens datum
+      document.querySelector("#departureDate").value = date;
       });
-
-
     </script>
 </head>
 <body>
@@ -62,13 +103,14 @@
         <header>
             <h1>Package Race</h1>
         </header>
-        
         <main>
             <div class="beskrivning">
                 <p> Beskrivning </p>
                 <h5></h5>
             </div>
+            <!-- Formulär -->
             <form name="parcelForm" class="row g-2" id="parcelForm">
+                <!-- Landet där paketet skickas ifrån -->
                 <div class="col-md-6">
                     <label for="departureCountry" class="form-label">Från land</label>
                     <select name="departureCountry" class="form-select">
@@ -81,17 +123,19 @@
                       <option value="DE">Tyskland</option>
                     </select>
                   </div>
+                  <!-- Address där paketer skickas ifrån -->
                   <div class="col-6">
                     <label for="departureAddress" class="form-label">Från adress</label>
-                    <input type="text" class="form-control" name="departureAddress" placeholder="Kirsebergsgatan 1337...">
-                    <p id="departureAddress"></p>
+                    <input type="text" class="form-control" name="departureAddress" placeholder="Kirsebergsgatan 1...">
+                    <span class="formValidation" id="departureAddress"></span>
                   </div>
+                  <!-- Postkod där paketet skickas ifrån -->
                   <div class="col-md-6">
                     <label for="departureZip" class="form-label">Från postnummer</label>
                     <input type="text" class="form-control" name="departureZip">
-                    <p id="departureZip"></p>
+                    <span class="formValidation" id="departureZip"></span>
                   </div>
-
+                  <!-- Landet dit paketet ska skickas -->
                   <div class="col-md-6">
                     <label for="arrivalCountry" class="form-label">Till land</label>
                     <select name="arrivalCountry" class="form-select">
@@ -104,24 +148,27 @@
                       <option value="DE">Tyskland</option>
                     </select>
                   </div>
+                  <!-- Address dit paketet ska skickas-->
                   <div class="col-6">
                     <label for="arrivalAddress" class="form-label">Till adress</label>
-                    <input type="text" class="form-control" name="arrivalAddress" placeholder="Rönnblomsgatan 11...">
-                    <p id="arrivalAddress"></p>
+                    <input type="text" class="form-control" name="arrivalAddress" placeholder="Rönnblomsgatan 2...">
+                    <span class="formValidation" id="arrivalAddress"></span>
                   </div>
+                  <!-- Postkod dit paketet ska skickas-->
                   <div class="col-md-6">
                     <label for="arrivalZip" class="form-label">Till postnummer</label>
                     <input type="text" class="form-control" name="arrivalZip">
-                    <p id="arrivalZip"></p>
+                    <span class="formValidation" id="arrivalZip"></span>
                   </div>
-
+                  <!-- Datumfältet -->
                   <div class="col-md-6">
                     <label for="date" class="form-label">Datum när paketet ska skickas</label>
-                    <input type="date" class="form-control" name="departureDate" value="YYYY-MM-DD">">
+                    <input type="date" class="form-control" name="departureDate" id="departureDate">
                   </div>
-
+                <!-- Knappen som skickar formuläret -->
                 <div class="col-6">
                   <button type="button" class="btn btn-primary" id="submitForm">Skicka</button>
+                  <span id="formSent"></span>
                 </div>
               </form>
         </main>
