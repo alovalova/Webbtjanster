@@ -6,99 +6,89 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script type="text/javascript">
-      $(document).ready(function () {
-        // Funktionen som skickar iväg formuläret
+      // Funktionen som skickar iväg formuläret
       function getDestinations() {
-        // Döljer "formulär skickat"
-        $("#formSent").hide();
+          // Döljer "formulär skickat"
+          $("#formSent").hide();
 
-        // Används för att välja när formuläret ska skickas iväg
-        var formValidate = true
+          // Används för att välja när formuläret ska skickas iväg
+          var formValidate = true
 
-        // Skapar ett objekt för att lägga till värdena från formuläret
-        var form_data = {}
-        form_data.departureCountry = $("select[name=departureCountry]").val();
-        form_data.departureAddress = $("input[name=departureAddress]").val();
-        form_data.departureZip = $("input[name=departureZip]").val();
-        form_data.arrivalCountry = $("select[name=arrivalCountry]").val();
-        form_data.arrivalAddress = $("input[name=arrivalAddress]").val();
-        form_data.arrivalZip = $("input[name=arrivalZip]").val();
-        form_data.departureDate = $("input[name=departureDate]").val();
-      
-        /* 
-        Validering för formuläret. Om ett fält är tomt, skriv ut felmeddelande och sätt
-        formValidate till false så att formuläret inte skickas iväg 
-        */
-        if (form_data.departureAddress == "") {
-          $("#departureAddress").text("Du måste ange en adress!");
-          formValidate = false;
-        }
-        else {
-          $("#departureAddress").text("");
-          console.log("departureAddress");
-        }
+          // Skapar ett objekt för att lägga till värdena från formuläret
+          var form_data = {}
+          form_data.departureCountry = $("select[name=departureCountry]").val();
+          form_data.departureAddress = $("input[name=departureAddress]").val();
+          form_data.departureZip = $("input[name=departureZip]").val();
+          form_data.arrivalCountry = $("select[name=arrivalCountry]").val();
+          form_data.arrivalAddress = $("input[name=arrivalAddress]").val();
+          form_data.arrivalZip = $("input[name=arrivalZip]").val();
+          form_data.departureDate = $("input[name=departureDate]").val();
+        
+          /* 
+          Validering för formuläret. Om ett fält är tomt, skriv ut felmeddelande och sätt
+          formValidate till false så att formuläret inte skickas iväg 
+          */
+          if (form_data.departureAddress == "") {
+            $("#departureAddress").text("Du måste ange en adress!");
+            formValidate = false;
+          }
+          else {
+            $("#departureAddress").text("");
+            console.log("departureAddress");
+          }
 
-        if (form_data.departureZip === "") {
-          $("#departureZip").text("Du måste ange ett postnummer!");
-          formValidate = false;
-        }
-        else {
-          $("#departureZip").text("");
-        }
+          if (form_data.departureZip === "") {
+            $("#departureZip").text("Du måste ange ett postnummer!");
+            formValidate = false;
+          }
+          else {
+            $("#departureZip").text("");
+          }
 
-        if (form_data.arrivalAddress === "") {
-          $("#arrivalAddress").text("Du måste ange en adress!");
-          formValidate = false
-        }
-        else {
-          $("#arrivalAddress").text("");
-        }
-        if (form_data.arrivalZip === "") {
-          $("#arrivalZip").text("Du måste ange ett postnummer!");
-          formValidate = false
-        }
-        else {
-          $("#arrivalZip").text("");
-        }
+          if (form_data.arrivalAddress === "") {
+            $("#arrivalAddress").text("Du måste ange en adress!");
+            formValidate = false
+          }
+          else {
+            $("#arrivalAddress").text("");
+          }
+          if (form_data.arrivalZip === "") {
+            $("#arrivalZip").text("Du måste ange ett postnummer!");
+            formValidate = false
+          }
+          else {
+            $("#arrivalZip").text("");
+          }
 
-        console.log(form_data);
+          /* Anrop till APIet för att hämta ut data */
+          if (formValidate == true) {
+            // Visas när formuläret validerat och skickas
+            $("#formSent").text("Formulär skickat!");
+            $("#formSent").show();
 
-        /* Anrop till APIet för att hämta ut data */
-        if (formValidate == true) {
-          // Visas när formuläret validerat och skickas
-          $("#formSent").text("Formulär skickat!");
-          $("#formSent").show();
+            // Skicka med vår form_data som request parameter
+            $.ajax({
+              method: "GET",
+              // Till en route på vår server där vi kommer åt APIet
+              url: "http://localhost:5000",
+              // Datan från formuläret skickas
+              data: form_data,
+              // Berättar för APIet att vi vill ha JSON tillbaka
+              headers: {"Accept": "application/json"},
+              crossOrigin: true
+            })
 
-          // Skicka med vår form_data som request parameter
-          $.ajax({
-            method: "GET",
-            // Till en route på vår server där vi kommer åt APIet
-            url: "http://localhost:5000",
-            // Datan från formuläret skickas
-            data: {
-              departureCountry: $("select[name=departureCountry]").val(),
-              departureAddress: $("input[name=departureAddress]").val(),
-              departureZip: $("input[name=departureZip]").val(),
-              arrivalCountry: $("select[name=arrivalCountry]").val(),
-              arrivalAddress: $("input[name=arrivalAddress]").val(),
-              arrivalZip: $("input[name=arrivalZip]").val(),
-              departureDate: $("input[name=departureDate]").val()
-            },
-            // Berättar för APIet att vi vill ha JSON tillbaka
-            headers: {"Accept": "application/json"},
-            crossOrigin: true
-          })
-
-          /* Denna funktion anropas när informationen hämtamts. Inladdad information går att nå via variabeln "response" */
-          .done(function(response) {
-            console.log(response);
-          });
-        } 
-        else {
-          console.log("Alert");
-          //alert("Formuläret skickades inte, vänligen kontrollera angivna fel!");
+            /* Denna funktion anropas när informationen hämtamts. Inladdad information går att nå via variabeln "response" */
+            .done(function(response) {
+              console.log(response);
+            });
+          } 
+          else {
+            console.log("Alert");
+            //alert("Formuläret skickades inte, vänligen kontrollera angivna fel!");
+          }
         }
-      }
+      $(document).ready(function () {
       // När man klickar på "Skicka" i formuläret så körs funktionen getDestinations
       $('#submitForm').click(getDestinations)
       

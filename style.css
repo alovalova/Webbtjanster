@@ -42,15 +42,20 @@ body{
   margin: 0 auto;
 }
 
-/* De olika fälten i formuläret (utom datum och knapp) */
-#content > main > #parcelForm input[type=text], select[class=form-select] {
-  margin-bottom: 15px;
+/* Margin mellan de olika fälten i formuläret */
+#content > main > #parcelForm label {
+  margin-top: 15px;
 }
 
-/* Margin mellan fält i formuläret */
+/* Margin mellan de olika delarna i formuläret */
+#content > main > #parcelForm label:nth-last-child(2) {
+  margin-top: 50px;
+}
+
+/* Margin för knappen i formuläret */
 #content > main #submitForm {
-  margin-top: 25px;
-  margin-bottom: 25px;
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
 /* Felmeddelande som visas om ett fält inte är ifyllt */
