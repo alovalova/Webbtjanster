@@ -29,7 +29,6 @@ public class APIRunner {
 
         get("/", (request, response) -> {
 
-            System.out.println(request.queryParams("departureDate"));
             String packageDepartureDate = request.queryParams("departureDate");
             String departureCountry = request.queryParams("departureCountry");
             String departureZip = request.queryParams("departureZip");
@@ -40,6 +39,7 @@ public class APIRunner {
             try {
                 newPackage = runner.controller.createPackage(packageDepartureDate, departureCountry, departureZip, arrivalCountry, arrivalZip);
                 runner.controller.createPostNordAPIGetRequest(newPackage);
+                runner.controller.countTransitTime(newPackage);
                 runner.controller.createNewFlightDestination(newPackage);
             } catch (Exception e) {
                 e.printStackTrace();

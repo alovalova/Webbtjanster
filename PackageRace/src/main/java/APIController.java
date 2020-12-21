@@ -84,23 +84,25 @@ public class APIController {
             e.printStackTrace();
         }
 
-        //printouts
-        System.out.println("First response: " + res.getBody());
 
-        JSONObject transitTimeResponse = (JSONObject) res.getBody().getObject().get("se.posten.loab.lisp.notis.publicapi.serviceapi.TransitTimeResponse");
-        JSONArray transitTimes = (JSONArray) transitTimeResponse.get("transitTimes");
+        try {
+            JSONObject transitTimeResponse = (JSONObject) res.getBody().getObject().get("se.posten.loab.lisp.notis.publicapi.serviceapi.TransitTimeResponse");
+            JSONArray transitTimes = (JSONArray) transitTimeResponse.get("transitTimes");
 
-        System.out.println("TransitTimes: " + transitTimes);
+            System.out.println("TransitTimes: " + transitTimes);
 
-        String deliveryTime = transitTimes.getJSONObject(0).get("deliveryTime").toString();
-        Calendar deliveryDate = (Calendar) transitTimes.getJSONObject(0).get("deliveryDate"); // hur hanterar vi detta?
+            String deliveryTime = transitTimes.getJSONObject(0).get("deliveryTime").toString();
+            String deliveryDate = (String) transitTimes.getJSONObject(0).get("deliveryDate"); // hur hanterar vi detta?
 
-        System.out.println("Delivery Time: " + deliveryTime + " Delivery Date: " + deliveryDate);
+            System.out.println("Delivery Time: " + deliveryTime + " Delivery Date: " + deliveryDate);
 
-        aPackage.setPackageArrivalTime(deliveryTime);
-        aPackage.setPackageArrivalDate(deliveryDate.toString());
+            aPackage.setPackageArrivalTime(deliveryTime);
+            aPackage.setPackageArrivalDate(deliveryDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        countTransitTime(aPackage);
+
         aPackage.setPostNordResponse(true);
     }
 
@@ -115,36 +117,19 @@ public class APIController {
         boolean areWeThereYet = false;
         int parcelTransitTime = aPackage.getTransitTime();
 
-        while (flightTransitTime < parcelTransitTime) {
-            //  createNewFlightDestination();
-
-        }
         areWeThereYet = true;
-
 
         return areWeThereYet;
     }
 
     public void createNewFlightDestination(Package aPackage) {
 
-        Amadeus amadeus = Amadeus
-                .builder("A7JmGIf5KhiJRPHI2w4syqghle0P581l", "nRBxGUXe116FG4fk")
-                .build();
-        System.out.println("Controller.createNewFlightDestination: " + amadeus.toString());
-        FlightDestination[] flightOfferSearches = null;
-        try {
-            flightOfferSearches = amadeus.shopping.flightDestinations.get(
-                    Params.with("origin", "CPH").
-                            and("departureDate", aPackage.getPackageDepartureDate()));
-//                            and("oneWay", true).
-//                            and("nonStop", true));
-        } catch (ResponseException e) {
-            e.printStackTrace();
-        }
-        System.out.println("Controller.createNewFlightDestination: " + flightOfferSearches);
+        countTransitTime(aPackage);
 
 //        Unirest.config().defaultBaseUrl("http://test.api.amadeus.com/v1"); // för anrop till andras APIer.
-//
+
+//      ClientID: "A7JmGIf5KhiJRPHI2w4syqghle0P581l", clientSecretKey: "nRBxGUXe116FG4fk";
+
 //        HttpResponse<JsonNode> res = Unirest.get("/shopping/flight-destinations")
 //                .queryString("key", "A7JmGIf5KhiJRPHI2w4syqghle0P581l")
 //                .queryString("origin", "CPH") // fixa flygplatskoderna

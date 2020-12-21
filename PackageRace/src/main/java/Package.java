@@ -20,9 +20,9 @@ public class Package {
     private String arrivalCountry;
     private String arrivalZip;
 
-    private boolean postNordResponse=false;
-    private boolean flightDestinationResponse=false;
-    private boolean flightArrivalTimeResponse=false;
+    private boolean postNordResponse = false;
+    private boolean flightDestinationResponse = false;
+    private boolean flightArrivalTimeResponse = false;
 
     public Package() {
         packageDepartureDate = "2020-12-15";
@@ -99,11 +99,27 @@ public class Package {
 
     public int getTransitTime() {
         int transitTime = 0;
+        StringBuilder departureBuilder = new StringBuilder();
+        departureBuilder.append(packageDepartureDate + " " + "08:00");
 
-        String dateStart = "01-14-2012 09:29:58";
-        String dateStop = "01-17-2012 08:31:48";
+        StringBuilder arrivalBuilder = new StringBuilder();
+        for (int i = 0; i < packageArrivalDate.length(); i++) {
+            if (i == 4) {
+                arrivalBuilder.append("-");
+                arrivalBuilder.append(packageArrivalDate.charAt(i));
+            } else if (i == 6) {
+                arrivalBuilder.append("-");
+                arrivalBuilder.append(packageArrivalDate.charAt(i));
+            }else{
+                arrivalBuilder.append(packageArrivalDate.charAt(i));
+            }
+        }
+        arrivalBuilder.append(" " + packageArrivalTime);
 
-        SimpleDateFormat format = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+        String dateStart = departureBuilder.toString();
+        String dateStop = arrivalBuilder.toString();
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
         Date d1 = null;
         Date d2 = null;
@@ -114,6 +130,7 @@ public class Package {
         try {
             d1 = format.parse(dateStart);
             d2 = format.parse(dateStop);
+
 
             DateTime dt1 = new DateTime(d1);
             DateTime dt2 = new DateTime(d2);
@@ -130,19 +147,20 @@ public class Package {
     }
 
     public int countTransitTime(int days, int hours, int minutes) {
-        int transitHours=0;
-        int addToHours=0;
+        int transitHours = 0;
+        int addToHours = 0;
 
-        if(minutes<30) {
+        if (minutes < 30) {
             addToHours = 0;
-        }
-        else
+        } else
             addToHours = 1;
 
-        transitHours=days*24+hours+addToHours;
+        transitHours = days * 24 + hours + addToHours;
 
         return transitHours;
-    }    public boolean isPostNordResponse() {
+    }
+
+    public boolean isPostNordResponse() {
         return postNordResponse;
     }
 
