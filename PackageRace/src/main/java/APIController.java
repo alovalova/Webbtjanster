@@ -1,8 +1,5 @@
-import com.amadeus.Amadeus;
-import com.amadeus.Params;
-import com.amadeus.exceptions.ResponseException;
-import com.amadeus.resources.FlightDestination;
-import com.amadeus.resources.FlightOfferSearch;
+import com.google.gson.Gson;
+import kong.unirest.HttpRequestWithBody;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -10,7 +7,6 @@ import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
 
 /**
  * @author
@@ -24,9 +20,12 @@ public class APIController {
     Package aPackage;
     int flightTransitTime = 0;
 
+    Gson gson;
+
     public APIController() {
         createFlight();
         createFlights();
+        gson=  new Gson();
     }
 
     public void createFlights() {
@@ -124,7 +123,28 @@ public class APIController {
 
     public void createNewFlightDestination(Package aPackage) {
 
-        countTransitTime(aPackage);
+//        countTransitTime(aPackage);
+
+        Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1/security/oauth2/token/"); // för anrop till andras APIer.
+
+        String clientID = "A7JmGIf5KhiJRPHI2w4syqghle0P581l";
+        String clientSecretKey = "nRBxGUXe116FG4fk";
+        String clientCredentials= "dborgstroem@gmail.com";
+
+        String postBody = "grant_type=dborgstroem@gmail.com&client_id=A7JmGIf5KhiJRPHI2w4syqghle0P581l" +
+                "&client_secret=nRBxGUXe116FG4fk";
+
+        HttpResponse<JsonNode> res = Unirest.post("https://test.api.amadeus.com/v1/security/oauth2/token")
+                .field("grant_type", "client_credentials")
+                .field("client_id", clientID)
+                .field("client_secret", clientSecretKey)
+                .asEmpty();
+
+        System.out.println("PostResponse: " +res.getBody() +"\n" + res.getStatusText()+"\n" + res.getHeaders());
+
+
+
+
 
 //        Unirest.config().defaultBaseUrl("http://test.api.amadeus.com/v1"); // för anrop till andras APIer.
 
