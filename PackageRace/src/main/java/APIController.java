@@ -141,12 +141,7 @@ public class APIController {
                 .asEmpty();
 
         System.out.println("PostResponse: " +res.getBody() +"\n" + res.getStatusText()+"\n" + res.getHeaders());
-
-
-
-
-
-//        Unirest.config().defaultBaseUrl("http://test.api.amadeus.com/v1"); // för anrop till andras APIer.
+        //        Unirest.config().defaultBaseUrl("http://test.api.amadeus.com/v1"); // för anrop till andras APIer.
 
 //      ClientID: "A7JmGIf5KhiJRPHI2w4syqghle0P581l", clientSecretKey: "nRBxGUXe116FG4fk";
 
