@@ -1,8 +1,10 @@
 import com.google.gson.Gson;
-import kong.unirest.HttpRequestWithBody;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
+import kong.unirest.UnirestException;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
@@ -15,17 +17,17 @@ import java.time.LocalDateTime;
  */
 public class APIController {
 
-    Flight flight;
-    Flights flights;
-    Package aPackage;
-    int flightTransitTime = 0;
+    private Flight flight;
+    private Flights flights;
+    private Package aPackage;
+    private int flightTransitTime = 0;
 
-    Gson gson;
+    private Gson gson;
 
     public APIController() {
         createFlight();
         createFlights();
-        gson=  new Gson();
+        gson = new Gson();
     }
 
     public void createFlights() {
@@ -83,7 +85,6 @@ public class APIController {
             e.printStackTrace();
         }
 
-
         try {
             JSONObject transitTimeResponse = (JSONObject) res.getBody().getObject().get("se.posten.loab.lisp.notis.publicapi.serviceapi.TransitTimeResponse");
             JSONArray transitTimes = (JSONArray) transitTimeResponse.get("transitTimes");
@@ -100,7 +101,6 @@ public class APIController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
 
         aPackage.setPostNordResponse(true);
     }
@@ -121,27 +121,88 @@ public class APIController {
         return areWeThereYet;
     }
 
-    public void createNewFlightDestination(Package aPackage) {
-
-//        countTransitTime(aPackage);
-
-        Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1/security/oauth2/token/"); // för anrop till andras APIer.
+    public String createAmadeusAuthentication() {
+        Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1"); // för anrop till andras APIer.
 
         String clientID = "A7JmGIf5KhiJRPHI2w4syqghle0P581l";
         String clientSecretKey = "nRBxGUXe116FG4fk";
-        String clientCredentials= "dborgstroem@gmail.com";
 
-        String postBody = "grant_type=dborgstroem@gmail.com&client_id=A7JmGIf5KhiJRPHI2w4syqghle0P581l" +
-                "&client_secret=nRBxGUXe116FG4fk";
-
-        HttpResponse<JsonNode> res = Unirest.post("https://test.api.amadeus.com/v1/security/oauth2/token")
+        HttpResponse<JsonNode> tokenResponse = Unirest.post("/security/oauth2/token")
                 .field("grant_type", "client_credentials")
                 .field("client_id", clientID)
                 .field("client_secret", clientSecretKey)
-                .asEmpty();
+                .asJson();
 
-        System.out.println("PostResponse: " +res.getBody() +"\n" + res.getStatusText()+"\n" + res.getHeaders());
-        //        Unirest.config().defaultBaseUrl("http://test.api.amadeus.com/v1"); // för anrop till andras APIer.
+        System.out.println("TokenResponse: "+tokenResponse.getBody()+tokenResponse.getStatusText());
+
+        return (String) tokenResponse.getBody().getObject().get("access_token");
+    }
+
+    public void createNewFlightDestination(Package aPackage) {
+
+
+
+//        countTransitTime(aPackage);
+        String token=createAmadeusAuthentication();
+        System.out.println(token);
+        Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
+
+        HttpResponse<JsonNode> flightDestinationResponse = Unirest.get("/shopping/flight-destinations")
+                .header("authorization", "Bearer "+token)
+                .queryString("origin", "MAD")
+                .queryString("departureDate", "2020-12-24")
+                .queryString("oneWay", "true")
+                .queryString("nonStop", "true")
+                .asJson();
+
+        System.out.println("flightDestinationResponse: " +flightDestinationResponse.getBody());
+
+        JsonArray data = (JsonArray) flightDestinationResponse.getBody().getArray().get(0);
+
+        JsonObject type = (JsonObject) data.get(0);
+        JsonObject destination = (JsonObject) type.get("destination");
+        System.out.println(destination);
+
+
+        //PostResponse: {"data"🙁
+        //                 {"type":"flight-destination",
+        //                  "origin":"MAD",
+        //                  "destination":"DUS",
+        //                  "departureDate":"2020-12-24",
+        //                  "price":{"total":"43.94"},
+        //                  "links":{"flightDates":"https://test.api.amadeus.com/v1/shopping/flight-dates?origin=MAD&destination=DUS&departureDate=2020-12-24&oneWay=true&nonStop=true&viewBy=DATE",
+        //                  "flightOffers":"https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=MAD&destinationLocationCode=DUS&departureDate=2020-12-24&adults=1&nonStop=true"}},
+        //                 {"type":"flight-destination",
+        //                  "origin":"MAD",
+        //                  "destination":"BOD",
+        //                  "departureDate":"2020-12-24",
+        //                  "price":{"total":"51.94"},
+        //                  "links":{"flightDates":"https://test.api.amadeus.com/v1/shopping/flight-dates?origin=MAD&destination=BOD&departureDate=2020-12-24&oneWay=true&nonStop=true&viewBy=DATE",
+        //                  "flightOffers":"https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=MAD&destinationLocationCode=BOD&departureDate=2020-12-24&adults=1&nonStop=true"}},
+        //                 {"type":"flight-destination",
+        //                  "origin":"MAD",
+        //                  "destination":"STO",
+        //                  "departureDate":"2020-12-24",
+        //                  "price":{"total":"116.94"},
+        //                  "links":{"flightDates":"https://test.api.amadeus.com/v1/shopping/flight-dates?origin=MAD&destination=STO&departureDate=2020-12-24&oneWay=true&nonStop=true&viewBy=DATE",
+        //                  "flightOffers":"https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=MAD&destinationLocationCode=STO&departureDate=2020-12-24&adults=1&nonStop=true"}},
+        //                 {"type":"flight-destination",
+        //                  "origin":"MAD",
+        //                  "destination":"SOF","departureDate":"2020-12-24","price":{"total":"125.94"},"links":{"flightDates":"https://test.api.amadeus.com/v1/shopping/flight-dates?origin=MAD&destination=SOF&departureDate=2020-12-24&oneWay=true&nonStop=true&viewBy=DATE","flightOffers":"https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=MAD&destinationLocationCode=SOF&departureDate=2020-12-24&adults=1&nonStop=true"}},{"type":"flight-destination","origin":"MAD","destination":"GVA","departureDate":"2020-12-24","price":{"total":"136.94"},"links":{"flightDates":"https://test.api.amadeus.com/v1/shopping/flight-dates?origin=MAD&destination=GVA&departureDate=2020-12-24&oneWay=true&nonStop=true&viewBy=DATE","flightOffers":"https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=MAD&destinationLocationCode=GVA&departureDate=2020-12-24&adults=1&nonStop=true"}},{"type":"flight-destination","origin":"MAD","destination":"NTE","departureDate":"2020-12-24","price":{"total":"156.94"},"links":{"flightDates":"https://test.api.amadeus.com/v1/shopping/flight-dates?origin=MAD&destination=NTE&departureDate=2020-12-24&oneWay=true&nonStop=true&viewBy=DATE","flightOffers":"https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=MAD&destinationLocationCode=NTE&departureDate=2020-12-24&adults=1&nonStop=true"}},{"type":"flight-destination","origin":"MAD","destination":"OTP","departureDate":"2020-12-24","price":{"total":"193.94"},"links":{"flightDates":"https://test.api.amadeus.com/v1/shopping/flight-dates?origin=MAD&destination=OTP&departureDate=2020-12-24&oneWay=true&nonStop=true&viewBy=DATE","flightOffers":"https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=MAD&destinationLocationCode=OTP&departureDate=2020-12-24&adults=1&nonStop=true"}},{"type":"flight-destination","origin":"MAD","destination":"BUH","departureDate":"2020-12-24","price":{"total":"212.94"},"links":{"flightDates":"https://test.api.amadeus.com/v1/shopping/flight-dates?origin=MAD&destination=BUH&departureDate=2020-12-24&oneWay=true&nonStop=true&viewBy=DATE","flightOffers":"https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=MAD&destinationLocationCode=BUH&departureDate=2020-12-24&adults=1&nonStop=true"}},{"type":"flight-destination","origin":"MAD","destination":"WAW","departureDate":"2020-12-24","price":{"total":"281.94"},"links":{"flightDates":"https://test.api.amadeus.com/v1/shopping/flight-dates?origin=MAD&destination=WAW&departureDate=2020-12-24&oneWay=true&nonStop=true&viewBy=DATE","flightOffers":"https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=MAD&destinationLocationCode=WAW&departureDate=2020-12-24&adults=1&nonStop=true"}},{"type":"flight-destination","origin":"MAD","destination":"MIA","departureDate":"2020-12-24","price":{"total":"2015.63"},"links":{"flightDates":"https://test.api.amadeus.com/v1/shopping/flight-dates?origin=MAD&destination=MIA&departureDate=2020-12-24&oneWay=true&nonStop=true&viewBy=DATE","flightOffers":"https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=MAD&destinationLocationCode=MIA&departureDate=2020-12-24&adults=1&nonStop=true"}}],"dictionaries":{"currencies":{"EUR":"EURO"},"locations":{"MAD":{"subType":"AIRPORT","detailedName":"ADOLFO SUAREZ BARAJAS"},"GVA":{"subType":"AIRPORT","detailedName":"GENEVA INTERNATIONAL"},"DUS":{"subType":"AIRPORT","detailedName":"INTERNATIONAL AIRPORT"},"MIA":{"subType":"AIRPORT","detailedName":"MIAMI INTL"},"BUH":{"subType":"CITY","detailedName":"BUCHAREST"},"BOD":{"subType":"AIRPORT","detailedName":"MERIGNAC"},"OTP":{"subType":"AIRPORT","detailedName":"HENRI COANDA"},"SOF":{"subType":"AIRPORT","detailedName":"SOFIA"},"WAW":{"subType":"AIRPORT","detailedName":"FREDERIC CHOPIN"},"NTE":{"subType":"AIRPORT","detailedName":"ATLANTIQUE"},"STO":{"subType":"CITY","detailedName":"STOCKHOLM"}}},"meta":{"currency":"EUR","links":{"self":"https://test.api.amadeus.com/v1/shopping/flight-destinations?origin=MAD&departureDate=2020-12-24&oneWay=true&nonStop=true&viewBy=DESTINATION"},"defaults":{"viewBy":"DESTINATION"}}}
+
+
+
+        //PostResponse: {"type":"amadeusOAuth2Token",
+        //               "username":"dborgstroem@gmail.com",
+        //               "application_name":"School",
+        //               "client_id":"A7JmGIf5KhiJRPHI2w4syqghle0P581l",
+        //               "token_type":"Bearer",
+        //               "access_token":"x5EcI4FZYOSpWOVR1YP5rf5lbegG",
+        //               "expires_in":1799,
+        //               "state":"approved",
+        //               "scope":""}
+
+//        Unirest.config().defaultBaseUrl("http://test.api.amadeus.com/v1"); // för anrop till andras APIer.
 
 //      ClientID: "A7JmGIf5KhiJRPHI2w4syqghle0P581l", clientSecretKey: "nRBxGUXe116FG4fk";
 
@@ -169,7 +230,7 @@ public class APIController {
 
 //"se.posten.loab.lisp.notis.publicapi.serviceapi.TransitTimeResponse":
 // {
-//      "transitTimes":[
+//      "transitTimes"🙁
 //         {"dateOfDeparture":"2020-12-15 18:30:00.0 CET",
 //          "latestTimeOfBooking":"14:00",
 //          "deliveryTime":"18:00",
@@ -182,4 +243,4 @@ public class APIController {
 //          "pickup":true,
 //          "distribution":true
 //          },
-//          "daysPickup":["MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"]}]}}
+//          "daysPickup"🙁"MONDAY","TUESDAY","WEDNESDAY","THURSDAY","FRIDAY"]}]}}
