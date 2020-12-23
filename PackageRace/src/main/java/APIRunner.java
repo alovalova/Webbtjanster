@@ -1,5 +1,5 @@
-import com.amadeus.Amadeus;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import spark.Filter;
 
@@ -35,18 +35,21 @@ public class APIRunner {
             String arrivalCountry = request.queryParams("arrivalCountry");
             String arrivalZip = request.queryParams("arrivalZip");
 
-            Package newPackage = null;
-            try {
-                newPackage = runner.controller.createPackage(packageDepartureDate, departureCountry, departureZip, arrivalCountry, arrivalZip);
-                runner.controller.createPostNordAPIGetRequest(newPackage);
-                runner.controller.countTransitTime(newPackage);
-                runner.controller.createNewFlightDestination(newPackage);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            Package newPackage = null;
+//            try {
+//                newPackage = runner.controller.createPackage(packageDepartureDate, departureCountry, departureZip, arrivalCountry, arrivalZip);
+//                runner.controller.createPostNordAPIGetRequest(newPackage);
+//                runner.controller.countTransitTime(newPackage);
+//                runner.controller.createNewFlightDestination(newPackage);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
 
             response.type("application/json");
-            return "{}";
+            Response res=new Response();
+            response.body(runner.gson.toJson(res));
+
+            return response.body();
 
         });
     }
