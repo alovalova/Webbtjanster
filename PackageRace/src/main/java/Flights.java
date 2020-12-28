@@ -12,18 +12,19 @@ import java.util.List;
  * @project Group20
  */
 public class Flights {
-    List<String> destinations;
+
+    List<Flight> flights;
 
     public Flights() {
-        destinations = new ArrayList<>();
+        flights = new ArrayList<>();
     }
 
-    public void addDestination(String destination){
-        destinations.add(destination);
+    public void addFlight(Flight flight){
+        flights.add(flight);
     }
 
-    public List<String> getDestinations() {
-        return destinations;
+    public List<Flight> getFlights() {
+        return flights;
     }
 
     public String readAirportCode(String airportCode, JsonParser parser){
@@ -38,4 +39,5 @@ public class Flights {
         }
         return airportName;
     }
+
 }
