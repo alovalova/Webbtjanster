@@ -71,8 +71,8 @@ body{
 
 /* Diven som håller svaret från APIet */
 #content > main .travelResult {
-  margin: 0 auto;
-  text-align: center;
+  background-color: #666;
+  height: 300px;
 }
 
 /* Paragraf för svaret från APIet */
@@ -95,4 +95,28 @@ footer > p{
   text-align: center;
   color: orangered;
   margin: 16px 0;
+}
+
+
+.test-div {
+  /* background-image: url(https://img.favpng.com/2/4/17/airplane-cartoon-animated-film-clip-art-png-favpng-QkQLBn9aZjQx3F3FAbVrTDr8m.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  */
+  background-color: black;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  margin-top: ;
+  margin-left: 10%;
+  bottom: 0;
+  left: 0;
+}
+
+.cities {
+  width: 100px;
+  height: 100px;
+  background-color: orange;
+  display: inline-block;
+  margin-left: 80px;
 }
