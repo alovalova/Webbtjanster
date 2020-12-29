@@ -12,14 +12,14 @@ import java.util.Date;
  * @project Group20
  */
 public class Flight {
-    String origin;
-    String destination;
-    String departureDate;
-    String departureTime;
-    String arrivalDate;
-    String arrivalTime;
-    int duration;
-    int waitingTime;
+    private String origin;
+    private String destination;
+    private String departureDate;
+    private String departureTime;
+    private String arrivalDate;
+    private String arrivalTime;
+    private int duration;
+    private int waitingTime;
 
     public Flight() {
     }
