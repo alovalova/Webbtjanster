@@ -19,6 +19,7 @@ public class Flight {
     String arrivalDate;
     String arrivalTime;
     int duration;
+    int waitingTime;
 
     public Flight() {
     }
@@ -77,6 +78,14 @@ public class Flight {
 
     public void setArrivalDate(String arrivalDate) {
         this.arrivalDate = arrivalDate;
+    }
+
+    public int getWaitingTime() {
+        return waitingTime;
+    }
+
+    public void setWaitingTime(int waitingTime) {
+        this.waitingTime = waitingTime;
     }
 
 

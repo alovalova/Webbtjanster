@@ -1,8 +1,8 @@
 public class TestClass {
     public static void main(String[] args) {
-        Package testPackage=new Package();
         APIController controller=new APIController();
-        controller.setDuration("PT1H45M");
+        controller.createPackage("2021-01-04","SE","SE","75260","24136");
+        controller.createPostNordAPIGetRequest();
 //        controller.createNewFlightDestination(testPackage);
         //System.out.println(testPackage.getTransitTime());
     }

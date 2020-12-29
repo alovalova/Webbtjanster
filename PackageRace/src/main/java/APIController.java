@@ -4,6 +4,13 @@ import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.Hours;
+import org.joda.time.Minutes;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author
@@ -29,12 +36,15 @@ public class APIController {
     private void createStartFlight() {
         flight = new Flight();
         flight.setOrigin("MAD");
-        //flight.setDepartureDate(aPackage.getPackageDepartureDate());
-        flight.setDepartureDate("2020-12-31"); // till för testning.
+        flight.setDepartureDate(aPackage.getPackageDepartureDate());
+//        flight.setDepartureDate("2020-12-31"); // till för testning.
     }
 
-    private void createNewFlight(){
+    private void createNewFlight() {
+        Flight previousFlight = flights.getFlights().get(flights.getFlights().size() - 1);
         flight = new Flight();
+        flight.setOrigin(previousFlight.getDestination());
+        flight.setDepartureDate(previousFlight.getArrivalDate());
     }
 
     /**
@@ -48,11 +58,12 @@ public class APIController {
      * Creates a new package with the parameters.
      */
     public void createPackage(String packageDepartureDate, String departureCountry, String arrivalCountry, String departureZip, String arrivalZip) {
-        aPackage = new Package(packageDepartureDate, departureCountry, departureZip, arrivalCountry, arrivalZip);
+        aPackage = new Package(packageDepartureDate, departureCountry, arrivalCountry, departureZip, arrivalZip);
         if (checkPackage(aPackage)) {
-            System.out.println("APIController.createPackage: " + "Package " + aPackage + " is created");
+            System.out.println("APIController.createPackage: " + "Package " + aPackage.getPackageDepartureDate() + " is created");
+        } else {
+            System.out.println("APIController.createPackage: " + "Package is not created");
         }
-        System.out.println("APIController.createPackage: " + "Package is not created");
     }
 
     /**
@@ -80,7 +91,7 @@ public class APIController {
         try {
             if (checkPackage(aPackage)) {
                 res = Unirest.get("/v1/transittime/getTransitTimeInformation.json")
-                        .queryString("apikey", "673d1dcaedbcd206cf3130c3cd01bb7d")
+                        .queryString("apikey", "fdb2ec79dd43fa36ef38b82d9dd0d10e")
                         .queryString("dateOfDeparture", aPackage.getPackageDepartureDate())
                         .queryString("serviceCode", "18")
                         .queryString("serviceGroupCode", aPackage.getDepartureCountry())
@@ -97,6 +108,7 @@ public class APIController {
         }
 
         try {
+            System.out.println("postnord body: " + res.getBody());
             JSONObject transitTimeResponse = (JSONObject) res.getBody().getObject().get("se.posten.loab.lisp.notis.publicapi.serviceapi.TransitTimeResponse");
             JSONArray transitTimes = (JSONArray) transitTimeResponse.get("transitTimes");
 
@@ -163,6 +175,8 @@ public class APIController {
                 .queryString("nonStop", "true")
                 .asJson();
 
+        System.out.println("Flight origin: " + flight.getOrigin() + " flight departureDate: " + flight.getDepartureDate());
+        System.out.println(flightDestinationResponse.getBody());
         JSONArray data = (JSONArray) flightDestinationResponse.getBody().getObject().get("data");
 
         String destination = data.getJSONObject(0).get("destination").toString();
@@ -179,69 +193,153 @@ public class APIController {
      */
     public void createNewFlightArrivalTime(String token) {
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v2");
+        String duration = "";
+        String departureDateTime = "";
+        String arrivalDateTime = "";
+        try {
 
-        HttpResponse<JsonNode> flightArrivalTimeResponse = Unirest.get("/shopping/flight-offers")
-                .header("authorization", "Bearer " + token)
-                .queryString("originLocationCode", flight.getOrigin()) //first time MAD --> next destination.
-                .queryString("destinationLocationCode", flight.getDestination())
-                .queryString("departureDate", flight.getDepartureDate())
-                .queryString("adults", 1)
-                .queryString("nonStop", "true")
-                .queryString("max", 1)
-                .asJson();
+            HttpResponse<JsonNode> flightArrivalTimeResponse = Unirest.get("/shopping/flight-offers")
+                    .header("authorization", "Bearer " + token)
+                    .queryString("originLocationCode", flight.getOrigin()) //first time MAD --> next destination.
+                    .queryString("destinationLocationCode", flight.getDestination())
+                    .queryString("departureDate", flight.getDepartureDate())
+                    .queryString("adults", 1)
+                    .queryString("nonStop", "true")
+                    .queryString("max", 1)
+                    .asJson();
 
-        JSONArray meta = (JSONArray) flightArrivalTimeResponse.getBody().getObject().get("data");
+            JSONArray meta = (JSONArray) flightArrivalTimeResponse.getBody().getObject().get("data");
 
-        JSONObject data = meta.getJSONObject(0);
+            JSONObject data = meta.getJSONObject(0);
 
-        JSONArray itineraries = data.getJSONArray("itineraries");
+            JSONArray itineraries = data.getJSONArray("itineraries");
 
-        JSONObject itinerary = itineraries.getJSONObject(0);
+            JSONObject itinerary = itineraries.getJSONObject(0);
 
-        JSONArray segments = itinerary.getJSONArray("segments");
+            JSONArray segments = itinerary.getJSONArray("segments");
 
-        JSONObject segment = segments.getJSONObject(0);
+            JSONObject segment = segments.getJSONObject(0);
 
-        JSONObject departure = segment.getJSONObject("departure");
+            JSONObject departure = segment.getJSONObject("departure");
 
-        JSONObject arrival = segment.getJSONObject("arrival");
+            JSONObject arrival = segment.getJSONObject("arrival");
 
-        String duration = itinerary.get("duration").toString();
 
-        String departureDateTime = departure.getString("at");
-        String arrivalDateTime = arrival.getString("at");
+            duration = itinerary.get("duration").toString();
 
-        System.out.println("departureDT: " + departureDateTime + " arrivalDT: " + arrivalDateTime + " duration: " + duration);
+            departureDateTime = departure.getString("at");
+            arrivalDateTime = arrival.getString("at");
 
+            System.out.println("departureDT: " + departureDateTime + " arrivalDT: " + arrivalDateTime + " duration: " + duration);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         setDepartureDateAndTime(departureDateTime);
         setArrivalDateAndTime(arrivalDateTime);
 
         setDuration(duration);
 
-        callANewFlight();
-
+        checkIfTimeIsLeft();
     }
 
-    public void callANewFlight() {
-        while (timeIsLeft()) {
+    public void checkIfTimeIsLeft() {
+        if (timeIsLeft()) {
             flights.addFlight(flight);
             createNewFlight();
             createNewFlightDestination();
+        } else {
+            createResponse();
         }
+    }
+
+    public void createResponse() {
+        Response res = new Response();
+        // fyll i responsen i objektet och skicka över till APIRunner.
     }
 
     /**
      * @return
      */
     public boolean timeIsLeft() {
-        int timeToDeparture = flight.getDuration(); // 3h
-        int arrivedTime= Integer.parseInt(flight.getArrivalTime()); // 14:00
+        int previous = flights.getFlights().size() - 1;
+        int waitingTime;
+        if (previous >= 0) {
+            Flight previousFlight = flights.getFlights().get(previous);
+            waitingTime = calculateWaitingTime(previousFlight);
+        } else {
+            Flight firstFlight = new Flight();
+            firstFlight.setDepartureDate(aPackage.getPackageDepartureDate());
+            firstFlight.setDepartureTime("08:30");
+            waitingTime = calculateWaitingTime(firstFlight);
+        }
 
-        remainingHours -= timeToDeparture;
+        int flightDuration = flight.getDuration(); // 3h
 
-        return true;
+        remainingHours -= flightDuration - waitingTime;
+        if (remainingHours > 0) {
+            System.out.println("remainingHours: " + remainingHours + " flightDuration: " + flightDuration + " waitingTime: " + waitingTime);
+            return true;
+        } else {
+            return false;
+        }
     }
 
+    public int calculateWaitingTime(Flight previousFlight) {
+        int waitingTime;
+        StringBuilder arrived = new StringBuilder();
+        StringBuilder departed = new StringBuilder();
+
+
+        String departureTime = previousFlight.getDepartureTime();
+        String departureDate = previousFlight.getDepartureDate();
+
+
+        String arrivalTime = flight.getArrivalTime();
+        String arrivalDate = flight.getArrivalDate();
+
+        arrived.append(arrivalDate + " " + arrivalTime);
+        departed.append(departureDate + " " + departureTime);
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+        Date d1 = null;
+        Date d2 = null;
+        int days = 0;
+        int hours = 0;
+        int minutes = 0;
+
+        try {
+            d1 = format.parse(departed.toString());
+            d2 = format.parse(arrived.toString());
+
+
+            DateTime dt1 = new DateTime(d1);
+            DateTime dt2 = new DateTime(d2);
+
+            days = Days.daysBetween(dt1, dt2).getDays();
+            hours = Hours.hoursBetween(dt1, dt2).getHours() % 24;
+            minutes = Minutes.minutesBetween(dt1, dt2).getMinutes() % 60;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        waitingTime = countWaitingTime(days, hours, minutes);
+        return waitingTime;
+    }
+
+    public int countWaitingTime(int days, int hours, int minutes) {
+        int transitHours = 0;
+        int addToHours = 0;
+
+        if (minutes < 30) {
+            addToHours = 0;
+        } else
+            addToHours = 1;
+
+        transitHours = days * 24 + hours + addToHours;
+
+        return transitHours;
+    }
 
     public void setDepartureDateAndTime(String dateTime) {
         String date = dateTime.substring(0, 10);
