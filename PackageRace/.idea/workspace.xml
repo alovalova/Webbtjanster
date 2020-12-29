@@ -55,7 +55,7 @@
       <recent name="C:\Users\Adam\Documents\GitHub\Webbtjanster\Group20\src\main\resources\public" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.APIRunner">
+  <component name="RunManager" selected="Application.TestClass">
     <configuration name="APIRunner" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="14" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
@@ -114,5 +114,15 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.ClassCastException" package="java.lang" />
+          <option name="timeStamp" value="2" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
