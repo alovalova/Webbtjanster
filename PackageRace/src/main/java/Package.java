@@ -25,7 +25,7 @@ public class Package {
     private boolean flightArrivalTimeResponse = false;
 
     public Package() {
-        packageDepartureDate = "2020-12-15";
+        packageDepartureDate = "2020-12-31";
         departureCountry = "SE";
         departureZip = "24136";
 

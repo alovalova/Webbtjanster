@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * @author
@@ -16,7 +17,7 @@ public class Flights {
     List<Flight> flights;
 
     public Flights() {
-        flights = new ArrayList<>();
+        flights = new Stack<>();
     }
 
     public void addFlight(Flight flight){
