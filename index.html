@@ -64,8 +64,12 @@
           if (formValidate == true) {
             // Visas när formuläret validerat och skickas
             $("#formSent").text("Formulär skickat!");
-            $("#formSent").show();
-
+            $('#formSent').show();
+            // Visas i tre sekunder, bekräftelse på att formuläret har skickats
+            setTimeout(function () {
+            $('#formSent').fadeOut('fast');
+            }, 3000); // Tid i millisekunder
+            $('#parcelForm').hide();
             // Skicka med vår form_data som request parameter
             $.ajax({
               method: "GET",
@@ -97,8 +101,22 @@
         }
       $(document).ready(function () {
       // När man klickar på "Skicka" i formuläret så körs funktionen getDestinations
-      $('#submitForm').click(getDestinations)
-      
+      $('#submitForm').click(getDestinations);
+      $('#submitForm').click(function(){
+        //$('#parcelForm').hide();
+      });
+        var test_response = {
+            packageDeliveryTime: "2021-01-18 18:30",
+            arrivalCities: ["Madrid", "Barcelona", "Rome", "Athens"],
+            arrivalTimes: ["2021-01-17 15:30", "2021-01-17 19:00", "2021-01-18 08:30", "2021-01-18 16:00"]
+        }
+        $(".travelResult").append("<p class=travelDestinations>Du påbörjar din resa från " + test_response.arrivalCities[0] + "<p>");
+        $(".travelResult").append("<p class=travelDestinations> och ditt flyg lyfter " + test_response.arrivalTimes[0] + "<p>");
+        for (i=1; i<test_response.arrivalCities.length; i++) {
+            $(".travelResult").append("<p class=travelDestinations>Sedan åker du till " + test_response.arrivalCities[i] + "<p>");
+            $(".travelResult").append("<p class=travelDestinations>Ditt flyg landar " + test_response.arrivalTimes[i] + "<p>");
+              console.log(test_response.arrivalCities[i]);
+        }
       // Hämtar ut dagens datum YYYY-MM-DD och gör om till en sträng
       var date = new Date().toISOString().substring(0, 10);
       // Fyller i datumfältet automatiskt med dagens datum
@@ -176,9 +194,9 @@
                 <!-- Knappen som skickar formuläret -->
                 <div class="col-6">
                   <button type="button" class="btn btn-primary" id="submitForm">Skicka</button>
-                  <span id="formSent"></span>
                 </div>
               </form>
+              <h3 id="formSent"></h3>
 
               <div class="travelResult">
               </div>
