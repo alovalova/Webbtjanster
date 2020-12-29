@@ -69,6 +69,17 @@ body{
   margin-left: 25px;
 }
 
+/* Diven som håller svaret från APIet */
+#content > main .travelResult {
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Paragraf för svaret från APIet */
+#content > main .travelResult > .travelDestinations {
+  color: purple;
+}
+
 /*FOOTER*/
 footer{
   grid-area: footer;
