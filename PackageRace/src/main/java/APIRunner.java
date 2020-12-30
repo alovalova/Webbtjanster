@@ -35,12 +35,11 @@ public class APIRunner {
             String arrivalCountry = request.queryParams("arrivalCountry");
             String arrivalZip = request.queryParams("arrivalZip");
 
-            runner.controller.createPackage(packageDepartureDate, departureCountry, departureZip, arrivalCountry, arrivalZip);
 
           try {
 
-              runner.controller.createPackage(packageDepartureDate, departureCountry, departureZip, arrivalCountry, arrivalZip);
-                runner.controller.createPostNordAPIGetRequest();
+              //runner.controller.createPackage(packageDepartureDate, departureCountry, departureZip, arrivalCountry, arrivalZip);
+               // runner.controller.createPostNordAPIGetRequest();
             } catch (Exception e) {
                 e.printStackTrace();
             }

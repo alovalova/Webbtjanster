@@ -31,7 +31,6 @@ public class ConnectionFlight extends Flight {
     private Gson gson;
     private ArrayList<String> destinationList;
 
-
     /**
      * creates a ConnectionFlight
      * @param origin the origin for the flight
@@ -68,12 +67,9 @@ public class ConnectionFlight extends Flight {
 
     /**
      * Search all possible destination from the origin on the departure date and puts the destination into an array
-     * @param origin
-     * @param departureDate
+     * and populates the connectionFlight with the first possible destination and arrival time
      */
-    public void searchDestination(String origin, String departureDate) {
-        this.origin=origin;
-
+    public void searchDestination() {
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
 
         try {
@@ -104,7 +100,7 @@ public class ConnectionFlight extends Flight {
             try {
                 departureDate = getNextDate(departureDate);
                 System.out.println("SearchDestination getNextDate");
-                searchDestination(this.origin, departureDate);
+                searchDestination();
             } catch (ParseException e) {
                 e.printStackTrace();
             }

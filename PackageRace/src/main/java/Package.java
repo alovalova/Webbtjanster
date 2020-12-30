@@ -45,6 +45,18 @@ public class Package {
         this.arrivalZip = arrivalZip;
     }
 
+    /**
+     * Check the parameters of a package
+     * @return true if all mandatory parameters are assigned
+     */
+    public boolean checkPackage() {
+        return packageDepartureDate != null &&
+                departureCountry != null &&
+                departureZip != null &&
+                arrivalCountry != null &&
+                arrivalZip != null;
+    }
+
     public String getPackageDepartureDate() {
         return packageDepartureDate;
     }
