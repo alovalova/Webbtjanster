@@ -25,7 +25,7 @@ public class Package {
     private boolean flightArrivalTimeResponse = false;
 
     public Package() {
-        packageDepartureDate = "2020-12-31";
+        packageDepartureDate = "2021-01-31";
         departureCountry = "SE";
         departureZip = "24136";
 
@@ -160,7 +160,7 @@ public class Package {
         return transitHours;
     }
 
-    public boolean isPostNordResponse() {
+    public boolean postNordResponseOk() {
         return postNordResponse;
     }
 

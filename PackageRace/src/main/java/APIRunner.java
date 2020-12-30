@@ -12,9 +12,9 @@ import static spark.Spark.*;
  */
 public class APIRunner {
 
-    JsonParser parser = new JsonParser();
-    Gson gson = new Gson();
-    APIController controller = new APIController();
+    private JsonParser parser = new JsonParser();
+    private Gson gson = new Gson();
+    private APIController controller = new APIController();
 
     public static void main(String[] args) {
         port(5000);
@@ -35,12 +35,18 @@ public class APIRunner {
             String arrivalCountry = request.queryParams("arrivalCountry");
             String arrivalZip = request.queryParams("arrivalZip");
 
-//          try {
-//                runner.controller.createPackage(packageDepartureDate, departureCountry, departureZip, arrivalCountry, arrivalZip);
-//                runner.controller.createPostNordAPIGetRequest();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
+            runner.controller.createPackage(packageDepartureDate, departureCountry, departureZip, arrivalCountry, arrivalZip);
+
+          try {
+
+              runner.controller.createPackage(packageDepartureDate, departureCountry, departureZip, arrivalCountry, arrivalZip);
+                runner.controller.createPostNordAPIGetRequest();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+
 
             response.type("application/json");
             Response res = new Response();
