@@ -4,7 +4,6 @@ import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
-import org.joda.time.DateTime;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +11,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * @author Chanon Borgström & Sofia Hallberg
+ * @created 30/12/2020
+ * @project Group20
+ */
 public class ConnectionFlight extends Flight {
     private String destination;
     private String origin;
@@ -27,6 +31,13 @@ public class ConnectionFlight extends Flight {
     private Gson gson;
     private ArrayList<String> destinationList;
 
+
+    /**
+     * creates a ConnectionFlight
+     * @param origin the origin for the flight
+     * @param departureDate date of departure for the connectionFlight
+     * @param controller the used controller
+     */
     public ConnectionFlight(String origin, String departureDate, APIController controller) {
         this.origin = origin;
         this.departureDate = departureDate;
@@ -38,6 +49,11 @@ public class ConnectionFlight extends Flight {
         token = controller.createAmadeusAuthentication();
     }
 
+    /**
+     * creates a ConnectionFlight
+     * @param previousFlight the flight to connect to
+     * @param controller the used controller
+     */
     public ConnectionFlight(Flight previousFlight, APIController controller) {
         this.origin = previousFlight.getDestination();
         System.out.println("getDestination i konstruktorn "+previousFlight.getDestination());
@@ -50,6 +66,11 @@ public class ConnectionFlight extends Flight {
         token = controller.createAmadeusAuthentication();
     }
 
+    /**
+     * Search all possible destination from the origin on the departure date and puts the destination into an array
+     * @param origin
+     * @param departureDate
+     */
     public void searchDestination(String origin, String departureDate) {
         this.origin=origin;
 
@@ -65,11 +86,9 @@ public class ConnectionFlight extends Flight {
                     .asJson();
 
             System.out.println("ConnectionFlight.searchFlights: Flight origin: " + origin + " flight departureDate: " + departureDate);
-            // System.out.println(flightDestinationResponse.getBody());
             JSONArray data = (JSONArray) flightDestinationResponse.getBody().getObject().get("data");
 
             JSONObject flightData = flightDestinationResponse.getBody().getObject();
-            // Skapa en array flights med JSON-flight-objekt
             JSONArray flights = flightData.getJSONArray("data");
             for (int i = 0; i < flights.length(); i++) {
                 JSONObject flight = flights.getJSONObject(i);
@@ -81,8 +100,6 @@ public class ConnectionFlight extends Flight {
             e.printStackTrace();
         }
 
-        //destination = data.getJSONObject(0).get("destination").toString();
-
         if (!checkNewDestinationDepartureTime()) {
             try {
                 departureDate = getNextDate(departureDate);
@@ -92,9 +109,12 @@ public class ConnectionFlight extends Flight {
                 e.printStackTrace();
             }
         }
-
     }
 
+    /**
+     * Check if a flight to a destination is possible to connect to
+     * @return true if the flight to the destination is possible to connect to
+     */
     private boolean checkNewDestinationDepartureTime() {
         boolean destinationPossible = false;
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v2");
@@ -116,7 +136,6 @@ public class ConnectionFlight extends Flight {
 
                     System.out.println("FlightArrivalTimeResponse: " + flightArrivalTimeResponse.getBody());
 
-
                     JSONArray meta = (JSONArray) flightArrivalTimeResponse.getBody().getObject().get("data");
                     JSONObject data = meta.getJSONObject(0);
                     JSONArray itineraries = data.getJSONArray("itineraries");
@@ -128,7 +147,6 @@ public class ConnectionFlight extends Flight {
 
                     setDepartureDateAndTime(departure.getString("at"));
                     setArrivalDateAndTime(arrival.getString("at"));
-
 
                     if (!compareDepartureTimes()) {
                         System.out.println("CheckNewDestinationDepartureTime if !compareDepartureTimes");
@@ -143,7 +161,6 @@ public class ConnectionFlight extends Flight {
                         System.out.println("Destination is: " +destination);
                         setDuration(itinerary.get("duration").toString());
                         destinationPossible = true;
-
                     }
                 }
             } catch (Exception e) {
@@ -151,19 +168,30 @@ public class ConnectionFlight extends Flight {
             }
         }
         return true;
-
     }
 
+    /**
+     * Assigns the local parameters departureDate and departureTime with values from a string
+     * @param dateTime the string representation of departure date and time
+     */
     public void setDepartureDateAndTime(String dateTime) {
         departureDate = dateTime.substring(0, 10);
         departureTime = dateTime.substring(11, 16);
     }
 
+    /**
+     * Assigns the local parameters arrivalDate and arrivalTime with values from a string
+     * @param dateTime the string representation of arrival date and time
+     */
     public void setArrivalDateAndTime(String dateTime) {
         arrivalDate = dateTime.substring(0, 10);
         arrivalTime = dateTime.substring(11, 16);
     }
 
+    /**
+     * Assigns the local parameter duration with value from a string
+     * @param duration the string representation of arrival date and time
+     */
     public void setDuration(String duration) {
         String[] durationArray = duration.split("PT");
         String hoursMinutes = durationArray[1];
@@ -177,6 +205,10 @@ public class ConnectionFlight extends Flight {
         this.duration = hours;
     }
 
+    /**
+     * Check if a connection flight is possible by comparing the connection flights departure time with the previous flights arrival time
+     * @return possibleConnection set to true if the connection flight is possible
+     */
     public boolean compareDepartureTimes() {
         boolean possibleConnection = false;
 
@@ -209,6 +241,10 @@ public class ConnectionFlight extends Flight {
         return possibleConnection;
     }
 
+    /**
+     * Takes a string representing a date and converts it to a string representing the next day
+     * @return a string representtion of the next date
+     */
     public static String getNextDate(String curDate) throws ParseException {
         final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         final Date date = format.parse(curDate);
@@ -218,7 +254,6 @@ public class ConnectionFlight extends Flight {
         return format.format(calendar.getTime());
     }
 
-
     public String getOrigin() {
         return origin;
     }
@@ -227,7 +262,6 @@ public class ConnectionFlight extends Flight {
         return departureDate;
     }
 
-    @Override
     public String getDestination() {
         return destination;
     }

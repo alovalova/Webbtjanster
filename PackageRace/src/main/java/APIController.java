@@ -31,7 +31,7 @@ public class APIController {
     }
 
     /**
-     * creates a flight object with the origin parameters.
+     * Creates a first ConnectionFlight object and populates it with variables
      */
     private void createStartFlight() {
         flight = new ConnectionFlight("MAD", aPackage.getPackageDepartureDate(), this);
@@ -41,12 +41,15 @@ public class APIController {
     }
 
     /**
-     * creates a flights array.
+     * Creates a Flights object
      */
     public void createFlights() {
         flights = new Flights();
     }
 
+    /**
+     * Creates a Flight object, a Flights object
+     */
     public void startFlying() {
         createStartFlight();
         createFlights();
@@ -67,7 +70,12 @@ public class APIController {
     }
 
     /**
-     * Create a new package with the parameters from frontEnd
+     * Create a package with the parameters from frontEnd
+     * @param packageDepartureDate
+     * @param departureZip
+     * @param departureCountry
+     * @param arrivalZip
+     * @param arrivalCountry
      */
     public void createPackage(String packageDepartureDate, String departureCountry, String arrivalCountry, String departureZip, String arrivalZip) {
         aPackage = new Package(packageDepartureDate, departureCountry, arrivalCountry, departureZip, arrivalZip);
@@ -79,16 +87,16 @@ public class APIController {
     }
 
     /**
-     * Check the parameters of the package
+     * Check the parameters of a package
      * @param aPackage the package to be checked
-     * @return true if all parameters are set
+     * @return true if all mandatory parameters are assigned
      */
     public boolean checkPackage(Package aPackage) {
         return aPackage.getPackageDepartureDate() != null &&
-                aPackage.getDepartureCountry() != null &&
-                aPackage.getDepartureZip() != null &&
-                aPackage.getArrivalCountry() != null &&
-                aPackage.getArrivalZip() != null;
+               aPackage.getDepartureCountry() != null &&
+               aPackage.getDepartureZip() != null &&
+               aPackage.getArrivalCountry() != null &&
+               aPackage.getArrivalZip() != null;
     }
 
     /**
@@ -147,12 +155,11 @@ public class APIController {
 
 
     /**
-     * Makes a authentication call to the Amadeus API to get a token.
-     *
-     * @return the token.
+     * Makes a authentication call to the Amadeus API and get a token
+     * @return the token
      */
     public String createAmadeusAuthentication() {
-        Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1"); // för anrop till andras APIer.
+        Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
 
         String clientID = "A7JmGIf5KhiJRPHI2w4syqghle0P581l";
         String clientSecretKey = "nRBxGUXe116FG4fk";
@@ -162,8 +169,6 @@ public class APIController {
                 .field("client_id", clientID)
                 .field("client_secret", clientSecretKey)
                 .asJson();
-
-        //System.out.println("TokenResponse: " + tokenResponse.getBody() + tokenResponse.getStatusText());
 
         return (String) tokenResponse.getBody().getObject().get("access_token");
     }
@@ -198,7 +203,6 @@ public class APIController {
 
     /**
      * Calls a GET-method at the Amadeus API to receive a flight time and date for departure and arrival.
-     *
      * @param token the authorization token.
      */
     public void createNewFlightArrivalTime(String token) {
@@ -219,21 +223,13 @@ public class APIController {
                     .asJson();
 
             JSONArray meta = (JSONArray) flightArrivalTimeResponse.getBody().getObject().get("data");
-
             JSONObject data = meta.getJSONObject(0);
-
             JSONArray itineraries = data.getJSONArray("itineraries");
-
             JSONObject itinerary = itineraries.getJSONObject(0);
-
             JSONArray segments = itinerary.getJSONArray("segments");
-
             JSONObject segment = segments.getJSONObject(0);
-
             JSONObject departure = segment.getJSONObject("departure");
-
             JSONObject arrival = segment.getJSONObject("arrival");
-
 
             duration = itinerary.get("duration").toString();
 

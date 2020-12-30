@@ -1,13 +1,7 @@
-import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.Hours;
-import org.joda.time.Minutes;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
- * @author
+ * Class representing a Flight object
+ * @author Chanon Borgström & Sofia Hallberg
  * @created 09/12/2020
  * @project Group20
  */
