@@ -1,6 +1,5 @@
 body{
   margin: auto;
-  font-family: 'Francois One', sans-serif;
   background-color: whitesmoke;
 }
 
@@ -12,13 +11,16 @@ body{
 
 /*HEADER*/
 #content > header{
-  background-color: whitesmoke;
+  margin-left: 60px;
   padding-top: 30px;
   padding-bottom: 30px;
-  text-align: center;
-  color: orangered;
+  height: 174px;
+  width: 1264px;
+  font-family: 'Bungee Outline', cursive;
+  color: black;
+  background-image: url(package_race.jpg);
+  align-items: center;
   font-size: 100px;
-  text-decoration-line: none;
 }
 
 /* Beskrivning ovanför formuläret */
@@ -29,12 +31,36 @@ body{
   border-bottom: 1px solid #333;
   margin-bottom: 25px;
 }
+#content > main > h3{
+  text-align: center;
+  text-shadow: 0px 0px 1px #000000;
+}
+
+#content > main > #parcelForm > h3{
+  text-align: center;
+  text-shadow: 0px 0px 1px #000000;
+  padding-top: 40px;
+}
 
 /* Formuläret */
 #content > main > #parcelForm {
   width: 65%;
   display: block;
   margin: 0 auto;
+}
+
+#content > main > #parcelForm > .col-md-6 > .form-label {
+  color: #378956;
+  text-shadow: 0px 0px 1px #000000;
+  text-align: center;
+  align-items: center;
+}
+
+#content > main > #parcelForm > .col-6 > .form-label{
+  color: #378956;
+  text-shadow: 0px 0px 1px #000000;
+  text-align: center;
+  align-items: center;
 }
 
 /* Centrerar formuläret i diven */
@@ -54,8 +80,10 @@ body{
 
 /* Margin för knappen i formuläret */
 #content > main #submitForm {
-  margin-top: 15px;
+  margin-top: 30px;
   margin-bottom: 15px;
+  background-color: black;
+  margin-left: 150px;
 }
 
 /* Felmeddelande som visas om ett fält inte är ifyllt */
@@ -71,8 +99,8 @@ body{
 
 /* Diven som håller svaret från APIet */
 #content > main .travelResult {
-  margin: 0 auto;
-  text-align: center;
+  background-color: #666;
+  height: 300px;
 }
 
 /* Paragraf för svaret från APIet */
@@ -93,6 +121,30 @@ footer{
 
 footer > p{
   text-align: center;
-  color: orangered;
+  color: black;
   margin: 16px 0;
+}
+
+
+.test-div {
+  /* background-image: url(https://img.favpng.com/2/4/17/airplane-cartoon-animated-film-clip-art-png-favpng-QkQLBn9aZjQx3F3FAbVrTDr8m.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  */
+  background-color: black;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  /*margin-top: ;*/
+  margin-left: 10%;
+  bottom: 0;
+  left: 0;
+}
+
+.cities {
+  width: 100px;
+  height: 100px;
+  background-color: orange;
+  display: inline-block;
+  margin-left: 80px;
 }
