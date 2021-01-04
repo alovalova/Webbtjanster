@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="sv">
 <head>
+    <title>Package Race</title>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Bungee+Outline&display=swap" rel="stylesheet">
@@ -37,7 +39,7 @@
                     </select>
                   </div>
                   <!-- Address där paketet skickas ifrån -->
-                  <div class="col-6">
+                  <div class="col-md-6">
                     <label for="departureAddress" class="form-label">Från adress</label>
                     <input type="text" class="form-control" name="departureAddress" placeholder="Gatvägen 12...">
                     <span class="formValidation" id="departureAddress"></span>
@@ -63,7 +65,7 @@
                     </select>
                   </div>
                   <!-- Address dit paketet ska skickas-->
-                  <div class="col-6">
+                  <div class="col-md-6">
                     <label for="arrivalAddress" class="form-label">Till adress</label>
                     <input type="text" class="form-control" name="arrivalAddress" placeholder="Väggatan 23...">
                     <span class="formValidation" id="arrivalAddress"></span>
@@ -86,11 +88,9 @@
                 </div>
               </form>
               <h3 id="formSent"></h3>
-              
-              <div class="test-div">
-              </div>
 
               <div class="travelResult">
+                <!-- Här inne hamnar animationerna i två olika divar-->
               </div>
 
               <button type="button" class="test-btn">Test</button>

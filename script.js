@@ -99,16 +99,23 @@ $(document).ready(function () {
     }
     // När man klickar på "Skicka" i formuläret så körs funktionen getDestinations
     $("#submitForm").click(getDestinations);
+
     $(".test-btn").click(function(){
+        // Diven som innehåll info om hur långt man hinner resa osv
+        $(".travelResult").append("<div class=story-box> BLABLA INFO OM RESAN" + test_response.arrivalCities[0] +"</div>");
+        // Skriver ut första diven som resan utgår ifrån
         $(".travelResult").append("<div class=cities>" + test_response.arrivalCities[0] +"</div>");
+        // Skapar diven som ska röra sig mellan de olika städerna
+        $(".cities").append("<div class=test-div></div>");
+        // För varje stad vi får som svar körs denna loopen och sköter animationen som rör sig mellan städerna
         for (let i=1; i<test_response.arrivalCities.length; i++) {
             var div = $(".test-div");
-            div.animate({bottom: "+=50px"}, 1000);
-            div.animate({left: "+=15%"}, 1000);
-            div.animate({bottom: "-=50px"}, 1000,
+            div.animate({left: "+=130px"}, 2000,
             function() {
                 $(".travelResult").append("<div class=cities>" + test_response.arrivalCities[i] +"</div>");
             })
+            div.animate({left: "+=0"}, 500);
+            
         }
     });
 
@@ -118,6 +125,7 @@ var test_response = {
     arrivalCities: ["Madrid", "Barcelona", "Rome", "Athens"],
     arrivalTimes: ["2021-01-17 15:30", "2021-01-17 19:00", "2021-01-18 08:30", "2021-01-18 16:00"]
 }
+
 $(".travelResult").append("<p class=travelDestinations>Du påbörjar din resa från " + test_response.arrivalCities[0] + "<p>");
 $(".travelResult").append("<p class=travelDestinations> och ditt flyg lyfter " + test_response.arrivalTimes[0] + "<p>");
 for (i=1; i<test_response.arrivalCities.length; i++) {
