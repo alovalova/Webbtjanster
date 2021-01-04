@@ -15,12 +15,12 @@ body{
   padding-top: 30px;
   padding-bottom: 30px;
   height: 174px;
-  width: 1264px;
   font-family: 'Bungee Outline', cursive;
   color: black;
   background-image: url(package_race.jpg);
-  align-items: center;
-  font-size: 100px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 /* Beskrivning ovanför formuläret */
@@ -31,15 +31,11 @@ body{
   border-bottom: 1px solid #333;
   margin-bottom: 25px;
 }
-#content > main > h3{
-  text-align: center;
-  text-shadow: 0px 0px 1px #000000;
-}
 
-#content > main > #parcelForm > h3{
+/* Alla H3 rubriker i main */
+#content > main > h3 {
   text-align: center;
   text-shadow: 0px 0px 1px #000000;
-  padding-top: 40px;
 }
 
 /* Formuläret */
@@ -49,14 +45,15 @@ body{
   margin: 0 auto;
 }
 
-#content > main > #parcelForm > .col-md-6 > .form-label {
-  color: #378956;
-  text-shadow: 0px 0px 1px #000000;
+/* Alla H3 rubriker i formuläret */
+#content > main > #parcelForm > h3 {
   text-align: center;
-  align-items: center;
+  text-shadow: 0px 0px 1px #000000;
+  padding-top: 40px;
 }
 
-#content > main > #parcelForm > .col-6 > .form-label{
+/* Labels till respektive formulär */
+#content > main > #parcelForm > .col-md-6 > .form-label {
   color: #378956;
   text-shadow: 0px 0px 1px #000000;
   text-align: center;
@@ -82,8 +79,8 @@ body{
 #content > main #submitForm {
   margin-top: 30px;
   margin-bottom: 15px;
-  background-color: black;
-  margin-left: 150px;
+  background-color: green;
+  border: none;
 }
 
 /* Felmeddelande som visas om ett fält inte är ifyllt */
@@ -93,7 +90,7 @@ body{
 
 /* Meddelande som visas om formuläret validerat och skickas */
 #formSent {
-  color: green;
+  color: #378956;
   text-align: center;
 }
 
@@ -101,6 +98,10 @@ body{
 #content > main .travelResult {
   background-color: #666;
   height: 300px;
+  position: relative;
+  display: flex;
+  justify-content: ;
+
 }
 
 /* Paragraf för svaret från APIet */
@@ -109,7 +110,7 @@ body{
 }
 
 /*FOOTER*/
-footer{
+footer {
   grid-area: footer;
   background-color: whitesmoke;
   border-top-style: solid;
@@ -119,32 +120,47 @@ footer{
   display: block;
 }
 
-footer > p{
+footer > p {
   text-align: center;
   color: black;
   margin: 16px 0;
 }
 
 
+
+/* Diven som flyttar sig mellan städerna */
 .test-div {
   /* background-image: url(https://img.favpng.com/2/4/17/airplane-cartoon-animated-film-clip-art-png-favpng-QkQLBn9aZjQx3F3FAbVrTDr8m.jpg);
   background-size: cover;
   background-repeat: no-repeat;
   */
   background-color: black;
-  width: 50px;
-  height: 50px;
+  width:15px;
+  height: 15px;
+  border-radius: 25px;
   position: absolute;
-  /*margin-top: ;*/
-  margin-left: 10%;
-  bottom: 0;
-  left: 0;
+  margin-top: -50px;
+  margin-left: 33px;
 }
 
+/* De olika städerna som genereras från APIet */
 .cities {
-  width: 100px;
+  width: 80px;
   height: 100px;
   background-color: orange;
   display: inline-block;
-  margin-left: 80px;
+  border-radius: 25px;
+  text-align: center;
+  margin: 50px 25px 0px 25px;
+  animation: fadeIn ease 1s;
+}
+
+/* För att ha en fadein på städerna som presenteras */s
+@keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
 }
