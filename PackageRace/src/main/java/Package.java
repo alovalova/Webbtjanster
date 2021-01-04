@@ -89,6 +89,10 @@ public class Package {
         this.packageArrivalDate = packageArrivalDate;
     }
 
+    public String getPackageArrivalDate() {
+        return packageArrivalDate;
+    }
+
     /**
      * Calculates the transit time for a package
      * @return the transit time in hours

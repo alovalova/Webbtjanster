@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="Group20" />
         <module name="java-backend" />
+        <module name="PackageRace" />
       </profile>
     </annotationProcessing>
   </component>

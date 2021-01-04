@@ -9,14 +9,16 @@ public class PackageRaceRunner {
     public void run(String packageDepartureDate, String departureCountry, String arrivalCountry, String departureZip, String arrivalZip) {
         aPackage = new Package(packageDepartureDate, departureCountry, arrivalCountry, departureZip, arrivalZip);
         if (aPackage.checkPackage()) {
-            System.out.println("APIController.createPackage: " + "Package " + aPackage.getPackageDepartureDate() + " is created");
+            System.out.println("PackageRaceRunner.run: " + "Package " + aPackage.getPackageDepartureDate() + " is created");
         } else {
-            System.out.println("APIController.createPackage: " + "Package is not created");
+            controller.createErrorMessageResponse("Package: PackageRaceRunner.run");
+            System.out.println("PackageRaceRunner.run: " + "Package is not created");
         }
 
         controller.createPostNordAPIGetRequest(aPackage);
         controller.startFlying(aPackage);
-        controller.createResponse();
+
+        //controller.createResponse();
     }
 
 }

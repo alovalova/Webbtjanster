@@ -48,7 +48,7 @@ public class APIRunner {
 
 
             response.type("application/json");
-            Response res = new Response();
+            Response res = runner.controller.getRes();
             response.body(runner.gson.toJson(res));
 
             return response.body();
