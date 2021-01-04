@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Response {
-    private String packageDeliveryTime = "2021-01-18 18:30";
+    private String packageDeliveryTime = "";
     private List departureCities;
     private List departureTimes;
     private List arrivalCities;

@@ -69,8 +69,8 @@ public class ConnectionFlight {
     /**
      * creates a ConnectionFlight
      *
-     * @param previousFlight  the flight to connect to
-     * @param controller the used controller
+     * @param previousFlight the flight to connect to
+     * @param controller     the used controller
      */
     public ConnectionFlight(ConnectionFlight previousFlight, APIController controller) {
         this.previousFlight = previousFlight;
@@ -121,27 +121,22 @@ public class ConnectionFlight {
         }
         //TODO: fortsätt här imorgon och försök lösa att ta nästa destination så att inte programmet stannar.
         catch (JSONException e) {
-            if (destinationIndex > previousFlight.getDestinationList().size() - 1) {
-                controller.createResponse();
-                controller.createErrorMessageResponse("Amadeus: ConnectionFlight.searchDestination.CatchPhrase.NoMoreDestinationsInList");
-            } else {
-                try {
-                    if (nextDateIndex < 5) {
-                        nextDepartureDate = getNextDate(departureDate);
-                        nextDateIndex++;
-                        searchDestination(nextDepartureDate);
-                    }
-                } catch (ParseException parseException) {
-                    parseException.printStackTrace();
+            try {
+                if (nextDateIndex < 5) {
+                    nextDepartureDate = getNextDate(departureDate);
+                    nextDateIndex++;
+                    searchDestination(nextDepartureDate);
+                }else{
+                    controller.createResponse();
+                    controller.createErrorMessageResponse("Amadeus: ConnectionFlight.searchDestination.CatchPhrase.TimeAndDateIsOut");
                 }
-                origin = previousFlight.getDestinationList().get(destinationIndex);
-                System.out.println(printClassMsg + "searchDestination.catchPhrase: nextOrigin: " + origin + " destinationListSize: " + previousFlight.getDestinationList().size());
-                destinationIndex++;
-                nextDateIndex = 0;
-                nextDepartureDate = this.departureDate;
-                searchDestination(nextDepartureDate);
+            } catch (ParseException parseException) {
+                parseException.printStackTrace();
             }
-
+            System.out.println(printClassMsg + "searchDestination.catchPhrase: origin: " + origin);;
+            nextDateIndex = 0;
+            nextDepartureDate = this.departureDate;
+            searchDestination(nextDepartureDate);
         }
         System.out.println(printClassMsg + "searchDestination.afterCatchPhrase");
 
@@ -156,8 +151,8 @@ public class ConnectionFlight {
             }
         } else {
             System.out.println(printClassMsg + "searchDestination: is created with destination: " + destination);
-            destinationIndex =0;
-            controller.checkIfTimeIsLeft(controller.getaPackage(),this);
+            destinationIndex = 0;
+            controller.checkIfTimeIsLeft(controller.getPackage(), this);
         }
     }
 
@@ -173,9 +168,9 @@ public class ConnectionFlight {
         int destinationIndex = 0;
         //System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: DepartureDate: " + departureDate + " origin: " + origin);
 
-        while (!destinationIs){
+        while (!destinationIs) {
             try {
-                if (destinationIndex < destinationList.size()-1) {
+                if (destinationIndex < destinationList.size() - 1) {
                     System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: origin: " + origin);
                     System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: destination: " + destinationList.get(destinationIndex));
 
@@ -210,17 +205,17 @@ public class ConnectionFlight {
                         setDuration(itinerary.get("duration").toString());
                         return true;
                     }
-                }else{
+                } else {
                     System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: is false");
-                    destinationIs =true;
+                    destinationIs = true;
                     return false;
                 }
 
             } catch (Exception e) {
                 try {
-                    if (destinationIndex < destinationList.size()-1) {
+                    if (destinationIndex < destinationList.size() - 1) {
                         destinationIndex++;
-                    }else{
+                    } else {
                         if (nextDateIndex < 5) {
                             nextDepartureDate = getNextDate(departureDate);
                             departureDate = nextDepartureDate;

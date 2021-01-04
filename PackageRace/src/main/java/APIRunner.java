@@ -34,18 +34,13 @@ public class APIRunner {
             String departureZip = request.queryParams("departureZip");
             String arrivalCountry = request.queryParams("arrivalCountry");
             String arrivalZip = request.queryParams("arrivalZip");
-
+            PackageRaceRunner packageRaceRunner = new PackageRaceRunner();
 
           try {
-
-              //runner.controller.createPackage(packageDepartureDate, departureCountry, departureZip, arrivalCountry, arrivalZip);
-               // runner.controller.createPostNordAPIGetRequest();
+              packageRaceRunner.run(packageDepartureDate,departureCountry,arrivalCountry,departureZip,arrivalZip);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-
-
 
             response.type("application/json");
             Response res = runner.controller.getRes();

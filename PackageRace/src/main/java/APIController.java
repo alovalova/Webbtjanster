@@ -1,4 +1,5 @@
 import com.google.gson.Gson;
+import org.json.simple.parser.JSONParser;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -8,7 +9,11 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.Hours;
 import org.joda.time.Minutes;
+import org.json.simple.parser.ParseException;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -172,7 +177,7 @@ public class APIController {
             System.out.print(" arrivalDate: " + firstFlight.getArrivalDate());
 
             waitingTime = calculateWaitingTime(firstFlight);
-            firstFlight.setWaitingTime(waitingTime);
+            flight.setWaitingTime(waitingTime);
         }
 
         int flightDuration = flight.getDuration(); // 3h
@@ -272,20 +277,42 @@ public class APIController {
         // fixa att get Origin och destination blir till stadsnamn
         System.out.println(printClassMsg + "createPostNordAPIGetRequest: Delivery Time: " + aPackage.getPackageArrivalTime() + " Delivery Date: " + aPackage.getPackageArrivalDate());
         for (int i = 0; i < flights.getFlights().size(); i++) {
-            res.addDepartureCity(flights.getFlights().get(i).getOrigin());
+            String departureCity = getAirPortName(flights.getFlights().get(i).getOrigin());
+            String arrivalCity = getAirPortName(flights.getFlights().get(i).getDestination());
+            res.addDepartureCity(departureCity);
             res.addDepartureTime(flights.getFlights().get(i).getDepartureTime());
-            res.addArrivalCity(flights.getFlights().get(i).getDestination());
+            res.addArrivalCity(arrivalCity);
             res.addArrivalTime(flights.getFlights().get(i).getArrivalTime());
-            System.out.println("Origin: " + flights.getFlights().get(i).getOrigin()
+            res.addWaitingTimes(flights.getFlights().get(i).getWaitingTime());
+            System.out.println("Origin: " + departureCity
                     + " DepartureTime: " + flights.getFlights().get(i).getDepartureTime() + " DepartureDate: " + flights.getFlights().get(i).getDepartureDate()
-                    + " destination: " + flights.getFlights().get(i).getDestination() + " arrivalTime: " + flights.getFlights().get(i).getArrivalTime()
-                    + " arrivalDate " + flights.getFlights().get(i).getArrivalDate());
+                    + " destination: " + arrivalCity + " arrivalTime: " + flights.getFlights().get(i).getArrivalTime()
+                    + " arrivalDate " + flights.getFlights().get(i).getArrivalDate()
+            + " waitingTime: " + flights.getFlights().get(i).getWaitingTime());
         }
 
         res.setPackageDeliveryTime(aPackage.getPackageArrivalTime());
         res.setErrorMessage(errorMessageBuilder.toString());
 
         // fyll i responsen i objektet och skicka över till APIRunner.
+    }
+
+    public String getAirPortName(String airportCode){
+        JSONParser jsonParser = new JSONParser();
+        String airportName = "";
+        try {
+            org.json.simple.JSONObject jsonObject = (org.json.simple.JSONObject) jsonParser.parse(new FileReader("files/airportTimezones.json"));
+            airportName = jsonObject.get(airportCode).toString();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return airportName;
     }
 
     /**
@@ -310,7 +337,7 @@ public class APIController {
         return token;
     }
 
-    public Package getaPackage() {
+    public Package getPackage() {
         return aPackage;
     }
 
