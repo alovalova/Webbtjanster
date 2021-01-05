@@ -22,82 +22,87 @@
                   Kanske kan du rida islandshäst på Island? </p>
                 <h5></h5>
             </div>
-            <h3>SKICKA FRÅN</h3>
+            <button class="btn btn-primary" id="showForm"></button>
             <!-- Formulär -->
             <form name="parcelForm" class="row g-2" id="parcelForm">
-                <!-- Landet där paketet skickas ifrån -->
-                <div class="col-md-6">
-                    <label for="departureCountry" class="form-label">Från land</label>
-                    <select name="departureCountry" class="form-select">
-                      <option value="SE">Sverige</option>
-                      <option value="NO">Norge</option>
-                      <option value="FI">Finland</option>
-                      <option value="DK">Danmark</option>
-                      <option value="IS">Island</option>
-                      <option value="AX">Åland</option>
-                      <option value="DE">Tyskland</option>
-                    </select>
-                  </div>
-                  <!-- Address där paketet skickas ifrån -->
-                  <div class="col-md-6">
-                    <label for="departureAddress" class="form-label">Från adress</label>
-                    <input type="text" class="form-control" name="departureAddress" placeholder="Gatvägen 12...">
-                    <span class="formValidation" id="departureAddress"></span>
-                  </div>
-                  <!-- Postnummer där paketet skickas ifrån -->
-                  <div class="col-md-6">
-                    <label for="departureZip" class="form-label">Från postnummer</label>
-                    <input type="text" class="form-control" name="departureZip">
-                    <span class="formValidation" id="departureZip"></span>
-                  </div>
-                  <!-- Landet dit paketet ska skickas -->
-                  <h3>SKICKA TILL</h3>
-                  <div class="col-md-6">
-                    <label for="arrivalCountry" class="form-label">Till land</label>
-                    <select name="arrivalCountry" class="form-select">
-                      <option value="SE">Sverige</option>
-                      <option value="NO">Norge</option>
-                      <option value="FI">Finland</option>
-                      <option value="DK">Danmark</option>
-                      <option value="IS">Island</option>
-                      <option value="AX">Åland</option>
-                      <option value="DE">Tyskland</option>
-                    </select>
-                  </div>
-                  <!-- Address dit paketet ska skickas-->
-                  <div class="col-md-6">
-                    <label for="arrivalAddress" class="form-label">Till adress</label>
-                    <input type="text" class="form-control" name="arrivalAddress" placeholder="Väggatan 23...">
-                    <span class="formValidation" id="arrivalAddress"></span>
-                  </div>
-                  <!-- Postnummer dit paketet ska skickas-->
-                  <div class="col-md-6">
-                    <label for="arrivalZip" class="form-label">Till postnummer</label>
-                    <input type="text" class="form-control" name="arrivalZip">
-                    <span class="formValidation" id="arrivalZip"></span>
-                  </div>
-                  <!-- Datumfältet -->
-                  <h3>DATUM</h3>
-                  <div class="col-md-6">
-                    <label for="date" class="form-label">Datum när paketet ska skickas</label>
-                    <input type="date" class="form-control" name="departureDate" id="departureDate">
-                  </div>
-                <!-- Knappen som skickar formuläret -->
-                <div class="col-6">
-                  <button type="button" class="btn btn-primary" id="submitForm">SKICKA PAKET</button>
+              <h3>SKICKA FRÅN</h3>
+              <!-- Landet där paketet skickas ifrån -->
+              <div class="col-md-6">
+                <label for="departureCountry" class="form-label">Från land</label>
+                <select name="departureCountry" class="form-select">
+                  <option value="SE">Sverige</option>
+                  <option value="NO">Norge</option>
+                  <option value="FI">Finland</option>
+                  <option value="DK">Danmark</option>
+                  <option value="IS">Island</option>
+                  <option value="AX">Åland</option>
+                  <option value="DE">Tyskland</option>
+                </select>
+              </div>
+              <!-- Address där paketet skickas ifrån -->
+              <div class="col-md-6">
+                <label for="departureAddress" class="form-label">Från adress</label>
+                <input type="text" class="form-control" name="departureAddress" placeholder="Gatvägen 12...">
+                <span class="formValidation" id="departureAddress"></span>
+              </div>
+              <!-- Postnummer där paketet skickas ifrån -->
+              <div class="col-md-6">
+                <label for="departureZip" class="form-label">Från postnummer</label>
+                <input type="text" class="form-control" name="departureZip">
+                <span class="formValidation" id="departureZip"></span>
+              </div>
+              <!-- Landet dit paketet ska skickas -->
+              <h3>SKICKA TILL</h3>
+              <div class="col-md-6">
+                <label for="arrivalCountry" class="form-label">Till land</label>
+                <select name="arrivalCountry" class="form-select">
+                  <option value="SE">Sverige</option>
+                  <option value="NO">Norge</option>
+                  <option value="FI">Finland</option>
+                  <option value="DK">Danmark</option>
+                  <option value="IS">Island</option>
+                  <option value="AX">Åland</option>
+                  <option value="DE">Tyskland</option>
+                </select>
+              </div>
+              <!-- Address dit paketet ska skickas-->
+              <div class="col-md-6">
+                <label for="arrivalAddress" class="form-label">Till adress</label>
+                <input type="text" class="form-control" name="arrivalAddress" placeholder="Väggatan 23...">
+                <span class="formValidation" id="arrivalAddress"></span>
+              </div>
+              <!-- Postnummer dit paketet ska skickas-->
+              <div class="col-md-6">
+                <label for="arrivalZip" class="form-label">Till postnummer</label>
+                <input type="text" class="form-control" name="arrivalZip">
+                <span class="formValidation" id="arrivalZip"></span>
+              </div>
+              <!-- Datumfältet -->
+              <h3>DATUM</h3>
+              <div class="col-md-6">
+                <label for="date" class="form-label">Datum när paketet ska skickas</label>
+                <input type="date" class="form-control" name="departureDate" id="departureDate">
+              </div>
+              <!-- Knappen som skickar formuläret -->
+              <div class="col-6">
+                <button type="button" class="btn btn-primary" id="submitForm">SKICKA PAKET</button>
+                <div class="loader">
                 </div>
-              </form>
+              </div>
+            </form>
+              <!-- Meddenandet för när formuläret validerat och skickats -->
               <h3 id="formSent"></h3>
+              <!-- Meddelande om svaret från APIet felar -->
+              <h3 id="formFailed"></h3>
 
               <div class="travelResult">
                 <!-- Här inne hamnar animationerna i två olika divar-->
               </div>
 
-              <button type="button" class="test-btn">Test</button>
         </main>
-    </div>
     <footer>
         <p>Package Race © 2020</p>
     </footer>
+  </div>
 </body>
 </html>

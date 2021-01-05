@@ -27,7 +27,6 @@ function getDestinations() {
     }
     else {
     $("#departureAddress").text("");
-    console.log("departureAddress");
     }
     if (form_data.departureZip === "") {
     $("#departureZip").text("Du måste ange ett postnummer!");
@@ -50,94 +49,95 @@ function getDestinations() {
     else {
     $("#arrivalZip").text("");
     }
-
-    /* Anrop till APIet för att hämta ut data */
+    /* Om formuläret validerar görs anropet till APIet */
     if (formValidate == true) {
-    // Visas när formuläret validerat och skickas
-    $("#formSent").text("Formulär skickat!");
-    $("#formSent").show();
-    // Visas i tre sekunder, bekräftelse på att formuläret har skickats
-    setTimeout(function () {
-    $("#formSent").fadeOut("fast");
-    }, 3000); // Tid i millisekunder
-    $("#parcelForm").hide();
+        // Om formuläret validerat visas loadern medans vi väntar på svar
+        $(".loader").show();
+        $.ajax({
+            method: "GET",
+            // Till en route på vår server där vi kommer åt APIet
+            url: "http://localhost:5000",
+            // Datan från formuläret skickas
+            data: form_data,
+            // Berättar för APIet att vi vill ha JSON tillbaka
+            headers: {"Accept": "application/json"},
+            crossOrigin: true,
+            // Om förfrågan till APIet lyckas 
+            success: function() {
+                $("#formSent").text("Formulär skickat!");
+                $("#formSent").show();
+                // Visas i tre sekunder, bekräftelse på att formuläret har skickats
+                setTimeout(function () {
+                $("#formSent").fadeOut("fast");
+                }, 2000); // Tid i millisekunder
+            },
+            // Om förfrågan till APIet misslyckas
+            error: function() {
+                $("#formFailed").text("Kontrollera postnummer!");
+                $("#formFailed").show();
+            }
+        })
 
-    $.ajax({
-        method: "GET",
-        // Till en route på vår server där vi kommer åt APIet
-        url: "http://localhost:5000",
-        // Datan från formuläret skickas
-        data: form_data,
-        // Berättar för APIet att vi vill ha JSON tillbaka
-        headers: {"Accept": "application/json"},
-        crossOrigin: true
-    })
+        /* Denna funktion anropas när informationen hämtats. Inladdad 
+        information går att nå via variabeln "response" */
+        .done(function(response) {
+            // Döjer formuläret för att ge plats åt svaret
+            $("#parcelForm").hide();
+            // Knapp för att visa/dölja formuläret
+            $("#showForm").show();
+            $("#showForm").text("Visa Formulär");
 
-    /* Denna funktion anropas när informationen hämtats. Inladdad information går att nå via variabeln "response" */
-    .done(function(response) {
-        console.log("-----Response-----");
-        console.log(response)
-        console.log(response.packageDeliveryTime);
-        console.log(response.arrivalCities);
-        var i;
-        for (i=0; i<response.arrivalCities.length; i++) {
-        $(".travelResult").append("<p class=travelDestinations>Du hinner resa från/till " + response.arrivalCities[i] + "</p>");
-        }
-        console.log(response.arrivalTimes);
-    });
-    } 
-    else {
-    console.log("Alert");
-    //alert("Formuläret skickades inte, vänligen kontrollera angivna fel!");
+            // Loader döljs när svaret har kommit
+            $(".loader").hide();
+
+            
+            console.log(response);
+            // Diven som innehåller info om hur långt man hinner resa osv
+            $(".travelResult").append("<div class=story-box> BLABLA INFO OM RESAN" + response.arrivalCities[0] +"</div>");
+            // Skriver ut första diven som resan utgår ifrån
+            $(".travelResult").append("<div class=cities>" + response.arrivalCities[0] +"</div>");
+            // Skapar diven som ska röra sig mellan de olika städerna
+            $(".cities").append("<div class=airplane></div>");
+            // För varje stad vi får som svar körs denna loopen och sköter animationen som rör sig mellan städerna
+            for (let i=1; i<response.arrivalCities.length; i++) {
+                var airplane = $(".airplane");
+                airplane.animate({left: "+=0px"}, 1000);
+                airplane.animate({left: "+=172px"}, 1500,
+                function() {
+                    $(".travelResult").append("<div class=cities>" + response.arrivalCities[i] +"</div>");
+                })
+                airplane.animate({left: "+=0"}, 500);
+            
+            }
+        });
     }
 }
 
 $(document).ready(function () {
-    var test_response = {
-        packageDeliveryTime: "2021-01-18 18:30",
-        arrivalCities: ["Madrid", "Barcelona", "Rome", "Athens"],
-        arrivalTimes: ["2021-01-17 15:30", "2021-01-17 19:00", "2021-01-18 08:30", "2021-01-18 16:00"]
-    }
+    // Döljer knappen för att visa/dölja formuläret
+    $("#showForm").hide();
+
+    // Döljer loadern från början, visas när formuläret skickas
+    $(".loader").hide();
+
+    // Ändrar texten i knappen för att visa/dölja formuläret beroende på om
+    // formuläret just nu är synligt eller inte
+    $("#showForm").click(function() {
+        if($("#parcelForm").is(":visible")){
+            $("#showForm").text("Visa Formulär");
+        }
+        else if ($("#parcelForm").is(":hidden")){
+            $("#showForm").text("Dölj Formulär");
+        }
+        $("#parcelForm").toggle("slow");
+
+    });
+
     // När man klickar på "Skicka" i formuläret så körs funktionen getDestinations
     $("#submitForm").click(getDestinations);
 
-    $(".test-btn").click(function(){
-        // Diven som innehåll info om hur långt man hinner resa osv
-        $(".travelResult").append("<div class=story-box> BLABLA INFO OM RESAN" + test_response.arrivalCities[0] +"</div>");
-        // Skriver ut första diven som resan utgår ifrån
-        $(".travelResult").append("<div class=cities>" + test_response.arrivalCities[0] +"</div>");
-        // Skapar diven som ska röra sig mellan de olika städerna
-        $(".cities").append("<div class=test-div></div>");
-        // För varje stad vi får som svar körs denna loopen och sköter animationen som rör sig mellan städerna
-        for (let i=1; i<test_response.arrivalCities.length; i++) {
-            var div = $(".test-div");
-            div.animate({left: "+=130px"}, 2000,
-            function() {
-                $(".travelResult").append("<div class=cities>" + test_response.arrivalCities[i] +"</div>");
-            })
-            div.animate({left: "+=0"}, 500);
-            
-        }
-    });
-
-/*
-var test_response = {
-    packageDeliveryTime: "2021-01-18 18:30",
-    arrivalCities: ["Madrid", "Barcelona", "Rome", "Athens"],
-    arrivalTimes: ["2021-01-17 15:30", "2021-01-17 19:00", "2021-01-18 08:30", "2021-01-18 16:00"]
-}
-
-$(".travelResult").append("<p class=travelDestinations>Du påbörjar din resa från " + test_response.arrivalCities[0] + "<p>");
-$(".travelResult").append("<p class=travelDestinations> och ditt flyg lyfter " + test_response.arrivalTimes[0] + "<p>");
-for (i=1; i<test_response.arrivalCities.length; i++) {
-    $(".travelResult").append("<p class=travelDestinations>Sedan åker du till " + test_response.arrivalCities[i] + "<p>");
-    $(".travelResult").append("<p class=travelDestinations>Ditt flyg landar " + test_response.arrivalTimes[i] + "<p>");
-        console.log(test_response.arrivalCities[i]);
-}
-*/
-
-// Hämtar ut dagens datum YYYY-MM-DD och gör om till en sträng
-var date = new Date().toISOString().substring(0, 10);
-// Fyller i datumfältet automatiskt med dagens datum
-document.querySelector("#departureDate").value = date;
+    // Hämtar ut dagens datum YYYY-MM-DD och gör om till en sträng
+    var date = new Date().toISOString().substring(0, 10);
+    // Fyller i datumfältet automatiskt med dagens datum
+    document.querySelector("#departureDate").value = date;
 });

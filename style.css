@@ -10,7 +10,7 @@ body{
 }
 
 /*HEADER*/
-#content > header{
+#content > header {
   margin-left: 60px;
   padding-top: 30px;
   padding-bottom: 30px;
@@ -32,10 +32,16 @@ body{
   margin-bottom: 25px;
 }
 
-/* Alla H3 rubriker i main */
-#content > main > h3 {
+/* Main diven */
+#content > main {
   text-align: center;
-  text-shadow: 0px 0px 1px #000000;
+}
+
+/* Knapp för att visa/dölja formuläret (syns efter formuläret har skickats) */
+main > #showForm {
+  position: relative;
+  margin: 10px auto 15px auto;
+  background-color: #378956;
 }
 
 /* Formuläret */
@@ -43,6 +49,7 @@ body{
   width: 65%;
   display: block;
   margin: 0 auto;
+  text-align: left;
 }
 
 /* Alla H3 rubriker i formuläret */
@@ -57,7 +64,6 @@ body{
   color: #378956;
   text-shadow: 0px 0px 1px #000000;
   text-align: center;
-  align-items: center;
 }
 
 /* Centrerar formuläret i diven */
@@ -75,10 +81,14 @@ body{
   margin-top: 50px;
 }
 
+/* Diven som håller i submit-knappen */
+#content > main .col-6 {
+  text-align: center;
+}
+
 /* Margin för knappen i formuläret */
 #content > main #submitForm {
-  margin-top: 30px;
-  margin-bottom: 15px;
+  margin-top: 25px;
   background-color: green;
   border: none;
 }
@@ -91,6 +101,12 @@ body{
 /* Meddelande som visas om formuläret validerat och skickas */
 #formSent {
   color: #378956;
+  text-align: center;
+}
+
+/* Meddelande som visas om formuläret fick felaktigt svar tillbaka */
+#formFailed {
+  color: red;
   text-align: center;
 }
 
@@ -107,8 +123,26 @@ body{
   color: purple;
 }
 
+/* Loader som visas medans formuläret väntar på svar */
+#content > main .loader {
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #378956;
+  border-right: 16px solid #378956;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin: 40px auto;
+}
+
+/* Loader när man klickat på formuläret */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /*FOOTER*/
-footer {
+#content > footer {
   grid-area: footer;
   background-color: whitesmoke;
   border-top-style: solid;
@@ -118,41 +152,48 @@ footer {
   display: block;
 }
 
-footer > p {
+#content > footer > p {
   text-align: center;
   color: black;
   margin: 16px 0;
 }
 
 
+/* FLYTTA DETTA NÄR VI FIXAT FÄRDIGT MED ANIMATIONERNA */
+
+
+/* Där storyn om resan presenteras */
+#content > main .story-box {
+  margin-right: 50px;
+}
 
 /* Diven som flyttar sig mellan städerna */
-.test-div {
+#content > main .airplane {
   background-image: url("images/airplane.png");
   background-size: cover;
   background-repeat: no-repeat;
-  background-color: #aaa;
-  width: 150px;
-  height: 150px;
+  background-color: ;
+  width: 100px;
+  height: 120px;
   border-radius: 25px;
   position: absolute;
-  margin-top: -50px;
-  margin-left: 33px;
+  margin-top: -150px;
+  margin-left: ;
 }
 
 /* De olika städerna som genereras från APIet */
-.cities {
-  width: 80px;
-  height: 100px;
+#content > main .cities {
+  width: 100px;
+  height: 120px;
   background-color: orange;
   display: inline-block;
-  border-radius: 25px;
+  border-radius: 5px;
   text-align: center;
-  margin: 50px 25px 0px 25px;
+  margin: 100px 25px 0px 50px;
   animation: fadeIn ease 1s;
 }
 
-/* För att ha en fadein på städerna som presenteras */s
+/* Fadein på städerna som presenteras */s
 @keyframes fadeIn {
   0% {
     opacity:0;
@@ -161,3 +202,5 @@ footer > p {
     opacity:1;
   }
 }
+
+
