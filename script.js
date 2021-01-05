@@ -73,12 +73,13 @@ function getDestinations() {
         crossOrigin: true
     })
 
-    /* Denna funktion anropas när informationen hämtamts. Inladdad information går att nå via variabeln "response" */
+    /* Denna funktion anropas när informationen hämtats. Inladdad information går att nå via variabeln "response" */
     .done(function(response) {
         console.log("-----Response-----");
         console.log(response)
         console.log(response.packageDeliveryTime);
         console.log(response.arrivalCities);
+        var i;
         for (i=0; i<response.arrivalCities.length; i++) {
         $(".travelResult").append("<p class=travelDestinations>Du hinner resa från/till " + response.arrivalCities[i] + "</p>");
         }
