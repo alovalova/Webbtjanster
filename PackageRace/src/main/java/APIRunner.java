@@ -43,8 +43,10 @@ public class APIRunner {
             }
 
             response.type("application/json");
-            Response res = runner.controller.getRes();
-            response.body(runner.gson.toJson(res));
+            if(runner.controller.isResponseDone()) {
+                Response res = runner.controller.getRes();
+                response.body(runner.gson.toJson(res));
+            }
 
             return response.body();
 

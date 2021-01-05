@@ -35,6 +35,7 @@ public class APIController {
 
     private String printClassMsg = "APIController.";
 
+    private boolean responseDone;
 
     private Gson gson;
     private Response res;
@@ -124,7 +125,17 @@ public class APIController {
     private void continueFlying(Package aPackage, ConnectionFlight previousFlight) {
         ConnectionFlight nextFlight = new ConnectionFlight(previousFlight, this);
         nextFlight.searchDestination(nextFlight.getDepartureDate());
-        checkIfTimeIsLeft(aPackage, nextFlight);
+        if (checkFlight(nextFlight)) {
+            checkIfTimeIsLeft(aPackage, nextFlight);
+        }else{
+            createResponse();
+        }
+    }
+
+    public boolean checkFlight(ConnectionFlight flight) {
+        return flight.getDepartureTime() != null &&
+                flight.getArrivalTime() != null &&
+                flight.getArrivalDate() != null;
     }
 
     public void checkIfTimeIsLeft(Package aPackage, ConnectionFlight flight) {
@@ -164,7 +175,6 @@ public class APIController {
             previousFlight.setWaitingTime(waitingTime);
 
         } else {
-
             ConnectionFlight firstFlight = new ConnectionFlight();
             firstFlight.setDepartureTime("08:30");
             firstFlight.setDepartureDate(aPackage.getPackageDepartureDate());
@@ -266,7 +276,8 @@ public class APIController {
         String errorMessagePostNord = "Error Message: incorrect values from " + errorMessage + "\n";
         errorMessageBuilder.append(errorMessagePostNord);
         System.out.println(errorMessageBuilder.toString());
-        System.exit(2);
+        responseDone = true;
+        //        System.exit(2);
     }
 
     /**
@@ -288,7 +299,7 @@ public class APIController {
                     + " DepartureTime: " + flights.getFlights().get(i).getDepartureTime() + " DepartureDate: " + flights.getFlights().get(i).getDepartureDate()
                     + " destination: " + arrivalCity + " arrivalTime: " + flights.getFlights().get(i).getArrivalTime()
                     + " arrivalDate " + flights.getFlights().get(i).getArrivalDate()
-            + " waitingTime: " + flights.getFlights().get(i).getWaitingTime());
+                    + " waitingTime: " + flights.getFlights().get(i).getWaitingTime());
         }
 
         res.setPackageDeliveryTime(aPackage.getPackageArrivalTime());
@@ -297,7 +308,7 @@ public class APIController {
         // fyll i responsen i objektet och skicka över till APIRunner.
     }
 
-    public String getAirPortName(String airportCode){
+    public String getAirPortName(String airportCode) {
         JSONParser jsonParser = new JSONParser();
         String airportName = "";
         try {
@@ -343,6 +354,10 @@ public class APIController {
 
     public Response getRes() {
         return res;
+    }
+
+    public boolean isResponseDone() {
+        return responseDone;
     }
 }
 

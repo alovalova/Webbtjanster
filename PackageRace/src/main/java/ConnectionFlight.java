@@ -36,11 +36,9 @@ public class ConnectionFlight {
     private ArrayList<String> destinationList;
     private String printClassMsg = "ConnectionFlight.";
 
-
     private int waitingTime;
 
     private ConnectionFlight previousFlight;
-    private int destinationIndex = 0;
     private int nextDateIndex = 0;
 
     public ConnectionFlight() {
@@ -91,67 +89,68 @@ public class ConnectionFlight {
         System.out.print(" arrivalDate: " + previousFlight.getArrivalDate() + "\n");
     }
 
+    public void searchDestinations() {
+        Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
+        for (int i = 5; i >= nextDateIndex; nextDateIndex++) {
+            try {
+                HttpResponse<JsonNode> flightDestinationResponse = Unirest.get("/shopping/flight-destinations")
+                        .header("authorization", "Bearer " + token)
+                        .queryString("origin", origin)
+                        .queryString("departureDate", departureDate)
+                        .queryString("oneWay", "true")
+                        .queryString("nonStop", "true")
+                        .asJson();
+//            System.out.println(printClassMsg + "searchDestination: Flight origin: " + origin + " flight departureDate: " + departureDate);
+
+                JSONObject flightData = flightDestinationResponse.getBody().getObject();
+//                System.out.println("flightData: " + flightData.toString());
+                if (flightData.has("errors")) {
+                    try {
+                        this.departureDate = getNextDate(departureDate);
+                        System.out.println("ConnectionFlight.SearchDestinations.Errors.getNextDate: "+ departureDate);
+                    } catch (ParseException parseException) {
+                        parseException.printStackTrace();
+                    }
+                } else {
+                    JSONArray flights = flightData.getJSONArray("data");
+                    if (flights.length() > 0) {
+                        for (int j = 0; j < flights.length(); j++) {
+                            JSONObject flight = flights.getJSONObject(j);
+                            destinationList.add(flight.get("destination").toString());
+                        }
+                        break;
+                    }
+                }
+            } catch (JSONException e) {
+                System.out.println(printClassMsg + "searchDestinations.catchPhrase: origin: " + origin);
+            }
+        }
+    }
+
+    //TODO: bryt ut och gör listor över destinationer och testa 5 datum frammåt.
+    // rekursion görs när vi inte vet hur länge ngt ska anropas.
+    // bryt ut API-anropen i egna metoder = tydligare.
+
     /**
      * Search all possible destination from the origin on the departure date and puts the destination into an array
      * and populates the connectionFlight with the first possible destination and arrival time
      */
     public void searchDestination(String departureDate) {
-        Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
-
-        try {
-            HttpResponse<JsonNode> flightDestinationResponse = Unirest.get("/shopping/flight-destinations")
-                    .header("authorization", "Bearer " + token)
-                    .queryString("origin", origin)
-                    .queryString("departureDate", departureDate)
-                    .queryString("oneWay", "true")
-                    .queryString("nonStop", "true")
-                    .asJson();
-
-//            System.out.println(printClassMsg + "searchDestination: Flight origin: " + origin + " flight departureDate: " + departureDate);
-
-            JSONObject flightData = flightDestinationResponse.getBody().getObject();
-            JSONArray flights = flightData.getJSONArray("data");
-            System.out.println(printClassMsg + "searchDestination.tryPhrase: " + flightDestinationResponse.getBody());
-            if (flights.length() > 0) {
-                for (int i = 0; i < flights.length(); i++) {
-                    JSONObject flight = flights.getJSONObject(i);
-                    destinationList.add(flight.get("destination").toString());
-                }
-            }
+        if (departureDate == null || nextDateIndex >= 5) {
+            controller.createResponse();
+            controller.createErrorMessageResponse("Amadeus: ConnectionFlight.searchDestination.departureDateIsNull");
+            return;
         }
-        //TODO: fortsätt här imorgon och försök lösa att ta nästa destination så att inte programmet stannar.
-        catch (JSONException e) {
-            try {
-                if (nextDateIndex < 5) {
-                    nextDepartureDate = getNextDate(departureDate);
-                    nextDateIndex++;
-                    searchDestination(nextDepartureDate);
-                }else{
-                    controller.createResponse();
-                    controller.createErrorMessageResponse("Amadeus: ConnectionFlight.searchDestination.CatchPhrase.TimeAndDateIsOut");
-                }
-            } catch (ParseException parseException) {
-                parseException.printStackTrace();
-            }
-            System.out.println(printClassMsg + "searchDestination.catchPhrase: origin: " + origin);;
-            nextDateIndex = 0;
-            nextDepartureDate = this.departureDate;
-            searchDestination(nextDepartureDate);
-        }
-        System.out.println(printClassMsg + "searchDestination.afterCatchPhrase");
+        this.departureDate = departureDate;
+        System.out.println("ConnectionFlight.SearchDestination.Date: " + departureDate);
+
+        searchDestinations();
 
         if (!checkNewDestinationAndDepartureTime()) {
-            try {
-                nextDepartureDate = getNextDate(departureDate);
-                System.out.println(printClassMsg + "SearchDestination: getNextDate");
-                searchDestination(nextDepartureDate);
-            } catch (ParseException e) {
-                controller.createResponse();
-                controller.createErrorMessageResponse("Amadeus: ConnectionFlight.searchDestination.CatchPhrase.TimeAndDateIsOut");
-            }
+            System.out.println(printClassMsg + "SearchDestination: getNextDate");
+            searchDestinations();
         } else {
-            System.out.println(printClassMsg + "searchDestination: is created with destination: " + destination);
-            destinationIndex = 0;
+            System.out.println(printClassMsg + "searchDestination: " + origin + " is created with destination: " + destination);
             controller.checkIfTimeIsLeft(controller.getPackage(), this);
         }
     }
@@ -162,79 +161,50 @@ public class ConnectionFlight {
      *
      * @return true if the flight to the destination is possible to connect to
      */
-    private boolean checkNewDestinationAndDepartureTime() {
-        boolean destinationIs = false;
+    public boolean checkNewDestinationAndDepartureTime() {
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v2");
-        int destinationIndex = 0;
-        //System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: DepartureDate: " + departureDate + " origin: " + origin);
+        System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: DepartureDate: " + departureDate + " origin: " + origin);
 
-        while (!destinationIs) {
+        for (int i = 0; i < destinationList.size(); i++) {
             try {
-                if (destinationIndex < destinationList.size() - 1) {
-                    System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: origin: " + origin);
-                    System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: destination: " + destinationList.get(destinationIndex));
+                System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: origin: " + origin);
+                System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: destination: " + destinationList.get(i));
 
-                    HttpResponse<JsonNode> flightArrivalTimeResponse = Unirest.get("/shopping/flight-offers")
-                            .header("authorization", "Bearer " + token)
-                            .queryString("originLocationCode", origin)
-                            .queryString("destinationLocationCode", destinationList.get(destinationIndex))
-                            .queryString("departureDate", departureDate)
-                            .queryString("adults", 1)
-                            .queryString("nonStop", "true")
-                            .queryString("max", 1)
-                            .asJson();
+                HttpResponse<JsonNode> flightArrivalTimeResponse = Unirest.get("/shopping/flight-offers")
+                        .header("authorization", "Bearer " + token)
+                        .queryString("originLocationCode", origin)
+                        .queryString("destinationLocationCode", destinationList.get(i))
+                        .queryString("departureDate", departureDate)
+                        .queryString("adults", 1)
+                        .queryString("nonStop", "true")
+                        .queryString("max", 1)
+                        .asJson();
 
-                    JSONArray meta = (JSONArray) flightArrivalTimeResponse.getBody().getObject().get("data");
-                    JSONObject data = meta.getJSONObject(0);
-                    JSONArray itineraries = data.getJSONArray("itineraries");
-                    JSONObject itinerary = itineraries.getJSONObject(0);
-                    JSONArray segments = itinerary.getJSONArray("segments");
-                    JSONObject segment = segments.getJSONObject(0);
-                    JSONObject departure = segment.getJSONObject("departure");
-                    JSONObject arrival = segment.getJSONObject("arrival");
+                JSONArray meta = (JSONArray) flightArrivalTimeResponse.getBody().getObject().get("data");
+                JSONObject data = meta.getJSONObject(0);
+                JSONArray itineraries = data.getJSONArray("itineraries");
+                JSONObject itinerary = itineraries.getJSONObject(0);
+                JSONArray segments = itinerary.getJSONArray("segments");
+                JSONObject segment = segments.getJSONObject(0);
+                JSONObject departure = segment.getJSONObject("departure");
+                JSONObject arrival = segment.getJSONObject("arrival");
 
-                    setDepartureDateAndTime(departure.getString("at"));
-                    setArrivalDateAndTime(arrival.getString("at"));
+                setDepartureDateAndTime(departure.getString("at"));
+                setArrivalDateAndTime(arrival.getString("at"));
 
-                    if (!compareDepartureTimes()) {
-                        System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: compareDepartureTimes is false");
-                        destinationIndex++;
-                    } else {
-                        this.destination = arrival.getString("iataCode");
-                        System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: compareDepartureTimes is true");
-                        setDuration(itinerary.get("duration").toString());
-                        return true;
-                    }
+                if (!compareDepartureTimes()) {
+                    System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: compareDepartureTimes is false");
                 } else {
-                    System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: is false");
-                    destinationIs = true;
-                    return false;
+                    this.destination = arrival.getString("iataCode");
+                    System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: compareDepartureTimes is true");
+                    setDuration(itinerary.get("duration").toString());
+                    return true;
                 }
 
-            } catch (Exception e) {
-                try {
-                    if (destinationIndex < destinationList.size() - 1) {
-                        destinationIndex++;
-                    } else {
-                        if (nextDateIndex < 5) {
-                            nextDepartureDate = getNextDate(departureDate);
-                            departureDate = nextDepartureDate;
-                            System.out.println(printClassMsg + "checkNewDestinationAndDepartureTimeCatchPhrase: getNextDate");
-                            nextDateIndex++;
-                            searchDestination(departureDate);
-
-                        } else {
-                            controller.createResponse();
-                            controller.createErrorMessageResponse("Amadeus: ConnectionFlight.checkNewDestinationAndDepartureTime.TimeAndDateIsOut");
-                        }
-                    }
-                } catch (ParseException parseException) {
-                    controller.createResponse();
-                    controller.createErrorMessageResponse("Amadeus: ConnectionFlight.checkNewDestinationAndDepartureTime.NoMoreDestination");
-                }
+            } catch (Exception ignored) {
             }
         }
-        return destinationIs;
+        return false;
     }
 
     /**
@@ -371,30 +341,6 @@ public class ConnectionFlight {
 
     public void setArrivalTime(String arrivalTime) {
         this.arrivalTime = arrivalTime;
-    }
-
-    public String getFirstPossibleDepartureTime() {
-        return firstPossibleDepartureTime;
-    }
-
-    public void setFirstPossibleDepartureTime(String firstPossibleDepartureTime) {
-        this.firstPossibleDepartureTime = firstPossibleDepartureTime;
-    }
-
-    public String getFirstPossibleDepartureDate() {
-        return firstPossibleDepartureDate;
-    }
-
-    public void setFirstPossibleDepartureDate(String firstPossibleDepartureDate) {
-        this.firstPossibleDepartureDate = firstPossibleDepartureDate;
-    }
-
-    public ArrayList<String> getDestinationList() {
-        return destinationList;
-    }
-
-    public void setDestinationList(ArrayList<String> destinationList) {
-        this.destinationList = destinationList;
     }
 
     public int getWaitingTime() {
