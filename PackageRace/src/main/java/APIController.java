@@ -277,7 +277,6 @@ public class APIController {
         errorMessageBuilder.append(errorMessagePostNord);
         System.out.println(errorMessageBuilder.toString());
         responseDone = true;
-        //        System.exit(2);
     }
 
     /**
@@ -286,7 +285,7 @@ public class APIController {
     public void createResponse() {
         res = new Response();
         // fixa att get Origin och destination blir till stadsnamn
-        System.out.println(printClassMsg + "createPostNordAPIGetRequest: Delivery Time: " + aPackage.getPackageArrivalTime() + " Delivery Date: " + aPackage.getPackageArrivalDate());
+        System.out.println(printClassMsg + "package DeliveryTime: " + aPackage.getPackageArrivalTime() + " DeliveryDate: " + aPackage.getPackageArrivalDate());
         for (int i = 0; i < flights.getFlights().size(); i++) {
             String departureCity = getAirPortName(flights.getFlights().get(i).getOrigin());
             String arrivalCity = getAirPortName(flights.getFlights().get(i).getDestination());
@@ -304,8 +303,8 @@ public class APIController {
 
         res.setPackageDeliveryTime(aPackage.getPackageArrivalTime());
         res.setErrorMessage(errorMessageBuilder.toString());
-
-        // fyll i responsen i objektet och skicka över till APIRunner.
+        responseDone = true;
+        System.out.println("ControllerResponse: " +responseDone);
     }
 
     public String getAirPortName(String airportCode) {

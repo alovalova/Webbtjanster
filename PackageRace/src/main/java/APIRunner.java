@@ -14,7 +14,6 @@ public class APIRunner {
 
     private JsonParser parser = new JsonParser();
     private Gson gson = new Gson();
-    private APIController controller = new APIController();
 
     public static void main(String[] args) {
         port(5000);
@@ -34,19 +33,18 @@ public class APIRunner {
             String departureZip = request.queryParams("departureZip");
             String arrivalCountry = request.queryParams("arrivalCountry");
             String arrivalZip = request.queryParams("arrivalZip");
-            PackageRaceRunner packageRaceRunner = new PackageRaceRunner();
 
-          try {
-              packageRaceRunner.run(packageDepartureDate,departureCountry,arrivalCountry,departureZip,arrivalZip);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            PackageRaceRunner packageRaceRunner = new PackageRaceRunner();
+            packageRaceRunner.run(packageDepartureDate, departureCountry, arrivalCountry, departureZip, arrivalZip);
 
             response.type("application/json");
-            if(runner.controller.isResponseDone()) {
-                Response res = runner.controller.getRes();
-                response.body(runner.gson.toJson(res));
-            }
+
+            APIController controller = packageRaceRunner.getController();
+            System.out.println("response: "+ controller.isResponseDone() + " response: " + controller.getRes());
+
+            Response res = controller.getRes();
+            System.out.println(res.toString());
+            response.body(runner.gson.toJson(res));
 
             return response.body();
 

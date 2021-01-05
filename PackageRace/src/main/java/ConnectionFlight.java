@@ -153,6 +153,7 @@ public class ConnectionFlight {
             System.out.println(printClassMsg + "searchDestination: " + origin + " is created with destination: " + destination);
             controller.checkIfTimeIsLeft(controller.getPackage(), this);
         }
+        controller.createResponse();
     }
 
 
