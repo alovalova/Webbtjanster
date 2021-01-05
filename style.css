@@ -17,7 +17,7 @@ body{
   height: 174px;
   font-family: 'Bungee Outline', cursive;
   color: black;
-  background-image: url(package_race.jpg);
+  background-image: url(images/package_race.jpg);
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -128,13 +128,12 @@ footer > p {
 
 /* Diven som flyttar sig mellan städerna */
 .test-div {
-  /* background-image: url(https://img.favpng.com/2/4/17/airplane-cartoon-animated-film-clip-art-png-favpng-QkQLBn9aZjQx3F3FAbVrTDr8m.jpg);
+  background-image: url("images/airplane.png");
   background-size: cover;
   background-repeat: no-repeat;
-  */
-  background-color: black;
-  width:15px;
-  height: 15px;
+  background-color: #aaa;
+  width: 150px;
+  height: 150px;
   border-radius: 25px;
   position: absolute;
   margin-top: -50px;
