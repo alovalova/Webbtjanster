@@ -14,11 +14,11 @@ public class PackageRaceRunner {
             controller.createErrorMessageResponse("Package: PackageRaceRunner.run");
             System.out.println("PackageRaceRunner.run: " + "Package is not created");
         }
-//        System.out.println(controller.getAirPortName("AAB"));
         controller.createPostNordAPIGetRequest(aPackage);
         controller.startFlying(aPackage);
-
-        //controller.createResponse();
     }
 
+    public APIController getController() {
+        return controller;
+    }
 }
