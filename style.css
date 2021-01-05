@@ -100,8 +100,6 @@ body{
   height: 300px;
   position: relative;
   display: flex;
-  justify-content: ;
-
 }
 
 /* Paragraf för svaret från APIet */
