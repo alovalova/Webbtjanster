@@ -89,6 +89,7 @@ main > #showForm {
 /* Margin för knappen i formuläret */
 #content > main #submitForm {
   margin-top: 25px;
+  margin-bottom: 25px;
   background-color: green;
   border: none;
 }
@@ -132,7 +133,7 @@ main > #showForm {
   width: 60px;
   height: 60px;
   animation: spin 1s linear infinite;
-  margin: 40px auto;
+  margin: 20px auto;
 }
 
 /* Loader när man klickat på formuläret */

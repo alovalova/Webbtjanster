@@ -3,6 +3,8 @@
 function getDestinations() {
     // Döljer "formulär skickat"
     $("#formSent").hide();
+    // Döljer felmeddelandet när man skickar formuläret på nytt
+    $("#formFailed").hide();
 
     // Används för att välja när formuläret ska skickas iväg
     var formValidate = true
@@ -73,6 +75,9 @@ function getDestinations() {
             },
             // Om förfrågan till APIet misslyckas
             error: function() {
+                // Döljer loadern om inget svar returneras
+                $(".loader").hide();
+                // Visar felmeddelande om inget svar returneras
                 $("#formFailed").text("Kontrollera postnummer!");
                 $("#formFailed").show();
             }
