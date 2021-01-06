@@ -96,24 +96,55 @@ function getDestinations() {
             $(".loader").hide();
 
             
+            /* Tömmer divarna som ska presentera svaret ifall där redan 
+            ligger text i när nytt svar ska presenteras */
+            if ($(".story-box").text() != "") {
+                $(".story-box").empty();
+                $(".response-animation").empty();
+            }
             console.log(response);
-            // Diven som innehåller info om hur långt man hinner resa osv
-            $(".travelResult").append("<div class=story-box> BLABLA INFO OM RESAN" + response.arrivalCities[0] +"</div>");
-            // Skriver ut första diven som resan utgår ifrån
-            $(".travelResult").append("<div class=cities>" + response.arrivalCities[0] +"</div>");
+            // Statiska delen av svaret då utgångsstad alltid är samma
+            $(".story-box").append(
+                "<p> Resan börjar i " +
+                response.departureCities[0].slice(7,) + " där flyget avgår " +
+                "klockan " + response.departureTimes[0] + ".</p>");
+            // Den dynamiska delen av svaret
+            for (var i=0; i<response.arrivalCities.length; i++) {
+                $(".story-box").append(
+                    "<p>" +
+                    "Flyget därefter går sedan vidare till " +
+                    response.arrivalCities[i].slice(7,) + " klockan " +
+                    response.arrivalTimes[i] + ".</p>");
+            }
+
+            // Skriver ut första staden som resan utgår ifrån
+            $(".travelResult").append(
+                "<div class=cities>" + response.departureCities[0] +"</div>");
             // Skapar diven som ska röra sig mellan de olika städerna
             $(".cities").append("<div class=airplane></div>");
             // För varje stad vi får som svar körs denna loopen och sköter animationen som rör sig mellan städerna
-            for (let i=1; i<response.arrivalCities.length; i++) {
+            for (let x=1; x<response.arrivalCities.length; x++) {
                 var airplane = $(".airplane");
                 airplane.animate({left: "+=0px"}, 1000);
                 airplane.animate({left: "+=172px"}, 1500,
                 function() {
-                    $(".travelResult").append("<div class=cities>" + response.arrivalCities[i] +"</div>");
+                    $(".travelResult").append("<div class=cities>" + response.arrivalCities[x].slice(7,) +"</div>");
                 })
                 airplane.animate({left: "+=0"}, 500);
-            
             }
+
+            /*
+            {packageDeliveryTime: "18:00", departureCities: Array(1), departureTimes: Array(1), arrivalCities: Array(1), arrivalTimes: Array(1), …}
+            arrivalCities: ["Europe/Paris"]
+            arrivalTimes: ["23:30"]
+            departureCities: ["Europe/Madrid"]
+            departureTimes: ["22:00"]
+            errorMessage: ""
+            packageDeliveryTime: "18:00"
+            waitingTimes: [15]
+            __proto__: Object
+            */
+
         });
     }
 }
