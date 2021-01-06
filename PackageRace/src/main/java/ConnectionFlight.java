@@ -45,8 +45,7 @@ public class ConnectionFlight {
     }
 
     /**
-     * creates a ConnectionFlight
-     *
+     * Creates a ConnectionFlight
      * @param origin        the origin for the flight
      * @param departureDate date of departure for the connectionFlight
      * @param controller    the used controller
@@ -65,8 +64,7 @@ public class ConnectionFlight {
     }
 
     /**
-     * creates a ConnectionFlight
-     *
+     * Creates a ConnectionFlight
      * @param previousFlight the flight to connect to
      * @param controller     the used controller
      */
@@ -89,6 +87,9 @@ public class ConnectionFlight {
         System.out.print(" arrivalDate: " + previousFlight.getArrivalDate() + "\n");
     }
 
+    /**
+     * Search a destination for a ConnectionFlight object from a given origin
+     */
     public void searchDestinations() {
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
         for (int i = 5; i >= nextDateIndex; nextDateIndex++) {
@@ -100,10 +101,9 @@ public class ConnectionFlight {
                         .queryString("oneWay", "true")
                         .queryString("nonStop", "true")
                         .asJson();
-//            System.out.println(printClassMsg + "searchDestination: Flight origin: " + origin + " flight departureDate: " + departureDate);
 
                 JSONObject flightData = flightDestinationResponse.getBody().getObject();
-//                System.out.println("flightData: " + flightData.toString());
+
                 if (flightData.has("errors")) {
                     try {
                         this.departureDate = getNextDate(departureDate);
@@ -156,7 +156,6 @@ public class ConnectionFlight {
 
     /**
      * Check if a flight to a destination is possible to connect to
-     *
      * @return true if the flight to the destination is possible to connect to
      */
     public boolean checkNewDestinationAndDepartureTime() {
@@ -207,7 +206,6 @@ public class ConnectionFlight {
 
     /**
      * Assigns the local parameters departureDate and departureTime with values from a string
-     *
      * @param dateTime the string representation of departure date and time
      */
     public void setDepartureDateAndTime(String dateTime) {
@@ -217,7 +215,6 @@ public class ConnectionFlight {
 
     /**
      * Assigns the local parameters arrivalDate and arrivalTime with values from a string
-     *
      * @param dateTime the string representation of arrival date and time
      */
     public void setArrivalDateAndTime(String dateTime) {
@@ -227,7 +224,6 @@ public class ConnectionFlight {
 
     /**
      * Assigns the local parameter duration with value from a string
-     *
      * @param duration the string representation of arrival date and time
      */
     public void setDuration(String duration) {
@@ -245,7 +241,6 @@ public class ConnectionFlight {
 
     /**
      * Check if a connection flight is possible by comparing the connection flights departure time with the previous flights arrival time
-     *
      * @return possibleConnection set to true if the connection flight is possible
      */
     public boolean compareDepartureTimes() {
@@ -277,7 +272,6 @@ public class ConnectionFlight {
 
     /**
      * Takes a string representing a date and converts it to a string representing the next day
-     *
      * @return a string representtion of the next date
      */
     public static String getNextDate(String curDate) throws ParseException {
