@@ -118,7 +118,7 @@ public class ConnectionFlight {
                             JSONObject flight = flights.getJSONObject(j);
                             destinationList.add(flight.get("destination").toString());
                         }
-                        break;
+                        return;
                     }
                 }
             } catch (JSONException e) {
@@ -137,7 +137,6 @@ public class ConnectionFlight {
      */
     public void searchDestination(String departureDate) {
         if (departureDate == null || nextDateIndex >= 5) {
-            controller.createResponse();
             controller.createErrorMessageResponse("Amadeus: ConnectionFlight.searchDestination.departureDateIsNull");
             return;
         }
@@ -151,9 +150,7 @@ public class ConnectionFlight {
             searchDestinations();
         } else {
             System.out.println(printClassMsg + "searchDestination: " + origin + " is created with destination: " + destination);
-            controller.checkIfTimeIsLeft(controller.getPackage(), this);
         }
-        controller.createResponse();
     }
 
 
