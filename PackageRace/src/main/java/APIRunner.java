@@ -40,7 +40,6 @@ public class APIRunner {
             response.type("application/json");
 
             APIController controller = packageRaceRunner.getController();
-            System.out.println("response: "+ controller.isResponseDone() + " response: " + controller.getRes());
 
             Response res = controller.getRes();
             System.out.println(res.toString());

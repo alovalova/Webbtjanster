@@ -108,8 +108,10 @@ public class APIController {
         remainingHours = aPackage.getTransitTime();
         flights = new Flights();
 
-        ConnectionFlight startFlight = new ConnectionFlight("MAD", aPackage.getPackageDepartureDate(), this); //startFlight skapas med origin mad och depdate som paketet
-        startFlight.searchDestination(startFlight.getDepartureDate()); //startFlight får ankomstort och ankomsttid
+        String packageDepartureDate = aPackage.getPackageDepartureDate();
+
+        ConnectionFlight startFlight = new ConnectionFlight("MAD", packageDepartureDate, this); //startFlight skapas med origin mad och depdate som paketet
+        startFlight.searchDestination(packageDepartureDate); //startFlight får ankomstort och ankomsttid
         System.out.print("\n" + printClassMsg + "startFlying: startFlight's values: ");
         System.out.print("departureTime: " + startFlight.getDepartureTime());
         System.out.print(" departureDate: " + startFlight.getDepartureDate());
@@ -117,19 +119,12 @@ public class APIController {
         System.out.print(" arrivalDate: " + startFlight.getArrivalDate());
         checkIfTimeIsLeft(aPackage, startFlight);
 
-//        ConnectionFlight secondFlight = new ConnectionFlight(startFlight, this); //skapa ett anslutande flyg
-//        secondFlight.searchDestination(); //det anslutande flyget får ankomstort och ankomsttid
-
     }
 
     private void continueFlying(Package aPackage, ConnectionFlight previousFlight) {
         ConnectionFlight nextFlight = new ConnectionFlight(previousFlight, this);
         nextFlight.searchDestination(nextFlight.getDepartureDate());
-        if (checkFlight(nextFlight)) {
-            checkIfTimeIsLeft(aPackage, nextFlight);
-        }else{
-            createResponse();
-        }
+        checkIfTimeIsLeft(aPackage, nextFlight);
     }
 
     public boolean checkFlight(ConnectionFlight flight) {
@@ -144,9 +139,8 @@ public class APIController {
             flights.addFlight(flight);
             continueFlying(aPackage, flight);
         } else {
-            System.out.println(printClassMsg + "checkIfTimeIsLeft: time is not left");
+            System.out.println("\n" + printClassMsg + "checkIfTimeIsLeft: time is not left");
             createResponse();
-            System.exit(2);
         }
     }
 
@@ -159,8 +153,8 @@ public class APIController {
         System.out.print(" departureDate: " + flight.getDepartureDate());
         System.out.print(" arrivalTime: " + flight.getArrivalTime());
         System.out.print(" arrivalDate: " + flight.getArrivalDate());
-        if (flight.getDepartureTime() == null) {
-            createResponse();
+        if (!checkFlight(flight)) {
+            return false;
         }
 
         int previous = flights.getFlights().size() - 1;
@@ -168,7 +162,7 @@ public class APIController {
         if (previous >= 0) {
             ConnectionFlight previousFlight = flights.getFlights().get(previous);
             if (previousFlight.getDepartureTime() == null) {
-                createResponse();
+                return false;
             }
             System.out.println("\n" + printClassMsg + "timeIsLeft: Flight heading to " + previousFlight.getDestination() + " is created");
             waitingTime = calculateWaitingTime(previousFlight);
@@ -304,7 +298,6 @@ public class APIController {
         res.setPackageDeliveryTime(aPackage.getPackageArrivalTime());
         res.setErrorMessage(errorMessageBuilder.toString());
         responseDone = true;
-        System.out.println("ControllerResponse: " +responseDone);
     }
 
     public String getAirPortName(String airportCode) {
@@ -331,8 +324,8 @@ public class APIController {
     public void createAmadeusAuthentication() {
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
 
-        String clientID = "A7JmGIf5KhiJRPHI2w4syqghle0P581l";
-        String clientSecretKey = "nRBxGUXe116FG4fk";
+        String clientID = "7bWW1kXqcIQka4v4APmhWYG7EpMPS9OT";
+        String clientSecretKey = "QsPUgYhP0VDWGObN";
 
         HttpResponse<JsonNode> tokenResponse = Unirest.post("/security/oauth2/token")
                 .field("grant_type", "client_credentials")
