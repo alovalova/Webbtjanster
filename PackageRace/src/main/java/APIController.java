@@ -14,11 +14,13 @@ import org.json.simple.parser.ParseException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.rmi.server.RMIServerSocketFactory;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * Controller class
+ *
  * @author Chanon Borgström & Sofia Hallberg
  * @created 16/12/2020
  * @project Group20
@@ -30,8 +32,6 @@ public class APIController {
     private int remainingHours;
 
     private String token;
-
-    private StringBuilder errorMessageBuilder = new StringBuilder();
 
     private String printClassMsg = "APIController.";
 
@@ -47,6 +47,7 @@ public class APIController {
 
     /**
      * Call to Post Nord's API to get delivery time and date for the package and populates the package with the delivery values
+     *
      * @param aPackage the package which is to be checked when to be delivered.
      */
     public void createPostNordAPIGetRequest(Package aPackage) {
@@ -85,19 +86,18 @@ public class APIController {
             aPackage.setPackageArrivalDate(deliveryDate);
             aPackage.setPostNordResponse(true);
         } catch (Exception e) {
-            e.printStackTrace();
-            createErrorMessageResponse("PostNord: APIController.createPostNordAPIGetRequest");
+            createErrorMessageResponse(400, "Invalid values");
         }
         if (aPackage.postNordResponseOk()) {
             remainingHours = aPackage.getTransitTime();
         } else {
-            createErrorMessageResponse("PostNord: APIController.createPostNordAPIGetRequest");
-            System.out.println(errorMessageBuilder.toString());
+            createErrorMessageResponse(400, "Invalid values");
         }
     }
 
     /**
      * Creates a Flight object for the first flight and a Flights object
+     *
      * @param aPackage the package racing with the flight
      */
     public void startFlying(Package aPackage) {
@@ -119,7 +119,8 @@ public class APIController {
 
     /**
      * Creates a Flight object for a succeeding flight
-     * @param aPackage the package racing with the flight
+     *
+     * @param aPackage       the package racing with the flight
      * @param previousFlight the previous flight in need of a connection flight
      */
     private void continueFlying(Package aPackage, ConnectionFlight previousFlight) {
@@ -130,6 +131,7 @@ public class APIController {
 
     /**
      * Check that a Flight-objects variables are assigned
+     *
      * @param flight the Flight object to check
      */
     public boolean checkFlight(ConnectionFlight flight) {
@@ -140,8 +142,9 @@ public class APIController {
 
     /**
      * Decides if there is time left for an additional flight or if the transit time is exceeded
+     *
      * @param aPackage the Package object racing with the flights
-     * @param flight the last flight in the race
+     * @param flight   the last flight in the race
      */
     public void checkIfTimeIsLeft(Package aPackage, ConnectionFlight flight) {
         if (timeIsLeft(aPackage, flight)) {
@@ -156,7 +159,8 @@ public class APIController {
 
     /**
      * Checks if there is time left for an additional flight
-     * @param flight the last flight in the race
+     *
+     * @param flight   the last flight in the race
      * @param aPackage te Package racing with the flights
      * @return
      */
@@ -211,6 +215,7 @@ public class APIController {
 
     /**
      * Calculate the waiting time to the next flight
+     *
      * @param previousFlight the arriving flight before a connection flight
      * @return the waiting time in hours
      */
@@ -256,6 +261,7 @@ public class APIController {
 
     /**
      * Calculates hours from days, hours and minutes
+     *
      * @param days
      * @param hours
      * @param minutes
@@ -277,12 +283,12 @@ public class APIController {
 
     /**
      * Creates an error message from a message from the Post Nord API
+     *
      * @param errorMessage the message from Post Nord API
      */
-    public void createErrorMessageResponse(String errorMessage) {
-        String errorMessagePostNord = "Error Message: incorrect values from " + errorMessage + "\n";
-        errorMessageBuilder.append(errorMessagePostNord);
-        System.out.println(errorMessageBuilder.toString());
+    public void createErrorMessageResponse(int httpCode, String errorMessage) {
+        res = new Response();
+        res.addErrorMessage(httpCode, errorMessage);
         responseDone = true;
     }
 
@@ -290,30 +296,34 @@ public class APIController {
      * Creates a response object to respond to the client
      */
     public void createResponse() {
-        res = new Response();
-        System.out.println(printClassMsg + "package DeliveryTime: " + aPackage.getPackageArrivalTime() + " DeliveryDate: " + aPackage.getPackageArrivalDate());
-        for (int i = 0; i < flights.getFlights().size(); i++) {
-            String departureCity = getAirPortName(flights.getFlights().get(i).getOrigin());
-            String arrivalCity = getAirPortName(flights.getFlights().get(i).getDestination());
-            res.addDepartureCity(departureCity);
-            res.addDepartureTime(flights.getFlights().get(i).getDepartureTime());
-            res.addArrivalCity(arrivalCity);
-            res.addArrivalTime(flights.getFlights().get(i).getArrivalTime());
-            res.addWaitingTimes(flights.getFlights().get(i).getWaitingTime());
-            System.out.println("Origin: " + departureCity
-                    + " DepartureTime: " + flights.getFlights().get(i).getDepartureTime() + " DepartureDate: " + flights.getFlights().get(i).getDepartureDate()
-                    + " destination: " + arrivalCity + " arrivalTime: " + flights.getFlights().get(i).getArrivalTime()
-                    + " arrivalDate " + flights.getFlights().get(i).getArrivalDate()
-                    + " waitingTime: " + flights.getFlights().get(i).getWaitingTime());
-        }
+        if (flights.getFlights().get(0) != null) {
+            res = new Response();
+            System.out.println(printClassMsg + "package DeliveryTime: " + aPackage.getPackageArrivalTime() + " DeliveryDate: " + aPackage.getPackageArrivalDate());
+            for (int i = 0; i < flights.getFlights().size(); i++) {
+                String departureCity = getAirPortName(flights.getFlights().get(i).getOrigin());
+                String arrivalCity = getAirPortName(flights.getFlights().get(i).getDestination());
+                res.addDepartureCity(departureCity);
+                res.addDepartureTime(flights.getFlights().get(i).getDepartureTime());
+                res.addArrivalCity(arrivalCity);
+                res.addArrivalTime(flights.getFlights().get(i).getArrivalTime());
+                res.addWaitingTimes(flights.getFlights().get(i).getWaitingTime());
+                System.out.println("Origin: " + departureCity
+                        + " DepartureTime: " + flights.getFlights().get(i).getDepartureTime() + " DepartureDate: " + flights.getFlights().get(i).getDepartureDate()
+                        + " destination: " + arrivalCity + " arrivalTime: " + flights.getFlights().get(i).getArrivalTime()
+                        + " arrivalDate " + flights.getFlights().get(i).getArrivalDate()
+                        + " waitingTime: " + flights.getFlights().get(i).getWaitingTime());
+            }
 
-        res.setPackageDeliveryTime(aPackage.getPackageArrivalTime());
-        res.setErrorMessage(errorMessageBuilder.toString());
-        responseDone = true;
+            res.setPackageDeliveryTime(aPackage.getPackageArrivalTime());
+            responseDone = true;
+        }else{
+            createErrorMessageResponse(404,"Flights not found");
+        }
     }
 
     /**
      * Translates an IATA code into the corresponding city
+     *
      * @param airportCode the IATA code
      */
     public String getAirPortName(String airportCode) {
@@ -354,6 +364,7 @@ public class APIController {
 
     /**
      * Checks if the Post Nord API has responded
+     *
      * @return true if the Post Nord API has responded
      */
     public boolean isResponseDone() {

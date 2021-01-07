@@ -46,6 +46,7 @@ public class ConnectionFlight {
 
     /**
      * Creates a ConnectionFlight
+     *
      * @param origin        the origin for the flight
      * @param departureDate date of departure for the connectionFlight
      * @param controller    the used controller
@@ -65,6 +66,7 @@ public class ConnectionFlight {
 
     /**
      * Creates a ConnectionFlight
+     *
      * @param previousFlight the flight to connect to
      * @param controller     the used controller
      */
@@ -84,7 +86,7 @@ public class ConnectionFlight {
         System.out.print("departureTime: " + previousFlight.getDepartureTime());
         System.out.print(" departureDate: " + previousFlight.getDepartureDate());
         System.out.print(" arrivalTime: " + previousFlight.getArrivalTime());
-        System.out.print(" arrivalDate: " + previousFlight.getArrivalDate() + "\n");
+        System.out.print(" arrivalDate: " + previousFlight.getArrivalDate() + " token: " + token + "\n");
     }
 
     /**
@@ -107,7 +109,7 @@ public class ConnectionFlight {
                 if (flightData.has("errors")) {
                     try {
                         this.departureDate = getNextDate(departureDate);
-                        System.out.println("ConnectionFlight.SearchDestinations.Errors.getNextDate: "+ departureDate);
+//                        System.out.println("ConnectionFlight.SearchDestinations.Errors.getNextDate: "+ departureDate);
                     } catch (ParseException parseException) {
                         parseException.printStackTrace();
                     }
@@ -118,6 +120,7 @@ public class ConnectionFlight {
                             JSONObject flight = flights.getJSONObject(j);
                             destinationList.add(flight.get("destination").toString());
                         }
+                        System.out.println("ConnectionFlight.SearchDestinations.Origin: " + origin + " destinationListSize: " + destinationList.size());
                         return;
                     }
                 }
@@ -127,9 +130,6 @@ public class ConnectionFlight {
         }
     }
 
-    //TODO: bryt ut och gör listor över destinationer och testa 5 datum frammåt.
-    // rekursion görs när vi inte vet hur länge ngt ska anropas.
-    // bryt ut API-anropen i egna metoder = tydligare.
 
     /**
      * Search all possible destination from the origin on the departure date and puts the destination into an array
@@ -137,16 +137,19 @@ public class ConnectionFlight {
      */
     public void searchDestination(String departureDate) {
         if (departureDate == null || nextDateIndex >= 5) {
-            controller.createErrorMessageResponse("Amadeus: ConnectionFlight.searchDestination.departureDateIsNull");
+            if (controller.getRes().getDepartureTimes().get(0) == null) {
+                controller.createErrorMessageResponse(404, "Flights Not found");
+            }
             return;
         }
         this.departureDate = departureDate;
-        System.out.println("ConnectionFlight.SearchDestination.Date: " + departureDate);
+        System.out.println("ConnectionFlight.SearchDestination.Date: " + departureDate + " origin: " + origin);
 
         searchDestinations();
 
         if (!checkNewDestinationAndDepartureTime()) {
-            System.out.println(printClassMsg + "SearchDestination: getNextDate");
+            nextDateIndex = 0;
+            System.out.println(printClassMsg + "SearchDestination.Origin: " + origin);
             searchDestinations();
         } else {
             System.out.println(printClassMsg + "searchDestination: " + origin + " is created with destination: " + destination);
@@ -156,11 +159,13 @@ public class ConnectionFlight {
 
     /**
      * Check if a flight to a destination is possible to connect to
+     *
      * @return true if the flight to the destination is possible to connect to
      */
     public boolean checkNewDestinationAndDepartureTime() {
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v2");
         System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: DepartureDate: " + departureDate + " origin: " + origin);
+
 
         for (int i = 0; i < destinationList.size(); i++) {
             try {
@@ -206,6 +211,7 @@ public class ConnectionFlight {
 
     /**
      * Assigns the local parameters departureDate and departureTime with values from a string
+     *
      * @param dateTime the string representation of departure date and time
      */
     public void setDepartureDateAndTime(String dateTime) {
@@ -215,6 +221,7 @@ public class ConnectionFlight {
 
     /**
      * Assigns the local parameters arrivalDate and arrivalTime with values from a string
+     *
      * @param dateTime the string representation of arrival date and time
      */
     public void setArrivalDateAndTime(String dateTime) {
@@ -224,6 +231,7 @@ public class ConnectionFlight {
 
     /**
      * Assigns the local parameter duration with value from a string
+     *
      * @param duration the string representation of arrival date and time
      */
     public void setDuration(String duration) {
@@ -241,6 +249,7 @@ public class ConnectionFlight {
 
     /**
      * Check if a connection flight is possible by comparing the connection flights departure time with the previous flights arrival time
+     *
      * @return possibleConnection set to true if the connection flight is possible
      */
     public boolean compareDepartureTimes() {
@@ -272,6 +281,7 @@ public class ConnectionFlight {
 
     /**
      * Takes a string representing a date and converts it to a string representing the next day
+     *
      * @return a string representtion of the next date
      */
     public static String getNextDate(String curDate) throws ParseException {

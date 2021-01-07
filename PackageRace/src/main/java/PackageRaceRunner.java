@@ -28,7 +28,7 @@ public class PackageRaceRunner {
         if (aPackage.checkPackage()) {
             System.out.println("PackageRaceRunner.run: " + "Package " + aPackage.getPackageDepartureDate() + " is created");
         } else {
-            controller.createErrorMessageResponse("Package: PackageRaceRunner.run");
+            controller.createErrorMessageResponse(400,"Invalid values");
             System.out.println("PackageRaceRunner.run: " + "Package is not created");
         }
         controller.createPostNordAPIGetRequest(aPackage);
