@@ -171,6 +171,7 @@ main > #showForm {
 /* Diven där animationen av responsen ligger */
 #content > main .response-animation {
   width: 70%;
+  text-align: left;
 }
 
 /* Diven som flyttar sig mellan städerna */
@@ -194,7 +195,7 @@ main > #showForm {
   display: inline-block;
   border-radius: 5px;
   text-align: center;
-  margin: 100px 25px 0px -60%;
+  margin: 100px 5px 0px 50px;
   animation: fadeIn ease 1s;
 }
 

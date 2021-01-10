@@ -12,11 +12,11 @@ function getDestinations() {
     // Skapar ett objekt för att lägga till värdena från formuläret
     var form_data = {}
     form_data.departureCountry = $("select[name=departureCountry]").val();
-    form_data.departureAddress = $("input[name=departureAddress]").val();
     form_data.departureZip = $("input[name=departureZip]").val();
+    form_data.departureAddress = $("input[name=departureAddress]").val();
     form_data.arrivalCountry = $("select[name=arrivalCountry]").val();
-    form_data.arrivalAddress = $("input[name=arrivalAddress]").val();
     form_data.arrivalZip = $("input[name=arrivalZip]").val();
+    form_data.arrivalAddress = $("input[name=arrivalAddress]").val();
     form_data.departureDate = $("input[name=departureDate]").val();
 
     /* 
@@ -72,7 +72,31 @@ function getDestinations() {
                 setTimeout(function () {
                 $("#formSent").fadeOut("fast");
                 }, 2000); // Tid i millisekunder
+                // Visar diven som håller svaret och animationen
+                $(".travelResult").show(); 
             },
+            error: function (jqXHR, exception) {
+                var msg = '';
+                if (jqXHR.status === 0) {
+                    msg = 'Not connect.\n Verify Network.';
+                } else if (jqXHR.status == 404) {
+                    msg = 'Requested page not found. [404]';
+                } else if (jqXHR.status == 500) {
+                    msg = 'Internal Server Error [500].';
+                } else if (exception === 'parsererror') {
+                    msg = 'Requested JSON parse failed.';
+                } else if (exception === 'timeout') {
+                    msg = 'Time out error.';
+                } else if (exception === 'abort') {
+                    msg = 'Ajax request aborted.';
+                } else {
+                    msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                }
+                $('#formFailed').text(msg);
+                $("#formFailed").show();
+                $(".loader").hide();
+            },
+            /*
             // Om förfrågan till APIet misslyckas
             error: function() {
                 // Döljer loadern om inget svar returneras
@@ -81,6 +105,7 @@ function getDestinations() {
                 $("#formFailed").text("Kontrollera postnummer!");
                 $("#formFailed").show();
             }
+            */
         })
 
         /* Denna funktion anropas när informationen hämtats. Inladdad 
@@ -101,6 +126,7 @@ function getDestinations() {
             if ($(".story-box").text() != "") {
                 $(".story-box").empty();
                 $(".response-animation").empty();
+                $(".cities").empty();
             }
             console.log(response);
             // Statiska delen av svaret då utgångsstad alltid är samma
@@ -112,23 +138,29 @@ function getDestinations() {
             for (var i=0; i<response.arrivalCities.length; i++) {
                 $(".story-box").append(
                     "<p>" +
-                    "Flyget därefter går sedan vidare till " +
+                    "Flyget går därefter vidare till " +
                     response.arrivalCities[i].slice(7,) + " klockan " +
                     response.arrivalTimes[i] + ".</p>");
+                $(".story-box").append(
+                    "<p> Kvarstående tid innan paketet är framme: " +
+                    response.waitingTimes[0] + " timmar");
+                
             }
-
+            
             // Skriver ut första staden som resan utgår ifrån
-            $(".travelResult").append(
-                "<div class=cities>" + response.departureCities[0] +"</div>");
+            $(".response-animation").append("<div class=cities>cities</div>");
+            //response.departureCities[0];
             // Skapar diven som ska röra sig mellan de olika städerna
             $(".cities").append("<div class=airplane></div>");
             // För varje stad vi får som svar körs denna loopen och sköter animationen som rör sig mellan städerna
-            for (let x=1; x<response.arrivalCities.length; x++) {
-                var airplane = $(".airplane");
+
+            var airplane = $(".airplane")
+            for (let x=0; x<4; x++) {
                 airplane.animate({left: "+=0px"}, 1000);
-                airplane.animate({left: "+=172px"}, 1500,
+                airplane.animate({left: "+=155px"}, 1500,
                 function() {
-                    $(".travelResult").append("<div class=cities>" + response.arrivalCities[x].slice(7,) +"</div>");
+                    $(".response-animation").append("<div class=cities>" + response.
+                    arrivalCities[0].slice(7,) +"</div>");
                 })
                 airplane.animate({left: "+=0"}, 500);
             }
@@ -150,6 +182,9 @@ function getDestinations() {
 }
 
 $(document).ready(function () {
+    // Döljer diven som håller svaret och animationen
+    $(".travelResult").hide(); 
+
     // Döljer knappen för att visa/dölja formuläret
     $("#showForm").hide();
 
