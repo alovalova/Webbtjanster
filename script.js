@@ -75,50 +75,12 @@ function getDestinations() {
                 // Visar diven som håller svaret och animationen
                 $(".travelResult").show(); 
             },
-            error: function (jqXHR, exception) {
-                var msg = '';
-                if (jqXHR.status === 0) {
-                    msg = 'Not connect.\n Verify Network.';
-                } else if (jqXHR.status == 404) {
-                    msg = 'Requested page not found. [404]';
-                } else if (jqXHR.status == 500) {
-                    msg = 'Internal Server Error [500].';
-                } else if (exception === 'parsererror') {
-                    msg = 'Requested JSON parse failed.';
-                } else if (exception === 'timeout') {
-                    msg = 'Time out error.';
-                } else if (exception === 'abort') {
-                    msg = 'Ajax request aborted.';
-                } else {
-                    msg = 'Uncaught Error.\n' + jqXHR.responseText;
-                }
-                $('#formFailed').text(msg);
+            /* Om något i förfrågan är felaktigt (eller servern inte svarar) */
+            error: function () {
+                $('#formFailed').text("Kontrollera postnummer");
                 $("#formFailed").show();
                 $(".loader").hide();
-            },
-            /*
-            // Om förfrågan till APIet misslyckas
-            error: function (jqXHR, exception) {
-                var msg = '';
-                if (jqXHR.status === 0) {
-                    msg = 'Not connect.\n Verify Network.';
-                } else if (jqXHR.status == 404) {
-                    msg = 'Requested page not found. [404]';
-                } else if (jqXHR.status == 500) {
-                    msg = 'Internal Server Error [500].';
-                } else if (exception === 'parsererror') {
-                    msg = 'Requested JSON parse failed.';
-                } else if (exception === 'timeout') {
-                    msg = 'Time out error.';
-                } else if (exception === 'abort') {
-                    msg = 'Ajax request aborted.';
-                } else {
-                    msg = 'Uncaught Error.\n' + jqXHR.responseText;
-                }
-                $('#formFailed').text(msg);
-                $("#formFailed").show();
             }
-            */
         })
 
         /* Denna funktion anropas när informationen hämtats. Inladdad
@@ -142,13 +104,24 @@ function getDestinations() {
                 $(".cities").empty();
             }
             console.log(response);
+            
+            var arrCities = []
+            for (let i=0; i<response.arrivalCities.length; i++) {
+                let test = response.arrivalCities[i].split("/");
+                arrCities.push(test[1]);
+            }
+            console.log(arrCities);
+            
+            
+
+
             // Statiska delen av svaret då utgångsstad alltid är samma
             $(".story-box").append(
                 "<p> Resan börjar i " +
                 response.departureCities[0].slice(7,) + " där flyget avgår " +
                 "klockan " + response.departureTimes[0] + ".</p>");
             // Den dynamiska delen av svaret
-            for (var i=0; i<response.arrivalCities.length; i++) {
+            for (let i=0; i<response.arrivalCities.length; i++) {
                 $(".story-box").append(
                     "<p>" +
                     "Flyget går därefter vidare till " +
@@ -196,7 +169,7 @@ function getDestinations() {
 
 $(document).ready(function () {
     // Döljer diven som håller svaret och animationen
-    $(".travelResult").hide(); 
+    // $(".travelResult").hide(); 
 
     // Döljer knappen för att visa/dölja formuläret
     $("#showForm").hide();
