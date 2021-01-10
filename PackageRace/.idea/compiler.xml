@@ -6,9 +6,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Group20" />
-        <module name="java-backend" />
         <module name="PackageRace" />
+        <module name="java-backend" />
+        <module name="Group20" />
       </profile>
     </annotationProcessing>
   </component>

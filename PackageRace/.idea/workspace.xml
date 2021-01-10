@@ -39,7 +39,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/files/joda-time-2.10.8" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../Storskaliga webtjänster/langx-java-3.2.3.jar!/" />
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.39195403" />
@@ -60,30 +60,30 @@
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="APIRunner" />
       <module name="PackageRace" />
+      <option name="PROGRAM_PARAMETERS" value="$MAVEN_REPOSITORY$" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Package" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration name="Package" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Package" />
-      <module name="Group20" />
+      <module name="java-backend" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <list>
       <item itemvalue="Application.TestClass" />
-      <item itemvalue="Application.APIRunner" />
       <item itemvalue="Application.Package" />
+      <item itemvalue="Application.APIRunner" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.APIRunner" />
-        <item itemvalue="Application.Package" />
       </list>
     </recent_temporary>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="false" />
   <component name="SvnConfiguration">
     <configuration />
   </component>

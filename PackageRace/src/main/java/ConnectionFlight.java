@@ -45,7 +45,7 @@ public class ConnectionFlight {
     }
 
     /**
-     * creates a ConnectionFlight
+     * Creates a ConnectionFlight
      *
      * @param origin        the origin for the flight
      * @param departureDate date of departure for the connectionFlight
@@ -65,7 +65,7 @@ public class ConnectionFlight {
     }
 
     /**
-     * creates a ConnectionFlight
+     * Creates a ConnectionFlight
      *
      * @param previousFlight the flight to connect to
      * @param controller     the used controller
@@ -86,9 +86,12 @@ public class ConnectionFlight {
         System.out.print("departureTime: " + previousFlight.getDepartureTime());
         System.out.print(" departureDate: " + previousFlight.getDepartureDate());
         System.out.print(" arrivalTime: " + previousFlight.getArrivalTime());
-        System.out.print(" arrivalDate: " + previousFlight.getArrivalDate() + "\n");
+        System.out.print(" arrivalDate: " + previousFlight.getArrivalDate() + " token: " + token + "\n");
     }
 
+    /**
+     * Search a destination for a ConnectionFlight object from a given origin
+     */
     public void searchDestinations() {
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
         for (int i = 5; i >= nextDateIndex; nextDateIndex++) {
@@ -100,14 +103,13 @@ public class ConnectionFlight {
                         .queryString("oneWay", "true")
                         .queryString("nonStop", "true")
                         .asJson();
-//            System.out.println(printClassMsg + "searchDestination: Flight origin: " + origin + " flight departureDate: " + departureDate);
 
                 JSONObject flightData = flightDestinationResponse.getBody().getObject();
-//                System.out.println("flightData: " + flightData.toString());
+
                 if (flightData.has("errors")) {
                     try {
                         this.departureDate = getNextDate(departureDate);
-                        System.out.println("ConnectionFlight.SearchDestinations.Errors.getNextDate: "+ departureDate);
+//                        System.out.println("ConnectionFlight.SearchDestinations.Errors.getNextDate: "+ departureDate);
                     } catch (ParseException parseException) {
                         parseException.printStackTrace();
                     }
@@ -118,6 +120,7 @@ public class ConnectionFlight {
                             JSONObject flight = flights.getJSONObject(j);
                             destinationList.add(flight.get("destination").toString());
                         }
+                        System.out.println("ConnectionFlight.SearchDestinations.Origin: " + origin + " destinationListSize: " + destinationList.size());
                         return;
                     }
                 }
@@ -127,9 +130,6 @@ public class ConnectionFlight {
         }
     }
 
-    //TODO: bryt ut och gör listor över destinationer och testa 5 datum frammåt.
-    // rekursion görs när vi inte vet hur länge ngt ska anropas.
-    // bryt ut API-anropen i egna metoder = tydligare.
 
     /**
      * Search all possible destination from the origin on the departure date and puts the destination into an array
@@ -137,16 +137,19 @@ public class ConnectionFlight {
      */
     public void searchDestination(String departureDate) {
         if (departureDate == null || nextDateIndex >= 5) {
-            controller.createErrorMessageResponse("Amadeus: ConnectionFlight.searchDestination.departureDateIsNull");
+            if (controller.getRes().getDepartureTimes().get(0) == null) {
+                controller.createErrorMessageResponse(404, "Flights Not found");
+            }
             return;
         }
         this.departureDate = departureDate;
-        System.out.println("ConnectionFlight.SearchDestination.Date: " + departureDate);
+        System.out.println("ConnectionFlight.SearchDestination.Date: " + departureDate + " origin: " + origin);
 
         searchDestinations();
 
         if (!checkNewDestinationAndDepartureTime()) {
-            System.out.println(printClassMsg + "SearchDestination: getNextDate");
+            nextDateIndex = 0;
+            System.out.println(printClassMsg + "SearchDestination.Origin: " + origin);
             searchDestinations();
         } else {
             System.out.println(printClassMsg + "searchDestination: " + origin + " is created with destination: " + destination);
@@ -162,6 +165,7 @@ public class ConnectionFlight {
     public boolean checkNewDestinationAndDepartureTime() {
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v2");
         System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: DepartureDate: " + departureDate + " origin: " + origin);
+
 
         for (int i = 0; i < destinationList.size(); i++) {
             try {

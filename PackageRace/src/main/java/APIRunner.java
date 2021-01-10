@@ -1,32 +1,34 @@
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import spark.Filter;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 import static spark.Spark.*;
 
 /**
- * @author Chanon Borgström % Sofia Hallberg
+ * @author Chanon Borgström & Sofia Hallberg
  * @created 09/12/2020
  * @project Group20
  */
 public class APIRunner {
 
-    private JsonParser parser = new JsonParser();
     private Gson gson = new Gson();
 
+    /**
+     * Main method that starts the server and runs the API
+     */
     public static void main(String[] args) {
         port(5000);
         APIRunner runner = new APIRunner();
-        // runner.controller.createPostNordAPIGetRequest(aPackage);
-        //staticFiles.location("/public"); // Static files
-        // När man skickar en förfrågan till en server vill inte servern ta emot förfrågan utam måste först kolla om klienten är ok
         after((Filter) (request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");
             response.header("Access-Control-Allow-Methods", "GET");
         });
 
-        get("/", (request, response) -> {
+        get("/v1/getDestinations", (request, response) -> {
 
             String packageDepartureDate = request.queryParams("departureDate");
             String departureCountry = request.queryParams("departureCountry");
@@ -41,13 +43,36 @@ public class APIRunner {
 
             APIController controller = packageRaceRunner.getController();
 
+//            ShowError error = new ShowError(404,"stirng").doGet(response.body());
             Response res = controller.getRes();
-            System.out.println(res.toString());
             response.body(runner.gson.toJson(res));
 
             return response.body();
 
         });
+    }
+    public static class ShowError extends HttpServlet {
+        private int httpCode;
+        private String errorMessage;
+
+        public ShowError(int httpCode, String errorMessage) {
+            this.httpCode = httpCode;
+            this.errorMessage = errorMessage;
+        }
+
+        // Method to handle GET method request.
+        public void doGet(HttpServletResponse response)
+                throws ServletException, IOException {
+
+            // Set error code and reason.
+            try {
+                System.out.println("error: " + errorMessage + " httpCode: " + httpCode);
+                response.sendError(httpCode, errorMessage);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 

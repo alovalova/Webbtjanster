@@ -14,24 +14,24 @@ import org.json.simple.parser.ParseException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.rmi.server.RMIServerSocketFactory;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * @author Project
+ * Controller class
+ *
+ * @author Chanon Borgström & Sofia Hallberg
  * @created 16/12/2020
  * @project Group20
  */
 public class APIController {
 
-    //private ConnectionFlight flight;
     private Flights flights;
     private Package aPackage;
     private int remainingHours;
 
     private String token;
-
-    private StringBuilder errorMessageBuilder = new StringBuilder();
 
     private String printClassMsg = "APIController.";
 
@@ -74,11 +74,8 @@ public class APIController {
         }
 
         try {
-//            System.out.println("postnord body: " + res.getBody());
             JSONObject transitTimeResponse = (JSONObject) res.getBody().getObject().get("se.posten.loab.lisp.notis.publicapi.serviceapi.TransitTimeResponse");
             JSONArray transitTimes = (JSONArray) transitTimeResponse.get("transitTimes");
-
-//            System.out.println("TransitTimes: " + transitTimes);
 
             String deliveryTime = transitTimes.getJSONObject(0).get("deliveryTime").toString();
             String deliveryDate = (String) transitTimes.getJSONObject(0).get("deliveryDate");
@@ -89,19 +86,19 @@ public class APIController {
             aPackage.setPackageArrivalDate(deliveryDate);
             aPackage.setPostNordResponse(true);
         } catch (Exception e) {
-            e.printStackTrace();
-            createErrorMessageResponse("PostNord: APIController.createPostNordAPIGetRequest");
+            createErrorMessageResponse(400, "Invalid values");
         }
         if (aPackage.postNordResponseOk()) {
             remainingHours = aPackage.getTransitTime();
         } else {
-            createErrorMessageResponse("PostNord: APIController.createPostNordAPIGetRequest");
-            System.out.println(errorMessageBuilder.toString());
+            createErrorMessageResponse(400, "Invalid values");
         }
     }
 
     /**
-     * Creates a Flight object, a Flights object
+     * Creates a Flight object for the first flight and a Flights object
+     *
+     * @param aPackage the package racing with the flight
      */
     public void startFlying(Package aPackage) {
         this.aPackage = aPackage;
@@ -118,21 +115,37 @@ public class APIController {
         System.out.print(" arrivalTime: " + startFlight.getArrivalTime());
         System.out.print(" arrivalDate: " + startFlight.getArrivalDate());
         checkIfTimeIsLeft(aPackage, startFlight);
-
     }
 
+    /**
+     * Creates a Flight object for a succeeding flight
+     *
+     * @param aPackage       the package racing with the flight
+     * @param previousFlight the previous flight in need of a connection flight
+     */
     private void continueFlying(Package aPackage, ConnectionFlight previousFlight) {
         ConnectionFlight nextFlight = new ConnectionFlight(previousFlight, this);
         nextFlight.searchDestination(nextFlight.getDepartureDate());
         checkIfTimeIsLeft(aPackage, nextFlight);
     }
 
+    /**
+     * Check that a Flight-objects variables are assigned
+     *
+     * @param flight the Flight object to check
+     */
     public boolean checkFlight(ConnectionFlight flight) {
         return flight.getDepartureTime() != null &&
                 flight.getArrivalTime() != null &&
                 flight.getArrivalDate() != null;
     }
 
+    /**
+     * Decides if there is time left for an additional flight or if the transit time is exceeded
+     *
+     * @param aPackage the Package object racing with the flights
+     * @param flight   the last flight in the race
+     */
     public void checkIfTimeIsLeft(Package aPackage, ConnectionFlight flight) {
         if (timeIsLeft(aPackage, flight)) {
             System.out.println(printClassMsg + "checkIfTimeIsLeft: time is left");
@@ -145,6 +158,10 @@ public class APIController {
     }
 
     /**
+     * Checks if there is time left for an additional flight
+     *
+     * @param flight   the last flight in the race
+     * @param aPackage te Package racing with the flights
      * @return
      */
     public boolean timeIsLeft(Package aPackage, ConnectionFlight flight) {
@@ -197,18 +214,18 @@ public class APIController {
     }
 
     /**
-     * @param previousFlight
-     * @return
+     * Calculate the waiting time to the next flight
+     *
+     * @param previousFlight the arriving flight before a connection flight
+     * @return the waiting time in hours
      */
     public int calculateWaitingTime(ConnectionFlight previousFlight) {
         int waitingTime;
         StringBuilder arrived = new StringBuilder();
         StringBuilder departed = new StringBuilder();
 
-
         String departureTime = previousFlight.getDepartureTime();
         String departureDate = previousFlight.getDepartureDate();
-
 
         String arrivalTime = previousFlight.getArrivalTime();
         String arrivalDate = previousFlight.getArrivalDate();
@@ -228,7 +245,6 @@ public class APIController {
             depart = format.parse(departed.toString());
             arrive = format.parse(arrived.toString());
 
-
             DateTime dep = new DateTime(depart);
             DateTime arr = new DateTime(arrive);
 
@@ -244,6 +260,8 @@ public class APIController {
     }
 
     /**
+     * Calculates hours from days, hours and minutes
+     *
      * @param days
      * @param hours
      * @param minutes
@@ -264,42 +282,50 @@ public class APIController {
 
 
     /**
-     * @param errorMessage
+     * Creates an error message from a message from the Post Nord API
+     *
+     * @param errorMessage the message from Post Nord API
      */
-    public void createErrorMessageResponse(String errorMessage) {
-        String errorMessagePostNord = "Error Message: incorrect values from " + errorMessage + "\n";
-        errorMessageBuilder.append(errorMessagePostNord);
-        System.out.println(errorMessageBuilder.toString());
+    public void createErrorMessageResponse(int httpCode, String errorMessage) {
+        res = new Response();
+        res.addErrorMessage(httpCode, errorMessage);
         responseDone = true;
     }
 
     /**
-     *
+     * Creates a response object to respond to the client
      */
     public void createResponse() {
-        res = new Response();
-        // fixa att get Origin och destination blir till stadsnamn
-        System.out.println(printClassMsg + "package DeliveryTime: " + aPackage.getPackageArrivalTime() + " DeliveryDate: " + aPackage.getPackageArrivalDate());
-        for (int i = 0; i < flights.getFlights().size(); i++) {
-            String departureCity = getAirPortName(flights.getFlights().get(i).getOrigin());
-            String arrivalCity = getAirPortName(flights.getFlights().get(i).getDestination());
-            res.addDepartureCity(departureCity);
-            res.addDepartureTime(flights.getFlights().get(i).getDepartureTime());
-            res.addArrivalCity(arrivalCity);
-            res.addArrivalTime(flights.getFlights().get(i).getArrivalTime());
-            res.addWaitingTimes(flights.getFlights().get(i).getWaitingTime());
-            System.out.println("Origin: " + departureCity
-                    + " DepartureTime: " + flights.getFlights().get(i).getDepartureTime() + " DepartureDate: " + flights.getFlights().get(i).getDepartureDate()
-                    + " destination: " + arrivalCity + " arrivalTime: " + flights.getFlights().get(i).getArrivalTime()
-                    + " arrivalDate " + flights.getFlights().get(i).getArrivalDate()
-                    + " waitingTime: " + flights.getFlights().get(i).getWaitingTime());
-        }
+        if (flights.getFlights().get(0) != null) {
+            res = new Response();
+            System.out.println(printClassMsg + "package DeliveryTime: " + aPackage.getPackageArrivalTime() + " DeliveryDate: " + aPackage.getPackageArrivalDate());
+            for (int i = 0; i < flights.getFlights().size(); i++) {
+                String departureCity = getAirPortName(flights.getFlights().get(i).getOrigin());
+                String arrivalCity = getAirPortName(flights.getFlights().get(i).getDestination());
+                res.addDepartureCity(departureCity);
+                res.addDepartureTime(flights.getFlights().get(i).getDepartureTime());
+                res.addArrivalCity(arrivalCity);
+                res.addArrivalTime(flights.getFlights().get(i).getArrivalTime());
+                res.addWaitingTimes(flights.getFlights().get(i).getWaitingTime());
+                System.out.println("Origin: " + departureCity
+                        + " DepartureTime: " + flights.getFlights().get(i).getDepartureTime() + " DepartureDate: " + flights.getFlights().get(i).getDepartureDate()
+                        + " destination: " + arrivalCity + " arrivalTime: " + flights.getFlights().get(i).getArrivalTime()
+                        + " arrivalDate " + flights.getFlights().get(i).getArrivalDate()
+                        + " waitingTime: " + flights.getFlights().get(i).getWaitingTime());
+            }
 
-        res.setPackageDeliveryTime(aPackage.getPackageArrivalTime());
-        res.setErrorMessage(errorMessageBuilder.toString());
-        responseDone = true;
+            res.setPackageDeliveryTime(aPackage.getPackageArrivalTime());
+            responseDone = true;
+        }else{
+            createErrorMessageResponse(404,"Flights not found");
+        }
     }
 
+    /**
+     * Translates an IATA code into the corresponding city
+     *
+     * @param airportCode the IATA code
+     */
     public String getAirPortName(String airportCode) {
         JSONParser jsonParser = new JSONParser();
         String airportName = "";
@@ -319,7 +345,7 @@ public class APIController {
     }
 
     /**
-     * Makes a authentication call to the Amadeus API and get a token.
+     * Makes a authentication call to the Amadeus API and receive a token
      */
     public void createAmadeusAuthentication() {
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
@@ -336,6 +362,15 @@ public class APIController {
         token = (String) tokenResponse.getBody().getObject().get("access_token");
     }
 
+    /**
+     * Checks if the Post Nord API has responded
+     *
+     * @return true if the Post Nord API has responded
+     */
+    public boolean isResponseDone() {
+        return responseDone;
+    }
+
     public String getToken() {
         return token;
     }
@@ -348,162 +383,4 @@ public class APIController {
         return res;
     }
 
-    public boolean isResponseDone() {
-        return responseDone;
-    }
 }
-
-//    public void createNewFlightDestination() {
-//
-//        String token = createAmadeusAuthentication();
-//
-//        Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
-//
-//        HttpResponse<JsonNode> flightDestinationResponse = Unirest.get("/shopping/flight-destinations")
-//                .header("authorization", "Bearer " + token)
-//                .queryString("origin", flight.getOrigin()) //first time MAD --> next destination.
-//                .queryString("departureDate", flight.getDepartureDate())
-//                .queryString("oneWay", "true")
-//                .queryString("nonStop", "true")
-//                .asJson();
-//
-//        System.out.println("Flight origin: " + flight.getOrigin() + " flight departureDate: " + flight.getDepartureDate());
-//        System.out.println(flightDestinationResponse.getBody());
-//        JSONArray data = (JSONArray) flightDestinationResponse.getBody().getObject().get("data");
-//
-//        String destination = data.getJSONObject(0).get("destination").toString();
-//
-//        flight.setDestination(destination);
-//        createNewFlightArrivalTime(token);
-//
-//    }
-
-//    /**
-//     * Calls a GET-method at the Amadeus API to receive a flight time and date for departure and arrival.
-//     * @param token the authorization token.
-//     */
-//    public void createNewFlightArrivalTime(String token) {
-//        Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v2");
-//        String duration = "";
-//        String departureDateTime = "";
-//        String arrivalDateTime = "";
-//        try {
-//
-//            HttpResponse<JsonNode> flightArrivalTimeResponse = Unirest.get("/shopping/flight-offers")
-//                    .header("authorization", "Bearer " + token)
-//                    .queryString("originLocationCode", flight.getOrigin()) //first time MAD --> next destination.
-//                    .queryString("destinationLocationCode", flight.getDestination())
-//                    .queryString("departureDate", flight.getDepartureDate())
-//                    .queryString("adults", 1)
-//                    .queryString("nonStop", "true")
-//                    .queryString("max", 1)
-//                    .asJson();
-//
-//            JSONArray meta = (JSONArray) flightArrivalTimeResponse.getBody().getObject().get("data");
-//            JSONObject data = meta.getJSONObject(0);
-//            JSONArray itineraries = data.getJSONArray("itineraries");
-//            JSONObject itinerary = itineraries.getJSONObject(0);
-//            JSONArray segments = itinerary.getJSONArray("segments");
-//            JSONObject segment = segments.getJSONObject(0);
-//            JSONObject departure = segment.getJSONObject("departure");
-//            JSONObject arrival = segment.getJSONObject("arrival");
-//
-//            duration = itinerary.get("duration").toString();
-//
-//            departureDateTime = departure.getString("at");
-//            arrivalDateTime = arrival.getString("at");
-//
-//            System.out.println("departureDT: " + departureDateTime + " arrivalDT: " + arrivalDateTime + " duration: " + duration);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        setDepartureDateAndTime(departureDateTime);
-//        setArrivalDateAndTime(arrivalDateTime);
-//
-//        setDuration(duration);
-//
-//        checkIfTimeIsLeft();
-//    }
-
-
-//
-//    public void setDepartureDateAndTime(String dateTime) {
-//        String date = dateTime.substring(0, 10);
-//        String time = dateTime.substring(11, 16);
-//
-//        flight.setDepartureDate(date);
-//        flight.setDepartureTime(time);
-//    }
-//
-//    public void setArrivalDateAndTime(String dateTime) {
-//        String date = dateTime.substring(0, 10);
-//        String time = dateTime.substring(11, 16);
-//
-//        flight.setArrivalDate(date);
-//        flight.setArrivalTime(time);
-//    }
-
-//    public void setDuration(String duration) {
-//        String[] durationArray = duration.split("PT");
-//        String hoursMinutes = durationArray[1];
-//        String[] hoursMinutesArray = hoursMinutes.split("H");
-//        int hours = Integer.parseInt(hoursMinutesArray[0]);
-//        int minutes = Integer.parseInt(hoursMinutesArray[1].split("M")[0]);
-//
-//        if (minutes >= 30) {
-//            hours++;
-//        }
-//        flight.setDuration(hours);
-//    }
-
-
-//    /**
-//     * Create a package with the parameters from frontEnd
-//     * @param aPackage
-//     */
-//    public void createPackage(Package aPackage) {
-//        if (checkPackage(aPackage)) {
-//            System.out.println("APIController.createPackage: " + "Package " + aPackage.getPackageDepartureDate() + " is created");
-//        } else {
-//            System.out.println("APIController.createPackage: " + "Package is not created");
-//        }
-//    }
-
-//    /**
-//     * Check the parameters of a package
-//     * @param aPackage the package to be checked
-//     * @return true if all mandatory parameters are assigned
-//     */
-//    public boolean checkPackage(Package aPackage) {
-//        return aPackage.getPackageDepartureDate() != null &&
-//               aPackage.getDepartureCountry() != null &&
-//               aPackage.getDepartureZip() != null &&
-//               aPackage.getArrivalCountry() != null &&
-//               aPackage.getArrivalZip() != null;
-//    }
-
-// ,"data":[{
-//      "type":"flight-offer","id":"1","source":"GDS",
-//      "instantTicketingRequired":false,
-//      "nonHomogeneous":false,
-//      "oneWay":false,
-//      "lastTicketingDate":"2020-12-29",
-//      "numberOfBookableSeats":4,
-//      "itineraries":[
-//          {"duration":"PT1H45M",
-//          "segments":[
-//              {"departure":{
-//                          "iataCode":"MAD","terminal":"2",
-//                          "at":"2020-12-31T15:15:00"},
-//              "arrival":{
-//                      "iataCode":"NTE",
-//                      "at":"2020-12-31T17:00:00"},
-//              "carrierCode":"V7",
-//              "number":"2273",
-//              "aircraft":{"code":"319"},
-//              "operating":{"carrierCode":"V7"},
-//              "duration":"PT1H45M",
-//              "id":"1",
-//              "numberOfStops":0,
-//              "blacklistedInEU":false}]
-//      }],"price":{"currency":"EUR","total":"63.94","base":"25.00","fees":[{"amount":"0.00","type":"SUPPLIER"},{"amount":"0.00","type":"TICKETING"}],"grandTotal":"63.94"},"pricingOptions":{"fareType":["PUBLISHED"],"includedCheckedBagsOnly":true},"validatingAirlineCodes":["V7"],"travelerPricings":[{"travelerId":"1","fareOption":"STANDARD","travelerType":"ADULT","price":{"currency":"EUR","total":"63.94","base":"25.00"},"fareDetailsBySegment":[{"segmentId":"1","cabin":"ECONOMY","fareBasis":"DV7PACK","class":"D","includedCheckedBags":{"quantity":1}}]}]}],"dictionaries":{"locations":{"MAD":{"cityCode":"MAD","countryCode":"ES"},"NTE":{"cityCode":"NTE","countryCode":"FR"}},"aircraft":{"319":"AIRBUS A319"},"currencies":{"EUR":"EURO"},"carriers":{"V7":"VOLOTEA"}}}

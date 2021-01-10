@@ -19,9 +19,9 @@ function getDestinations() {
     form_data.arrivalAddress = $("input[name=arrivalAddress]").val();
     form_data.departureDate = $("input[name=departureDate]").val();
 
-    /* 
+    /*
     Validering för formuläret. Om ett fält är tomt, skriv ut felmeddelande och sätt
-    formValidate till false så att formuläret inte skickas iväg 
+    formValidate till false så att formuläret inte skickas iväg
     */
     if (form_data.departureAddress == "") {
     $("#departureAddress").text("Du måste ange en adress!");
@@ -58,13 +58,13 @@ function getDestinations() {
         $.ajax({
             method: "GET",
             // Till en route på vår server där vi kommer åt APIet
-            url: "http://localhost:5000",
+            url: "http://localhost:5000/v1/getDestinations",
             // Datan från formuläret skickas
             data: form_data,
             // Berättar för APIet att vi vill ha JSON tillbaka
             headers: {"Accept": "application/json"},
             crossOrigin: true,
-            // Om förfrågan till APIet lyckas 
+            // Om förfrågan till APIet lyckas
             success: function() {
                 $("#formSent").text("Formulär skickat!");
                 $("#formSent").show();
@@ -98,17 +98,30 @@ function getDestinations() {
             },
             /*
             // Om förfrågan till APIet misslyckas
-            error: function() {
-                // Döljer loadern om inget svar returneras
-                $(".loader").hide();
-                // Visar felmeddelande om inget svar returneras
-                $("#formFailed").text("Kontrollera postnummer!");
+            error: function (jqXHR, exception) {
+                var msg = '';
+                if (jqXHR.status === 0) {
+                    msg = 'Not connect.\n Verify Network.';
+                } else if (jqXHR.status == 404) {
+                    msg = 'Requested page not found. [404]';
+                } else if (jqXHR.status == 500) {
+                    msg = 'Internal Server Error [500].';
+                } else if (exception === 'parsererror') {
+                    msg = 'Requested JSON parse failed.';
+                } else if (exception === 'timeout') {
+                    msg = 'Time out error.';
+                } else if (exception === 'abort') {
+                    msg = 'Ajax request aborted.';
+                } else {
+                    msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                }
+                $('#formFailed').text(msg);
                 $("#formFailed").show();
             }
             */
         })
 
-        /* Denna funktion anropas när informationen hämtats. Inladdad 
+        /* Denna funktion anropas när informationen hämtats. Inladdad
         information går att nå via variabeln "response" */
         .done(function(response) {
             // Döjer formuläret för att ge plats åt svaret
@@ -120,8 +133,8 @@ function getDestinations() {
             // Loader döljs när svaret har kommit
             $(".loader").hide();
 
-            
-            /* Tömmer divarna som ska presentera svaret ifall där redan 
+
+            /* Tömmer divarna som ska presentera svaret ifall där redan
             ligger text i när nytt svar ska presenteras */
             if ($(".story-box").text() != "") {
                 $(".story-box").empty();
