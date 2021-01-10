@@ -99,7 +99,7 @@ function getDestinations() {
             ligger text i när nytt svar ska presenteras */
             if ($(".story-box").text() != "") {
                 $(".story-box").empty();
-                $(".travelResult").empty();
+                // $(".travelResult").empty();
             }
 
 
@@ -123,36 +123,39 @@ function getDestinations() {
                 response.departureCities[0].slice(7,) + " där flyget avgår " +
                 "klockan " + response.departureTimes[0] + ".</p>");
             // Den dynamiska delen av svaret
-            for (let i=0; i<response.arrivalCities.length; i++) {
+            for (let i=0; i<arrCities.length; i++) {
                 $(".story-box").append(
                     "<p>" +
-                    "Flyget går därefter vidare till " +
-                    response.arrivalCities[i].slice(7,) + " klockan " +
-                    response.arrivalTimes[i] + ".</p>");
+                    "Flyget landar i " + arrCities[i] + " klockan " +
+                    response.arrivalTimes[i] + " för att sedan åka vidare " +
+                    "till."); // Kolla vad vi kan få ut för svar för att
+                    // skriva ett roligare svar? 
+
                 $(".story-box").append(
                     "<p> Kvarstående tid innan paketet är framme: " +
                     response.waitingTimes[0] + " timmar");
                 
             }
-            
+
             // Skriver ut första staden som resan utgår ifrån
             $(".travelResult").append("<div class=cities>" + 
             response.departureCities[0].slice(7,) + "</div>");
-            //response.departureCities[0];
+
             // Skapar diven som ska röra sig mellan de olika städerna
             $(".cities").append("<div class=airplane></div>");
-            // För varje stad vi får som svar körs denna loopen och sköter animationen som rör sig mellan städerna
 
+            // För varje stad vi får som svar körs denna loopen och sköter animationen som rör sig mellan städerna
             var airplane = $(".airplane")
-            for (let i=0; i<arrCities.leng; i++) {
+            for (let i=0; i<arrCities.length; i++) {
                 airplane.animate({left: "+=0px"}, 1000);
                 airplane.animate({left: "+=155px"}, 1500,
                 function() {
                     $(".travelResult").append("<div class=cities></<div>");
-                    $(".cities").append("<p>" + 
-                    arrCities[i] +"</p>");
-                },
-                airplane.animate({left: "+=0"}, 500));
+                    // Lägger till paragrafen i sista "cities" diven
+                    $(".cities").last().append("<p>" +  
+                    arrCities[i] + "</p>");
+                })
+                airplane.animate({left: "+=0"}, 500);
             }
 
             /*
