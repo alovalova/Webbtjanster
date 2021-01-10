@@ -95,25 +95,27 @@ function getDestinations() {
             // Loader döljs när svaret har kommit
             $(".loader").hide();
 
-
             /* Tömmer divarna som ska presentera svaret ifall där redan
             ligger text i när nytt svar ska presenteras */
             if ($(".story-box").text() != "") {
                 $(".story-box").empty();
-                $(".response-animation").empty();
-                $(".cities").empty();
+                $(".travelResult").empty();
             }
+
+
             console.log(response);
             
+            /* Tar bort regionen som skrivs ut innan staden och lägger till
+                i en lista som sedan kan itereras över */
             var arrCities = []
             for (let i=0; i<response.arrivalCities.length; i++) {
-                let test = response.arrivalCities[i].split("/");
-                arrCities.push(test[1]);
+                let splitCities = response.arrivalCities[i].split("/");
+                for (let x=0; x<splitCities.length; x++) {
+                    if (x % 2 != 0) {
+                    arrCities.push(splitCities[x]);
+                    }
+                }
             }
-            console.log(arrCities);
-            
-            
-
 
             // Statiska delen av svaret då utgångsstad alltid är samma
             $(".story-box").append(
@@ -134,21 +136,23 @@ function getDestinations() {
             }
             
             // Skriver ut första staden som resan utgår ifrån
-            $(".response-animation").append("<div class=cities>cities</div>");
+            $(".travelResult").append("<div class=cities>" + 
+            response.departureCities[0].slice(7,) + "</div>");
             //response.departureCities[0];
             // Skapar diven som ska röra sig mellan de olika städerna
             $(".cities").append("<div class=airplane></div>");
             // För varje stad vi får som svar körs denna loopen och sköter animationen som rör sig mellan städerna
 
             var airplane = $(".airplane")
-            for (let x=0; x<4; x++) {
+            for (let i=0; i<arrCities.leng; i++) {
                 airplane.animate({left: "+=0px"}, 1000);
                 airplane.animate({left: "+=155px"}, 1500,
                 function() {
-                    $(".response-animation").append("<div class=cities>" + response.
-                    arrivalCities[0].slice(7,) +"</div>");
-                })
-                airplane.animate({left: "+=0"}, 500);
+                    $(".travelResult").append("<div class=cities></<div>");
+                    $(".cities").append("<p>" + 
+                    arrCities[i] +"</p>");
+                },
+                airplane.animate({left: "+=0"}, 500));
             }
 
             /*
@@ -169,7 +173,7 @@ function getDestinations() {
 
 $(document).ready(function () {
     // Döljer diven som håller svaret och animationen
-    // $(".travelResult").hide(); 
+    $(".travelResult").hide(); 
 
     // Döljer knappen för att visa/dölja formuläret
     $("#showForm").hide();

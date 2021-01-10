@@ -168,12 +168,6 @@ main > #showForm {
   width: 30%;
 }
 
-/* Diven där animationen av responsen ligger */
-#content > main .response-animation {
-  width: 70%;
-  text-align: left;
-}
-
 /* Diven som flyttar sig mellan städerna */
 #content > main .airplane {
   background-image: url("images/airplane.png");
@@ -199,7 +193,7 @@ main > #showForm {
   animation: fadeIn ease 1s;
 }
 
-/* Fadein på städerna som presenteras */s
+/* Fadein på städerna som presenteras */
 @keyframes fadeIn {
   0% {
     opacity:0;
