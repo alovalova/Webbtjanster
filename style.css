@@ -135,11 +135,6 @@ main > #showForm {
   font-size: 1.2em;
 }
 
-/* Gör så att divarna utgår ifrån mitten */
-#content > main > .travelResult > .animation-box > .cities:nth-child(1) {
-  margin-left: 0px;
-}
-
 /* Fadein på städerna (cities) som presenteras */
 @keyframes fadeIn {
   0% {

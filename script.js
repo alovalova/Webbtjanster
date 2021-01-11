@@ -146,22 +146,42 @@ function getDestinations() {
             $(".story-box").append(
                 "<p> Resan börjar i " +
                 response.departureCities[0].slice(7,) + " där flyget avgår " +
-                "klockan " + response.departureTimes[0] + ".</p>");
+                "klockan " + response.departureTimes[0] + ". Du har " + 
+                response.waitingTimes[0] + " timmar kvar tills flyget " +
+                "lyfter, varför inte utforska " + 
+                response.departureCities[0].slice(7,) + "?</p>");
+
+            /*
+                arrivalCities: ["Europe/Paris"]
+                arrivalTimes: ["21:05"]
+                departureCities: ["Europe/Madrid"]
+                departureTimes: ["19:40"]
+                packageDeliveryDate: "20210122"
+                packageDeliveryTime: "18:00"
+                packageRemainingHours: "20"
+                waitingTimes: [13]
+            */     
+
+            // Gör om datumsträngen till ett format enlig "YYYY-MM-DD"
+            var deliveryDate = response.packageDeliveryDate.slice(0, 4) + 
+            "-" + response.packageDeliveryDate.slice(4,6) + "-" + 
+            response.packageDeliveryDate.slice(6,9);
 
             // Den dynamiska delen av svaret
             for (let i=0; i<arrCities.length; i++) {
                 if (i == arrCities.length-1) {
                     $(".story-box").append(
-                        "<p> Flyget landar slutligen i " + 
-                        arrCities[i] + " klockan " + 
-                        response.arrivalTimes[i] + " med " + 
-                        response.waitingTimes[0] + " timmar kvar innan " +
-                        "paketet är framme. </p>");
+                        "<p> Resan avslutas slutligen i " + 
+                        arrCities[i] + " den " + 
+                        deliveryDate + " klockan " + 
+                        response.packageDeliveryTime + " för då är paketet " +
+                        "framme vid sin slutdestination. </p>");
                 }else {
                     $(".story-box").append(
-                    "<p> Flyget landar i " + arrCities[i] + " klockan " +
-                    response.arrivalTimes[i] + " för att sedan åka vidare " +
-                    "till " + arrCities[i+1] + " klockan " + 
+                    "<p> Nästa flyg du tar landar i " + arrCities[i] + 
+                    " klockan " + response.arrivalTimes[i] + 
+                    " och sedan tar du ytterliggare ett flyg till " +
+                    + arrCities[i+1] + " som avgår klockan " + 
                     response.arrivalTimes[i+1] + "</p>"); 
                 }
             }
@@ -177,8 +197,8 @@ function getDestinations() {
                 animationen som rör sig mellan städerna */ 
             var airplane = $(".airplane");
             for (let i=0; i<arrCities.length; i++) {
-                airplane.animate({left: "+=0px"}, 1000);
-                airplane.animate({right: "+=78px"}, 1500,
+                airplane.animate({marginTop: "+=0px"}, 1000);
+                airplane.animate({left: "+=78px"}, 1500,
                 function() {
                     $(".animation-box").append("<div class=cities></<div>");
                     // Lägger till paragrafen i sista "cities" diven
@@ -190,21 +210,6 @@ function getDestinations() {
         });
     }
 }
-            
-        
-    
-
-    /*
-        {packageDeliveryTime: "18:00", departureCities: Array(1), departureTimes: Array(1), arrivalCities: Array(1), arrivalTimes: Array(1), …}
-        arrivalCities: ["Europe/Paris"]
-        arrivalTimes: ["23:30"]
-        departureCities: ["Europe/Madrid"]
-        departureTimes: ["22:00"]
-        errorMessage: ""
-        packageDeliveryTime: "18:00"
-        waitingTimes: [15]
-        __proto__: Object
-    */
 
 // Detta körs när hela sidan har laddats in
 $(document).ready(function () {
