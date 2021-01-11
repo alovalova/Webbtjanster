@@ -160,6 +160,7 @@ main > #showForm {
   border-radius: 25px;
   position: absolute;
   margin-top: -150px;
+  
 }
 
 /* Loader som visas medans formuläret väntar på svar */
