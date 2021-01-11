@@ -19,8 +19,8 @@ function getDestinations() {
     form_data.arrivalAddress = $("input[name=arrivalAddress]").val();
     form_data.departureDate = $("input[name=departureDate]").val();
 
-    /* Validering för formuläret. Om ett fält är tomt, skriv ut felmeddelande och    sätt formValidate till false så att formuläret inte skickas iväg */
-    
+    /* Validering för formuläret. Om ett fält är tomt, skriv ut felmeddelande 
+        och sätt formValidate till false så att formuläret inte skickas iväg */
     if (form_data.departureAddress == "") {
     $("#departureAddress").text("Du måste ange en adress!");
     formValidate = false;
@@ -49,6 +49,7 @@ function getDestinations() {
     else {
     $("#arrivalZip").text("");
     }
+
     // Om formuläret validerar görs anropet till APIet 
     if (formValidate == true) {
         // Om formuläret validerat visas loadern medans vi väntar på svar
@@ -64,7 +65,7 @@ function getDestinations() {
             crossOrigin: true,
             // Om förfrågan till APIet lyckas
             success: function() {
-                $("#formSent").text("Formulär skickat!");
+                $("#formSent").text("Paket skickat!");
                 $("#formSent").show();
                 // Visas i tre sekunder, bekräftelse på att formuläret har skickats
                 setTimeout(function () {
@@ -72,6 +73,17 @@ function getDestinations() {
                 }, 2000); // Tid i millisekunder
                 // Visar diven som håller svaret och animationen
                 $(".travelResult").show(); 
+            },
+            statusCode: {
+                200: function() {
+                  console.log("Success 200");
+                },
+                400: function() {
+                    console.log("Invalid Input");
+                },
+                404: function() {
+                    console.log("Flights not found")
+                },
             },
             // Om något i förfrågan är felaktigt (eller servern inte svarar) 
             error: function () {
@@ -88,7 +100,7 @@ function getDestinations() {
             $("#parcelForm").hide();
             // Knapp för att visa/dölja formuläret
             $("#showForm").show();
-            $("#showForm").text("Visa Formulär");
+            $("#showForm").text("Visa formulär");
 
             // Loader döljs när svaret har kommit
             $(".loader").hide();
@@ -105,8 +117,9 @@ function getDestinations() {
             
             /* Tar bort regionen som skrivs ut innan staden och lägger till
                 i en lista som sedan kan itereras över.
-                Svaret vi får ser ut såhär: "Europe/Madrid" */
-            var arrCities = ["Stockholm", "Oslo", "Helsingfors"]
+                Svaret vi får från början ser ut såhär: "Europe/Madrid" 
+            */
+            var arrCities = []
             for (let i=0; i<response.arrivalCities.length; i++) {
                 let splitCities = response.arrivalCities[i].split("/");
                 for (let x=0; x<splitCities.length; x++) {
@@ -121,19 +134,23 @@ function getDestinations() {
                 "<p> Resan börjar i " +
                 response.departureCities[0].slice(7,) + " där flyget avgår " +
                 "klockan " + response.departureTimes[0] + ".</p>");
+
             // Den dynamiska delen av svaret
             for (let i=0; i<arrCities.length; i++) {
-                $(".story-box").append(
-                    "<p>" +
-                    "Flyget landar i " + arrCities[i] + " klockan " +
+                if (i == arrCities.length-1) {
+                    $(".story-box").append(
+                        "<p> Flyget landar slutligen i " + 
+                        arrCities[i] + " klockan " + 
+                        response.arrivalTimes[i] + " med " + 
+                        response.waitingTimes[0] + " timmar kvar innan " +
+                        "paketet är framme. </p>");
+                }else {
+                    $(".story-box").append(
+                    "<p> Flyget landar i " + arrCities[i] + " klockan " +
                     response.arrivalTimes[i] + " för att sedan åka vidare " +
-                    "till."); // Kolla vad vi kan få ut för svar för att
-                    // skriva ett roligare svar? 
-
-                $(".story-box").append(
-                    "<p> Kvarstående tid innan paketet är framme: " +
-                    response.waitingTimes[0] + " timmar");
-                
+                    "till " + arrCities[i+1] + " klockan " + 
+                    response.arrivalTimes[i+1] + "</p>"); 
+                }
             }
 
             // Skriver ut första staden som resan utgår ifrån
@@ -143,7 +160,8 @@ function getDestinations() {
             // Skapar diven som ska röra sig mellan de olika städerna
             $(".cities").append("<div class=airplane></div>");
 
-            /* För varje stad vi får som svar körs denna loopen och sköter  animationen som rör sig mellan städerna */
+            /* För varje stad vi får som svar körs denna loopen och sköter
+                animationen som rör sig mellan städerna */ 
             var airplane = $(".airplane")
             for (let i=0; i<arrCities.length; i++) {
                 airplane.animate({left: "+=0px"}, 1000);
@@ -156,23 +174,23 @@ function getDestinations() {
                 })
                 airplane.animate({left: "+=0"}, 500);
             }
-
-            /*
-            {packageDeliveryTime: "18:00", departureCities: Array(1), departureTimes: Array(1), arrivalCities: Array(1), arrivalTimes: Array(1), …}
-            arrivalCities: ["Europe/Paris"]
-            arrivalTimes: ["23:30"]
-            departureCities: ["Europe/Madrid"]
-            departureTimes: ["22:00"]
-            errorMessage: ""
-            packageDeliveryTime: "18:00"
-            waitingTimes: [15]
-            __proto__: Object
-            */
-
         });
     }
 }
 
+    /*
+        {packageDeliveryTime: "18:00", departureCities: Array(1), departureTimes: Array(1), arrivalCities: Array(1), arrivalTimes: Array(1), …}
+        arrivalCities: ["Europe/Paris"]
+        arrivalTimes: ["23:30"]
+        departureCities: ["Europe/Madrid"]
+        departureTimes: ["22:00"]
+        errorMessage: ""
+        packageDeliveryTime: "18:00"
+        waitingTimes: [15]
+        __proto__: Object
+    */
+
+// Detta körs när hela sidan har laddats in
 $(document).ready(function () {
     // Döljer diven som håller svaret och animationen som default
     $(".travelResult").hide(); 

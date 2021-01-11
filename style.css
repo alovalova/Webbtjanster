@@ -111,15 +111,12 @@ main > #showForm {
   text-align: center;
 }
 
-/* Diven som håller svaret från APIet */
-#content > main > .travelResult {
-}
-
 /* Där storyn om resan presenteras */
 #content > main .travelResult .story-box {
   width: 100%;
   margin-top: 30px;
   padding: 5px;
+  font-size: 1.2em;
 }
 
 /* Diven som håller i "cities" som skapas */
@@ -135,6 +132,7 @@ main > #showForm {
   display: inline-block;
   margin: 75px 5px 25px 50px;
   animation: fadeIn ease 1s;
+  font-size: 1.2em;
 }
 
 /* Gör så att divarna utgår ifrån mitten */
