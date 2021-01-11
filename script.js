@@ -19,10 +19,8 @@ function getDestinations() {
     form_data.arrivalAddress = $("input[name=arrivalAddress]").val();
     form_data.departureDate = $("input[name=departureDate]").val();
 
-    /*
-    Validering för formuläret. Om ett fält är tomt, skriv ut felmeddelande och sätt
-    formValidate till false så att formuläret inte skickas iväg
-    */
+    /* Validering för formuläret. Om ett fält är tomt, skriv ut felmeddelande och    sätt formValidate till false så att formuläret inte skickas iväg */
+    
     if (form_data.departureAddress == "") {
     $("#departureAddress").text("Du måste ange en adress!");
     formValidate = false;
@@ -51,7 +49,7 @@ function getDestinations() {
     else {
     $("#arrivalZip").text("");
     }
-    /* Om formuläret validerar görs anropet till APIet */
+    // Om formuläret validerar görs anropet till APIet 
     if (formValidate == true) {
         // Om formuläret validerat visas loadern medans vi väntar på svar
         $(".loader").show();
@@ -75,7 +73,7 @@ function getDestinations() {
                 // Visar diven som håller svaret och animationen
                 $(".travelResult").show(); 
             },
-            /* Om något i förfrågan är felaktigt (eller servern inte svarar) */
+            // Om något i förfrågan är felaktigt (eller servern inte svarar) 
             error: function () {
                 $('#formFailed').text("Kontrollera postnummer");
                 $("#formFailed").show();
@@ -84,7 +82,7 @@ function getDestinations() {
         })
 
         /* Denna funktion anropas när informationen hämtats. Inladdad
-        information går att nå via variabeln "response" */
+            information går att nå via variabeln "response" */
         .done(function(response) {
             // Döjer formuläret för att ge plats åt svaret
             $("#parcelForm").hide();
@@ -96,18 +94,19 @@ function getDestinations() {
             $(".loader").hide();
 
             /* Tömmer divarna som ska presentera svaret ifall där redan
-            ligger text i när nytt svar ska presenteras */
+                ligger text i när nytt svar ska presenteras */
             if ($(".story-box").text() != "") {
                 $(".story-box").empty();
-                // $(".travelResult").empty();
+                $(".animation-box").empty();
             }
 
-
+            // Visar upp hela svaret vi får i consolen
             console.log(response);
             
             /* Tar bort regionen som skrivs ut innan staden och lägger till
-                i en lista som sedan kan itereras över */
-            var arrCities = []
+                i en lista som sedan kan itereras över.
+                Svaret vi får ser ut såhär: "Europe/Madrid" */
+            var arrCities = ["Stockholm", "Oslo", "Helsingfors"]
             for (let i=0; i<response.arrivalCities.length; i++) {
                 let splitCities = response.arrivalCities[i].split("/");
                 for (let x=0; x<splitCities.length; x++) {
@@ -138,19 +137,19 @@ function getDestinations() {
             }
 
             // Skriver ut första staden som resan utgår ifrån
-            $(".travelResult").append("<div class=cities>" + 
+            $(".animation-box").append("<div class=cities>" + 
             response.departureCities[0].slice(7,) + "</div>");
 
             // Skapar diven som ska röra sig mellan de olika städerna
             $(".cities").append("<div class=airplane></div>");
 
-            // För varje stad vi får som svar körs denna loopen och sköter animationen som rör sig mellan städerna
+            /* För varje stad vi får som svar körs denna loopen och sköter  animationen som rör sig mellan städerna */
             var airplane = $(".airplane")
             for (let i=0; i<arrCities.length; i++) {
                 airplane.animate({left: "+=0px"}, 1000);
-                airplane.animate({left: "+=155px"}, 1500,
+                airplane.animate({left: "+=78px"}, 1500,
                 function() {
-                    $(".travelResult").append("<div class=cities></<div>");
+                    $(".animation-box").append("<div class=cities></<div>");
                     // Lägger till paragrafen i sista "cities" diven
                     $(".cities").last().append("<p>" +  
                     arrCities[i] + "</p>");
@@ -175,7 +174,7 @@ function getDestinations() {
 }
 
 $(document).ready(function () {
-    // Döljer diven som håller svaret och animationen
+    // Döljer diven som håller svaret och animationen som default
     $(".travelResult").hide(); 
 
     // Döljer knappen för att visa/dölja formuläret
@@ -184,8 +183,8 @@ $(document).ready(function () {
     // Döljer loadern från början, visas när formuläret skickas
     $(".loader").hide();
 
-    // Ändrar texten i knappen för att visa/dölja formuläret beroende på om
-    // formuläret just nu är synligt eller inte
+    /* Ändrar texten i knappen för att visa/dölja formuläret beroende på om
+        formuläret just nu är synligt eller inte */
     $("#showForm").click(function() {
         if($("#parcelForm").is(":visible")){
             $("#showForm").text("Visa Formulär");
@@ -197,7 +196,8 @@ $(document).ready(function () {
 
     });
 
-    // När man klickar på "Skicka" i formuläret så körs funktionen getDestinations
+    /* När man klickar på "Skicka" i formuläret så körs funktionen 
+        getDestinations */
     $("#submitForm").click(getDestinations);
 
     // Hämtar ut dagens datum YYYY-MM-DD och gör om till en sträng

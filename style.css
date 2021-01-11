@@ -112,16 +112,56 @@ main > #showForm {
 }
 
 /* Diven som håller svaret från APIet */
-#content > main .travelResult {
-  background-color: white;
-  height: 300px;
-  position: relative;
-  display: flex;
+#content > main > .travelResult {
 }
 
-/* Paragraf för svaret från APIet */
-#content > main .travelResult > .travelDestinations {
-  color: purple;
+/* Där storyn om resan presenteras */
+#content > main .travelResult .story-box {
+  width: 100%;
+  margin-top: 30px;
+  padding: 5px;
+}
+
+/* Diven som håller i "cities" som skapas */
+#content > main .travelResult .animation.box {
+  width: 100%;
+}
+
+/* De olika städerna som genereras från APIet */
+#content > main > .travelResult > .animation-box > .cities {
+  width: 100px;
+  height: 100px;
+  background-image: url("images/pin.png");
+  display: inline-block;
+  margin: 75px 5px 25px 50px;
+  animation: fadeIn ease 1s;
+}
+
+/* Gör så att divarna utgår ifrån mitten */
+#content > main > .travelResult > .animation-box > .cities:nth-child(1) {
+  margin-left: 0px;
+}
+
+/* Fadein på städerna (cities) som presenteras */
+@keyframes fadeIn {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+
+/* Diven som flyttar sig mellan städerna */
+#content > main .airplane {
+  background-image: url("images/airplane.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100px;
+  height: 120px;
+  border-radius: 25px;
+  position: absolute;
+  margin-top: -150px;
 }
 
 /* Loader som visas medans formuläret väntar på svar */
@@ -159,47 +199,14 @@ main > #showForm {
   margin: 16px 0;
 }
 
-
-/* FLYTTA DETTA NÄR VI FIXAT FÄRDIGT MED ANIMATIONERNA */
-
-
-/* Där storyn om resan presenteras */
-#content > main .story-box {
-  width: 31%;
-}
-
-/* Diven som flyttar sig mellan städerna */
-#content > main .airplane {
-  background-image: url("images/airplane.png");
-  background-size: cover;
-  background-repeat: no-repeat;
-  width: 100px;
-  height: 120px;
-  border-radius: 25px;
-  position: absolute;
-  margin-top: -150px;
-}
-
-/* De olika städerna som genereras från APIet */
-#content > main .cities {
-  width: 100px;
-  height: 100px;
-  background-image: url("images/pin.png");
-  display: inline-block;
-  border-radius: 5px;
-  text-align: center;
-  margin: 100px 5px 0px 50px;
-  animation: fadeIn ease 1s;
-}
-
-/* Fadein på städerna som presenteras */
-@keyframes fadeIn {
-  0% {
-    opacity:0;
+@media screen and (max-width: 750px) {
+    /* Animationen för flygplanet */
+    #content > main .airplane {
+    display: none;
   }
-  100% {
-    opacity:1;
+
+  /* Diven som håller i cities */
+  #content > main .animation-box {
+    display: none;
   }
 }
-
-
