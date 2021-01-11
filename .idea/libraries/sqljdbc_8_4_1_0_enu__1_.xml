@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="sqljdbc_8.4.1.0_enu (1)">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Downloads/sqljdbc_8.4.1.0_enu (1).zip!/" />
+      <root url="jar://$USER_HOME$/Downloads/unirest-java-sr-example.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/Downloads/joda-time-2.10.8-dist.zip!/joda-time-2.10.8/src/example" />
+      <root url="jar://$USER_HOME$/Downloads/joda-time-2.10.8-dist.zip!/joda-time-2.10.8/src/main/java" />
+      <root url="jar://$USER_HOME$/Downloads/joda-time-2.10.8-dist.zip!/joda-time-2.10.8/src/test/java" />
+      <root url="jar://$USER_HOME$/Downloads/spark-master.zip!/spark-master/src/main/java" />
+      <root url="jar://$USER_HOME$/Downloads/spark-master.zip!/spark-master/src/test/java" />
+      <root url="jar://$USER_HOME$/Downloads/unirest-java-sr-example.zip!/unirest-java-sr-example/src/main/java" />
+    </SOURCES>
+  </library>
+</component>
