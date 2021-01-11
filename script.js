@@ -145,22 +145,7 @@ function getDestinations() {
             // Statiska delen av svaret då utgångsstad alltid är samma
             $(".story-box").append(
                 "<p> Resan börjar i " +
-                response.departureCities[0].slice(7,) + " där flyget avgår " +
-                "klockan " + response.departureTimes[0] + ". Du har " + 
-                response.waitingTimes[0] + " timmar kvar tills flyget " +
-                "lyfter, varför inte utforska " + 
-                response.departureCities[0].slice(7,) + "?</p>");
-
-            /*
-                arrivalCities: ["Europe/Paris"]
-                arrivalTimes: ["21:05"]
-                departureCities: ["Europe/Madrid"]
-                departureTimes: ["19:40"]
-                packageDeliveryDate: "20210122"
-                packageDeliveryTime: "18:00"
-                packageRemainingHours: "20"
-                waitingTimes: [13]
-            */     
+                response.departureCities[0].slice(7,) + ".</p>");
 
             // Gör om datumsträngen till ett format enlig "YYYY-MM-DD"
             var deliveryDate = response.packageDeliveryDate.slice(0, 4) + 
@@ -169,22 +154,13 @@ function getDestinations() {
 
             // Den dynamiska delen av svaret
             for (let i=0; i<arrCities.length; i++) {
-                if (i == arrCities.length-1) {
-                    $(".story-box").append(
-                        "<p> Resan avslutas slutligen i " + 
-                        arrCities[i] + " den " + 
-                        deliveryDate + " klockan " + 
-                        response.packageDeliveryTime + " för då är paketet " +
-                        "framme vid sin slutdestination. </p>");
-                }else {
-                    $(".story-box").append(
-                    "<p> Nästa flyg du tar landar i " + arrCities[i] + 
-                    " klockan " + response.arrivalTimes[i] + 
-                    " och sedan tar du ytterliggare ett flyg till " +
-                    + arrCities[i+1] + " som avgår klockan " + 
-                    response.arrivalTimes[i+1] + "</p>"); 
-                }
+                $(".story-box").append(
+                    "<p>Sedan åker du till " + arrCities[i] + ".</p>");
             }
+            $(".story-box").append(
+                "<p>Paketet är framme vid sin slutdestination klockan " 
+                + response.packageDeliveryTime + " den " +
+                deliveryDate +  ". </p>");
 
             // Skriver ut första staden som resan utgår ifrån
             $(".animation-box").append("<div class=cities>" + 
