@@ -1,7 +1,5 @@
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +12,13 @@ import java.util.List;
 
 public class Response {
     private String packageDeliveryTime = "";
+    private String packageDeliveryDate = "";
+    private String packageRemainingHours = "";
     private List departureCities;
     private List departureTimes;
     private List arrivalCities;
     private List arrivalTimes;
     private List waitingTimes;
-    private List<ShowError> errorMessages;
 
     public Response() {
         departureCities = new ArrayList();
@@ -27,16 +26,20 @@ public class Response {
         arrivalCities = new ArrayList();
         arrivalTimes = new ArrayList();
         waitingTimes = new ArrayList();
-        errorMessages = new ArrayList<>();
     }
 
-    public void addErrorMessage(int httpCode,String errorMessage) {
-        new ShowError(httpCode,errorMessage);
+    public void setPackageRemainingHours(String packageRemainingHours) {
+        this.packageRemainingHours = packageRemainingHours;
+    }
+
+    public void setPackageDeliveryDate(String packageDeliveryDate) {
+        this.packageDeliveryDate = packageDeliveryDate;
     }
 
     public void setPackageDeliveryTime(String packageDeliveryTime) {
-        this.packageDeliveryTime = packageDeliveryTime;
+        this.packageDeliveryDate = packageDeliveryTime;
     }
+
 
     public void addArrivalCity(String arrivalCity) {
         arrivalCities.add(arrivalCity);
@@ -62,27 +65,4 @@ public class Response {
         return departureTimes;
     }
 
-    public class ShowError extends HttpServlet {
-        private int httpCode;
-        private String errorMessage;
-
-        public ShowError(int httpCode, String errorMessage) {
-            this.httpCode = httpCode;
-            this.errorMessage = errorMessage;
-        }
-
-        // Method to handle GET method request.
-        public void doGet(HttpServletRequest request, HttpServletResponse response)
-                throws ServletException, IOException {
-
-            // Set error code and reason.
-            try {
-                System.out.println("error: " + errorMessage + " httpCode: " + httpCode);
-                response.sendError(httpCode, errorMessage);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }

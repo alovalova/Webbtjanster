@@ -3,6 +3,7 @@ import spark.Filter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
@@ -36,44 +37,28 @@ public class APIRunner {
             String arrivalCountry = request.queryParams("arrivalCountry");
             String arrivalZip = request.queryParams("arrivalZip");
 
-            PackageRaceRunner packageRaceRunner = new PackageRaceRunner();
-            packageRaceRunner.run(packageDepartureDate, departureCountry, arrivalCountry, departureZip, arrivalZip);
-
             response.type("application/json");
-
+            PackageRaceRunner packageRaceRunner = new PackageRaceRunner();
             APIController controller = packageRaceRunner.getController();
+            if (packageRaceRunner.run(packageDepartureDate, departureCountry, arrivalCountry, departureZip, arrivalZip)){
+                if (controller.isResponseDone()) {
+                    Response res = controller.getRes();
+                    response.body(runner.gson.toJson(res));
+                    response.status(200);
+                }else{
+                    response.status(controller.getHttpCode());
+                    System.out.println(response.status());
+                    response.body(runner.gson.toJson(controller.getErrorMessages()));
+                }
+            }else{
+                System.out.println("PackageRunner.run is false");
+                response.status(controller.getHttpCode());
+                System.out.println(response.status());
+                response.body(runner.gson.toJson(controller.getErrorMessages()));
+            }
 
-//            ShowError error = new ShowError(404,"stirng").doGet(response.body());
-            Response res = controller.getRes();
-            response.body(runner.gson.toJson(res));
-
-            return response.body();
-
+            return response;
         });
     }
-    public static class ShowError extends HttpServlet {
-        private int httpCode;
-        private String errorMessage;
-
-        public ShowError(int httpCode, String errorMessage) {
-            this.httpCode = httpCode;
-            this.errorMessage = errorMessage;
-        }
-
-        // Method to handle GET method request.
-        public void doGet(HttpServletResponse response)
-                throws ServletException, IOException {
-
-            // Set error code and reason.
-            try {
-                System.out.println("error: " + errorMessage + " httpCode: " + httpCode);
-                response.sendError(httpCode, errorMessage);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
 
 }
