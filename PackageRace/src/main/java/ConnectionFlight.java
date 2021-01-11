@@ -1,4 +1,3 @@
-import com.google.gson.Gson;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -32,7 +31,6 @@ public class ConnectionFlight {
     private String firstPossibleDepartureTime;
     private String firstPossibleDepartureDate;
     private int duration;
-    private Gson gson;
     private ArrayList<String> destinationList;
     private String printClassMsg = "ConnectionFlight.";
 
@@ -58,7 +56,6 @@ public class ConnectionFlight {
         this.controller = controller;
         this.firstPossibleDepartureTime = "08:30";
         this.firstPossibleDepartureDate = departureDate;
-        gson = new Gson();
         destinationList = new ArrayList<>();
         controller.createAmadeusAuthentication();
         token = controller.getToken();
@@ -78,7 +75,6 @@ public class ConnectionFlight {
         this.controller = controller;
         this.firstPossibleDepartureTime = previousFlight.getArrivalTime();
         this.firstPossibleDepartureDate = previousFlight.getArrivalDate();
-        gson = new Gson();
         destinationList = new ArrayList<>();
         token = controller.getToken();
 
@@ -109,7 +105,7 @@ public class ConnectionFlight {
                 if (flightData.has("errors")) {
                     try {
                         this.departureDate = getNextDate(departureDate);
-                        System.out.println("ConnectionFlight.SearchDestinations.Errors.getNextDate: "+ departureDate);
+//                        System.out.println("ConnectionFlight.SearchDestinations.Errors.getNextDate: "+ departureDate);
                     } catch (ParseException parseException) {
                         return false;
                     }
@@ -131,7 +127,6 @@ public class ConnectionFlight {
                 return false;
             }
         }
-        System.out.println("All nextDate is finished");
         return false;
     }
 
@@ -160,8 +155,7 @@ public class ConnectionFlight {
                 return true;
             }
         }
-        controller.createErrorMessageResponse(404, "Flights Not found");
-        return false;
+        return true;
     }
 
 
@@ -212,7 +206,6 @@ public class ConnectionFlight {
                 }
 
             } catch (Exception ignored) {
-                return false;
             }
         }
 
