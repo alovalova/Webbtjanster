@@ -98,7 +98,6 @@ public class APIController {
             remainingHours = aPackage.getTransitTime();
         } else {
             createErrorMessageResponse(400, "Invalid values");
-            return false;
         }
         return true;
     }
@@ -118,18 +117,19 @@ public class APIController {
 
         ConnectionFlight startFlight = new ConnectionFlight("MAD", packageDepartureDate, this); //startFlight skapas med origin mad och depdate som paketet
         if (startFlight.searchDestination(packageDepartureDate)) {
-            //startFlight får ankomstort och ankomsttid
+             //startFlight får ankomstort och ankomsttid
             System.out.print("\n" + printClassMsg + "startFlying: startFlight's values: ");
             System.out.print("departureTime: " + startFlight.getDepartureTime());
             System.out.print(" departureDate: " + startFlight.getDepartureDate());
             System.out.print(" arrivalTime: " + startFlight.getArrivalTime());
             System.out.print(" arrivalDate: " + startFlight.getArrivalDate());
-        } else {
+        }else{
+
             return false;
         }
-        if (checkIfTimeIsLeft(aPackage, startFlight)) {
+        if (checkIfTimeIsLeft(aPackage, startFlight)){
             return true;
-        } else {
+        }else{
             return false;
         }
     }
@@ -346,9 +346,9 @@ public class APIController {
             res.setPackageRemainingHours(Integer.toString(remainingHours));
             responseDone = true;
             return true;
-        } else {
+        }else{
             responseDone = false;
-            if (createErrorMessageResponse(404, "Flights not found")) {
+            if (createErrorMessageResponse(404,"Flights not found")){
                 return false;
             }
             return false;
@@ -365,10 +365,14 @@ public class APIController {
         JSONParser jsonParser = new JSONParser();
         String airportName = "";
         try {
-            org.json.simple.JSONObject jsonObject = (org.json.simple.JSONObject) jsonParser.parse(new FileReader("files/data/" + airportCode.toLowerCase() + ".json"));
-            airportName = jsonObject.get("city").toString();
+            org.json.simple.JSONObject jsonObject = (org.json.simple.JSONObject) jsonParser.parse(new FileReader("files/airportTimezones.json"));
+            airportName = jsonObject.get(airportCode).toString();
 
-        } catch (ParseException | IOException e) {
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
