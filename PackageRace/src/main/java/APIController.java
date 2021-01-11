@@ -14,9 +14,10 @@ import org.json.simple.parser.ParseException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.rmi.server.RMIServerSocketFactory;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Controller class
@@ -39,9 +40,12 @@ public class APIController {
 
     private Gson gson;
     private Response res;
+    private List<String> errorMessages;
+    private int httpCode;
 
     public APIController() {
         gson = new Gson();
+        errorMessages = new ArrayList<>();
     }
 
 
@@ -50,7 +54,7 @@ public class APIController {
      *
      * @param aPackage the package which is to be checked when to be delivered.
      */
-    public void createPostNordAPIGetRequest(Package aPackage) {
+    public boolean createPostNordAPIGetRequest(Package aPackage) {
         Unirest.config().defaultBaseUrl("http://api2.postnord.com/rest/transport");
         HttpResponse<JsonNode> res = null;
 
@@ -87,12 +91,14 @@ public class APIController {
             aPackage.setPostNordResponse(true);
         } catch (Exception e) {
             createErrorMessageResponse(400, "Invalid values");
+            return false;
         }
         if (aPackage.postNordResponseOk()) {
             remainingHours = aPackage.getTransitTime();
         } else {
             createErrorMessageResponse(400, "Invalid values");
         }
+        return true;
     }
 
     /**
@@ -100,7 +106,7 @@ public class APIController {
      *
      * @param aPackage the package racing with the flight
      */
-    public void startFlying(Package aPackage) {
+    public boolean startFlying(Package aPackage) {
         this.aPackage = aPackage;
         remainingHours = aPackage.getTransitTime();
         flights = new Flights();
@@ -108,13 +114,22 @@ public class APIController {
         String packageDepartureDate = aPackage.getPackageDepartureDate();
 
         ConnectionFlight startFlight = new ConnectionFlight("MAD", packageDepartureDate, this); //startFlight skapas med origin mad och depdate som paketet
-        startFlight.searchDestination(packageDepartureDate); //startFlight får ankomstort och ankomsttid
-        System.out.print("\n" + printClassMsg + "startFlying: startFlight's values: ");
-        System.out.print("departureTime: " + startFlight.getDepartureTime());
-        System.out.print(" departureDate: " + startFlight.getDepartureDate());
-        System.out.print(" arrivalTime: " + startFlight.getArrivalTime());
-        System.out.print(" arrivalDate: " + startFlight.getArrivalDate());
-        checkIfTimeIsLeft(aPackage, startFlight);
+        if (startFlight.searchDestination(packageDepartureDate)) {
+             //startFlight får ankomstort och ankomsttid
+            System.out.print("\n" + printClassMsg + "startFlying: startFlight's values: ");
+            System.out.print("departureTime: " + startFlight.getDepartureTime());
+            System.out.print(" departureDate: " + startFlight.getDepartureDate());
+            System.out.print(" arrivalTime: " + startFlight.getArrivalTime());
+            System.out.print(" arrivalDate: " + startFlight.getArrivalDate());
+        }else{
+
+            return false;
+        }
+        if (checkIfTimeIsLeft(aPackage, startFlight)){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /**
@@ -146,14 +161,16 @@ public class APIController {
      * @param aPackage the Package object racing with the flights
      * @param flight   the last flight in the race
      */
-    public void checkIfTimeIsLeft(Package aPackage, ConnectionFlight flight) {
+    public boolean checkIfTimeIsLeft(Package aPackage, ConnectionFlight flight) {
         if (timeIsLeft(aPackage, flight)) {
             System.out.println(printClassMsg + "checkIfTimeIsLeft: time is left");
             flights.addFlight(flight);
             continueFlying(aPackage, flight);
+            return true;
         } else {
             System.out.println("\n" + printClassMsg + "checkIfTimeIsLeft: time is not left");
             createResponse();
+            return false;
         }
     }
 
@@ -286,16 +303,18 @@ public class APIController {
      *
      * @param errorMessage the message from Post Nord API
      */
-    public void createErrorMessageResponse(int httpCode, String errorMessage) {
-        res = new Response();
-        res.addErrorMessage(httpCode, errorMessage);
-        responseDone = true;
+    public boolean createErrorMessageResponse(int httpCode, String errorMessage) {
+        responseDone = false;
+        System.out.println("ErrorMessage: " + errorMessage);
+        this.httpCode = httpCode;
+        errorMessages.add(errorMessage);
+        return true;
     }
 
     /**
      * Creates a response object to respond to the client
      */
-    public void createResponse() {
+    public boolean createResponse() {
         if (flights.getFlights().get(0) != null) {
             res = new Response();
             System.out.println(printClassMsg + "package DeliveryTime: " + aPackage.getPackageArrivalTime() + " DeliveryDate: " + aPackage.getPackageArrivalDate());
@@ -307,6 +326,7 @@ public class APIController {
                 res.addArrivalCity(arrivalCity);
                 res.addArrivalTime(flights.getFlights().get(i).getArrivalTime());
                 res.addWaitingTimes(flights.getFlights().get(i).getWaitingTime());
+
                 System.out.println("Origin: " + departureCity
                         + " DepartureTime: " + flights.getFlights().get(i).getDepartureTime() + " DepartureDate: " + flights.getFlights().get(i).getDepartureDate()
                         + " destination: " + arrivalCity + " arrivalTime: " + flights.getFlights().get(i).getArrivalTime()
@@ -315,9 +335,16 @@ public class APIController {
             }
 
             res.setPackageDeliveryTime(aPackage.getPackageArrivalTime());
+            res.setPackageDeliveryDate(aPackage.getPackageArrivalDate());
+            res.setPackageRemainingHours(Integer.toString(remainingHours));
             responseDone = true;
+            return true;
         }else{
-            createErrorMessageResponse(404,"Flights not found");
+            responseDone = false;
+            if (createErrorMessageResponse(404,"Flights not found")){
+                return false;
+            }
+            return false;
         }
     }
 
@@ -383,4 +410,11 @@ public class APIController {
         return res;
     }
 
+    public int getHttpCode() {
+        return httpCode;
+    }
+
+    public List<String> getErrorMessages() {
+        return errorMessages;
+    }
 }
