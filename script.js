@@ -37,17 +37,30 @@ function getDestinations() {
     }
     if (form_data.arrivalAddress === "") {
     $("#arrivalAddress").text("Du måste ange en adress!");
-    formValidate = false
+    formValidate = false;
     }
     else {
     $("#arrivalAddress").text("");
     }
     if (form_data.arrivalZip === "") {
     $("#arrivalZip").text("Du måste ange ett postnummer!");
-    formValidate = false
+    formValidate = false;
     }
     else {
     $("#arrivalZip").text("");
+    }
+
+    // Hämtar ut dagens datum YYYY-MM-DD och gör om till en sträng
+    let date = new Date().toISOString().substring(0, 10);
+    // Departure date som väljs av användaren
+    let d1 = document.querySelector("#departureDate").value;
+    // Dagens datum
+    let d2 = date;
+    // Om valt datum är tidigare än dagens datum genereras ett felmeddelande
+    if (d1 < d2) {
+        $("#formFailed").text("Du kan inte resa bakåt i tiden..");
+        $("#formFailed").show();
+        formValidate = false;
     }
 
     // Om formuläret validerar görs anropet till APIet 
@@ -64,32 +77,32 @@ function getDestinations() {
             headers: {"Accept": "application/json"},
             crossOrigin: true,
             // Om förfrågan till APIet lyckas
-            success: function() {
-                $("#formSent").text("Paket skickat!");
-                $("#formSent").show();
-                // Visas i tre sekunder, bekräftelse på att formuläret har skickats
-                setTimeout(function () {
-                $("#formSent").fadeOut("fast");
-                }, 2000); // Tid i millisekunder
-                // Visar diven som håller svaret och animationen
-                $(".travelResult").show(); 
-            },
             statusCode: {
                 200: function() {
-                  console.log("Success 200");
+                    console.log("Success 200");
+                    $("#formSent").text("Paket skickat!");
+                    $("#formSent").show();
+                    // Visas i tre sekunder, bekräftelse på att formuläret har skickats
+                    setTimeout(function () {
+                    $("#formSent").fadeOut("fast");
+                    }, 2000); // Tid i millisekunder
+                    // Visar diven som håller svaret och animationen
+                    $(".travelResult").show(); 
                 },
+                // Om indatan är felaktig till post-apiet
                 400: function() {
                     console.log("Invalid Input");
+                    $('#formFailed').text("Kontrollera postnummer");
+                    $("#formFailed").show();
+                    $(".loader").hide();
                 },
+                // Om Inga flyg hittas
                 404: function() {
                     console.log("Flights not found")
+                    $('#formFailed').text("Inga flyg hittades, försök igen!");
+                    $("#formFailed").show();
+                    $(".loader").hide();
                 },
-            },
-            // Om något i förfrågan är felaktigt (eller servern inte svarar) 
-            error: function () {
-                $('#formFailed').text("Kontrollera postnummer");
-                $("#formFailed").show();
-                $(".loader").hide();
             }
         })
 
@@ -162,21 +175,24 @@ function getDestinations() {
 
             /* För varje stad vi får som svar körs denna loopen och sköter
                 animationen som rör sig mellan städerna */ 
-            var airplane = $(".airplane")
+            var airplane = $(".airplane");
             for (let i=0; i<arrCities.length; i++) {
                 airplane.animate({left: "+=0px"}, 1000);
-                airplane.animate({left: "+=78px"}, 1500,
+                airplane.animate({right: "+=78px"}, 1500,
                 function() {
                     $(".animation-box").append("<div class=cities></<div>");
                     // Lägger till paragrafen i sista "cities" diven
                     $(".cities").last().append("<p>" +  
                     arrCities[i] + "</p>");
-                })
+                });
                 airplane.animate({left: "+=0"}, 500);
             }
         });
     }
 }
+            
+        
+    
 
     /*
         {packageDeliveryTime: "18:00", departureCities: Array(1), departureTimes: Array(1), arrivalCities: Array(1), arrivalTimes: Array(1), …}
@@ -219,7 +235,7 @@ $(document).ready(function () {
     $("#submitForm").click(getDestinations);
 
     // Hämtar ut dagens datum YYYY-MM-DD och gör om till en sträng
-    var date = new Date().toISOString().substring(0, 10);
+    let date = new Date().toISOString().substring(0, 10);
     // Fyller i datumfältet automatiskt med dagens datum
     document.querySelector("#departureDate").value = date;
 });
