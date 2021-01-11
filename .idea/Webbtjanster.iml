@@ -11,5 +11,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="com.google.code.gson:gson:2.8.6" level="project" />
     <orderEntry type="library" name="unirest-java-3.11.09" level="project" />
+    <orderEntry type="library" name="langx-java-3.2.3" level="project" />
+    <orderEntry type="library" name="sqljdbc_8.4.1.0_enu (1)" level="project" />
   </component>
 </module>

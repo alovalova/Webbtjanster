@@ -22,6 +22,7 @@ public class PackageRaceRunner {
      * @param departureCountry
      * @param departureZip
      * @param packageDepartureDate
+     * @return
      */
     public boolean run(String packageDepartureDate, String departureCountry, String arrivalCountry, String departureZip, String arrivalZip) {
         aPackage = new Package(packageDepartureDate, departureCountry, arrivalCountry, departureZip, arrivalZip);

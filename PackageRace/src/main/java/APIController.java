@@ -53,6 +53,7 @@ public class APIController {
      * Call to Post Nord's API to get delivery time and date for the package and populates the package with the delivery values
      *
      * @param aPackage the package which is to be checked when to be delivered.
+     * @return true if the call is successful
      */
     public boolean createPostNordAPIGetRequest(Package aPackage) {
         Unirest.config().defaultBaseUrl("http://api2.postnord.com/rest/transport");
@@ -106,6 +107,7 @@ public class APIController {
      * Creates a Flight object for the first flight and a Flights object
      *
      * @param aPackage the package racing with the flight
+     * @return true if there is time left after the flight
      */
     public boolean startFlying(Package aPackage) {
         this.aPackage = aPackage;
@@ -148,6 +150,7 @@ public class APIController {
      * Check that a Flight-objects variables are assigned
      *
      * @param flight the Flight object to check
+     * @return true if all parameters are assigned
      */
     public boolean checkFlight(ConnectionFlight flight) {
         return flight.getDepartureTime() != null &&
@@ -160,6 +163,7 @@ public class APIController {
      *
      * @param aPackage the Package object racing with the flights
      * @param flight   the last flight in the race
+     * @return true if there is time left after the flight
      */
     public boolean checkIfTimeIsLeft(Package aPackage, ConnectionFlight flight) {
         if (timeIsLeft(aPackage, flight)) {
@@ -179,7 +183,7 @@ public class APIController {
      *
      * @param flight   the last flight in the race
      * @param aPackage te Package racing with the flights
-     * @return
+     * @return true if there is time left
      */
     public boolean timeIsLeft(Package aPackage, ConnectionFlight flight) {
         System.out.print("\n" + printClassMsg + "timeIsLeft: flight's values: ");
@@ -282,7 +286,7 @@ public class APIController {
      * @param days
      * @param hours
      * @param minutes
-     * @return
+     * @return days, hours and minutes calculated as hours
      */
     public int countWaitingTime(int days, int hours, int minutes) {
         int transitHours = 0;
@@ -302,6 +306,7 @@ public class APIController {
      * Creates an error message from a message from the Post Nord API
      *
      * @param errorMessage the message from Post Nord API
+     * @return true when an error message is created
      */
     public boolean createErrorMessageResponse(int httpCode, String errorMessage) {
         responseDone = false;
@@ -313,6 +318,8 @@ public class APIController {
 
     /**
      * Creates a response object to respond to the client
+     *
+     * @return true if a Response object is created
      */
     public boolean createResponse() {
         if (flights.getFlights().get(0) != null) {
@@ -352,6 +359,7 @@ public class APIController {
      * Translates an IATA code into the corresponding city
      *
      * @param airportCode the IATA code
+     * @return the name/location of the airport
      */
     public String getAirPortName(String airportCode) {
         JSONParser jsonParser = new JSONParser();
@@ -373,8 +381,8 @@ public class APIController {
     public void createAmadeusAuthentication() {
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
 
-        String clientID = "7bWW1kXqcIQka4v4APmhWYG7EpMPS9OT";
-        String clientSecretKey = "QsPUgYhP0VDWGObN";
+        String clientID = "kGBnleJGgXG0nGCrUL305XPVYTtg9pOq";
+        String clientSecretKey = "0vrTAuAHBQmVmGQQ";
 
         HttpResponse<JsonNode> tokenResponse = Unirest.post("/security/oauth2/token")
                 .field("grant_type", "client_credentials")
