@@ -61,12 +61,21 @@ public class Package {
         return packageDepartureDate;
     }
 
+
+
     public String getPackageArrivalTime() {
         return packageArrivalTime;
     }
 
     public void setPackageArrivalTime(String packageArrivalTime) {
         this.packageArrivalTime = packageArrivalTime;
+    }
+
+    public String getPackageArrivalDate() {
+        return packageArrivalDate;
+    }
+    public void setPackageArrivalDate(String packageArrivalDate) {
+        this.packageArrivalDate = packageArrivalDate;
     }
 
     public String getDepartureCountry() {
@@ -83,14 +92,6 @@ public class Package {
 
     public String getArrivalZip() {
         return arrivalZip;
-    }
-
-    public void setPackageArrivalDate(String packageArrivalDate) {
-        this.packageArrivalDate = packageArrivalDate;
-    }
-
-    public String getPackageArrivalDate() {
-        return packageArrivalDate;
     }
 
     /**
