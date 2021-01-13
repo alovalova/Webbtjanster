@@ -251,8 +251,8 @@ public class APIController {
         String arrivalTime = previousFlight.getArrivalTime();
         String arrivalDate = previousFlight.getArrivalDate();
 
-        arrived.append(arrivalDate + " " + arrivalTime);
-        departed.append(departureDate + " " + departureTime);
+        arrived.append(arrivalDate).append(" ").append(arrivalTime);
+        departed.append(departureDate).append(" ").append(departureTime);
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -365,14 +365,10 @@ public class APIController {
         JSONParser jsonParser = new JSONParser();
         String airportName = "";
         try {
-            org.json.simple.JSONObject jsonObject = (org.json.simple.JSONObject) jsonParser.parse(new FileReader("files/airportTimezones.json"));
-            airportName = jsonObject.get(airportCode).toString();
+            org.json.simple.JSONObject jsonObject = (org.json.simple.JSONObject) jsonParser.parse(new FileReader("files/data/"+airportCode+".json"));
+            airportName = jsonObject.get("city").toString();
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (ParseException | IOException e) {
             e.printStackTrace();
         }
 
@@ -384,6 +380,13 @@ public class APIController {
      */
     public void createAmadeusAuthentication() {
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
+        // old id: kGBnleJGgXG0nGCrUL305XPVYTtg9pOq
+        // old secret: 0vrTAuAHBQmVmGQQ
+        // old defaultBaseUrl: https://test.api.amadeus.com/v1"
+
+        // new id: Mtq4XdUQYVPlbMjGps4Tw2xUe035FGRO
+        // new Id: Ja3eDbOJRR6SDCpT
+        // new defaultBaseUrl: https://api.amadeus.com
 
         String clientID = "kGBnleJGgXG0nGCrUL305XPVYTtg9pOq";
         String clientSecretKey = "0vrTAuAHBQmVmGQQ";

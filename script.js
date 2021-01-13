@@ -19,7 +19,7 @@ function getDestinations() {
     form_data.arrivalAddress = $("input[name=arrivalAddress]").val();
     form_data.departureDate = $("input[name=departureDate]").val();
 
-    /* Validering för formuläret. Om ett fält är tomt, skriv ut felmeddelande 
+    /* Validering för formuläret. Om ett fält är tomt, skriv ut felmeddelande
         och sätt formValidate till false så att formuläret inte skickas iväg */
     if (form_data.departureAddress == "") {
     $("#departureAddress").text("Du måste ange en adress!");
@@ -63,14 +63,14 @@ function getDestinations() {
         formValidate = false;
     }
 
-    // Om formuläret validerar görs anropet till APIet 
+    // Om formuläret validerar görs anropet till APIet
     if (formValidate == true) {
         // Om formuläret validerat visas loadern medans vi väntar på svar
         $(".loader").show();
         $.ajax({
             method: "GET",
             // Till en route på vår server där vi kommer åt APIet
-            url: "http://localhost:5000/v1/getDestinations",
+            url: "http://localhost:9999/v1/getDestinations",
             // Datan från formuläret skickas
             data: form_data,
             // Berättar för APIet att vi vill ha JSON tillbaka
@@ -87,7 +87,7 @@ function getDestinations() {
                     $("#formSent").fadeOut("fast");
                     }, 2000); // Tid i millisekunder
                     // Visar diven som håller svaret och animationen
-                    $(".travelResult").show(); 
+                    $(".travelResult").show();
                 },
                 // Om indatan är felaktig till post-apiet
                 400: function() {
@@ -127,10 +127,10 @@ function getDestinations() {
 
             // Visar upp hela svaret vi får i consolen
             console.log(response);
-            
+
             /* Tar bort regionen som skrivs ut innan staden och lägger till
                 i en lista som sedan kan itereras över.
-                Svaret vi får från början ser ut såhär: "Europe/Madrid" 
+                Svaret vi får från början ser ut såhär: "Europe/Madrid"
             */
             var arrCities = []
             for (let i=0; i<response.arrivalCities.length; i++) {
@@ -148,8 +148,8 @@ function getDestinations() {
                 response.departureCities[0].slice(7,) + ".</p>");
 
             // Gör om datumsträngen till ett format enlig "YYYY-MM-DD"
-            var deliveryDate = response.packageDeliveryDate.slice(0, 4) + 
-            "-" + response.packageDeliveryDate.slice(4,6) + "-" + 
+            var deliveryDate = response.packageDeliveryDate.slice(0, 4) +
+            "-" + response.packageDeliveryDate.slice(4,6) + "-" +
             response.packageDeliveryDate.slice(6,9);
 
             // Den dynamiska delen av svaret
@@ -158,19 +158,19 @@ function getDestinations() {
                     "<p>Sedan åker du till " + arrCities[i] + ".</p>");
             }
             $(".story-box").append(
-                "<p>Paketet är framme vid sin slutdestination klockan " 
+                "<p>Paketet är framme vid sin slutdestination klockan "
                 + response.packageDeliveryTime + " den " +
                 deliveryDate +  ". </p>");
 
             // Skriver ut första staden som resan utgår ifrån
-            $(".animation-box").append("<div class=cities>" + 
+            $(".animation-box").append("<div class=cities>" +
             response.departureCities[0].slice(7,) + "</div>");
 
             // Skapar diven som ska röra sig mellan de olika städerna
             $(".cities").append("<div class=airplane></div>");
 
             /* För varje stad vi får som svar körs denna loopen och sköter
-                animationen som rör sig mellan städerna */ 
+                animationen som rör sig mellan städerna */
             var airplane = $(".airplane");
             for (let i=0; i<arrCities.length; i++) {
                 airplane.animate({marginTop: "+=0px"}, 1000);
@@ -178,7 +178,7 @@ function getDestinations() {
                 function() {
                     $(".animation-box").append("<div class=cities></<div>");
                     // Lägger till paragrafen i sista "cities" diven
-                    $(".cities").last().append("<p>" +  
+                    $(".cities").last().append("<p>" +
                     arrCities[i] + "</p>");
                 });
                 airplane.animate({left: "+=0"}, 500);
@@ -190,7 +190,7 @@ function getDestinations() {
 // Detta körs när hela sidan har laddats in
 $(document).ready(function () {
     // Döljer diven som håller svaret och animationen som default
-    $(".travelResult").hide(); 
+    $(".travelResult").hide();
 
     // Döljer knappen för att visa/dölja formuläret
     $("#showForm").hide();
@@ -211,7 +211,7 @@ $(document).ready(function () {
 
     });
 
-    /* När man klickar på "Skicka" i formuläret så körs funktionen 
+    /* När man klickar på "Skicka" i formuläret så körs funktionen
         getDestinations */
     $("#submitForm").click(getDestinations);
 

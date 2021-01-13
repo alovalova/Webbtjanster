@@ -59,7 +59,6 @@ public class ConnectionFlight {
         this.firstPossibleDepartureTime = "08:30";
         this.firstPossibleDepartureDate = departureDate;
         gson = new Gson();
-        destinationList = new ArrayList<>();
         controller.createAmadeusAuthentication();
         token = controller.getToken();
     }
@@ -79,7 +78,6 @@ public class ConnectionFlight {
         this.firstPossibleDepartureTime = previousFlight.getArrivalTime();
         this.firstPossibleDepartureDate = previousFlight.getArrivalDate();
         gson = new Gson();
-        destinationList = new ArrayList<>();
         token = controller.getToken();
 
         System.out.print("\n" + printClassMsg + "ConnectionFlight: flight's values: ");
@@ -93,6 +91,9 @@ public class ConnectionFlight {
      * Search a destination for a ConnectionFlight object from a given origin
      */
     public boolean searchDestinations() {
+        //https://test.api.amadeus.com/v1
+        //https://api.amadeus.com
+        destinationList = new ArrayList<>();
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
         for (int i = 5; i >= nextDateIndex; nextDateIndex++) {
             try {
@@ -160,7 +161,6 @@ public class ConnectionFlight {
                 return true;
             }
         }
-        controller.createErrorMessageResponse(404, "Flights Not found");
         return false;
     }
 
@@ -171,12 +171,15 @@ public class ConnectionFlight {
      * @return true if the flight to the destination is possible to connect to
      */
     public boolean checkNewDestinationAndDepartureTime() {
+        //https://test.api.amadeus.com/v2
+        //new API: https://api.amadeus.com
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v2");
-        System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: DepartureDate: " + departureDate + " origin: " + origin);
+//        System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: DepartureDate: " + departureDate + " origin: " + origin);
 
 
         for (int i = 0; i < destinationList.size(); i++) {
             try {
+                System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: DepartureDate: " + departureDate);
                 System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: origin: " + origin);
                 System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: destination: " + destinationList.get(i));
 
@@ -201,7 +204,7 @@ public class ConnectionFlight {
 
                 setDepartureDateAndTime(departure.getString("at"));
                 setArrivalDateAndTime(arrival.getString("at"));
-
+                System.out.println("comparing departureTimes");
                 if (!compareDepartureTimes()) {
                     System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: compareDepartureTimes is false");
                 } else {
@@ -212,7 +215,6 @@ public class ConnectionFlight {
                 }
 
             } catch (Exception ignored) {
-                return false;
             }
         }
 
