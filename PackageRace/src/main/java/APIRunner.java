@@ -22,7 +22,7 @@ public class APIRunner {
      * Main method that starts the server and runs the API
      */
     public static void main(String[] args) {
-        port(9999);
+        port(5000);
         APIRunner runner = new APIRunner();
         after((Filter) (request, response) -> {
             response.header("Access-Control-Allow-Origin", "*");

@@ -11,7 +11,6 @@ import org.joda.time.Hours;
 import org.joda.time.Minutes;
 import org.json.simple.parser.ParseException;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -115,7 +114,7 @@ public class APIController {
 
         String packageDepartureDate = aPackage.getPackageDepartureDate();
 
-        ConnectionFlight startFlight = new ConnectionFlight("MAD", packageDepartureDate, this); //startFlight skapas med origin mad och depdate som paketet
+        ConnectionFlight startFlight = new ConnectionFlight("MAD", packageDepartureDate, this);
         if (startFlight.searchDestination(packageDepartureDate)) {
              //startFlight får ankomstort och ankomsttid
             System.out.print("\n" + printClassMsg + "startFlying: startFlight's values: ");
@@ -301,7 +300,6 @@ public class APIController {
         return transitHours;
     }
 
-
     /**
      * Creates an error message from a message from the Post Nord API
      *
@@ -319,9 +317,8 @@ public class APIController {
     /**
      * Creates a response object to respond to the client
      *
-     * @return true if a Response object is created
      */
-    public boolean createResponse() {
+    public void createResponse() {
         if (flights.getFlights().get(0) != null) {
             res = new Response();
             System.out.println(printClassMsg + "package DeliveryTime: " + aPackage.getPackageArrivalTime() + " DeliveryDate: " + aPackage.getPackageArrivalDate());
@@ -345,13 +342,10 @@ public class APIController {
             res.setPackageDeliveryDate(aPackage.getPackageArrivalDate());
             res.setPackageRemainingHours(Integer.toString(remainingHours));
             responseDone = true;
-            return true;
         }else{
             responseDone = false;
             if (createErrorMessageResponse(404,"Flights not found")){
-                return false;
             }
-            return false;
         }
     }
 
@@ -379,25 +373,28 @@ public class APIController {
      * Makes a authentication call to the Amadeus API and receive a token
      */
     public void createAmadeusAuthentication() {
-        Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
+        // old defaultBaseUrl: https://test.api.amadeus.com/v1"
+        // new defaultBaseUrl: https://api.amadeus.com/v1
+
+        Unirest.config().defaultBaseUrl("https://api.amadeus.com/v1");
         // old id: kGBnleJGgXG0nGCrUL305XPVYTtg9pOq
         // old secret: 0vrTAuAHBQmVmGQQ
-        // old defaultBaseUrl: https://test.api.amadeus.com/v1"
 
         // new id: Mtq4XdUQYVPlbMjGps4Tw2xUe035FGRO
         // new Id: Ja3eDbOJRR6SDCpT
-        // new defaultBaseUrl: https://api.amadeus.com
 
-        String clientID = "kGBnleJGgXG0nGCrUL305XPVYTtg9pOq";
-        String clientSecretKey = "0vrTAuAHBQmVmGQQ";
+
+        String clientID = "Mtq4XdUQYVPlbMjGps4Tw2xUe035FGRO";
+        String clientSecretKey = "Ja3eDbOJRR6SDCpT";
 
         HttpResponse<JsonNode> tokenResponse = Unirest.post("/security/oauth2/token")
                 .field("grant_type", "client_credentials")
                 .field("client_id", clientID)
                 .field("client_secret", clientSecretKey)
                 .asJson();
-
+        System.out.println(tokenResponse.getBody());
         token = (String) tokenResponse.getBody().getObject().get("access_token");
+
     }
 
     /**

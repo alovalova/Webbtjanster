@@ -79,7 +79,6 @@ public class ConnectionFlight {
         this.firstPossibleDepartureDate = previousFlight.getArrivalDate();
         gson = new Gson();
         token = controller.getToken();
-
         System.out.print("\n" + printClassMsg + "ConnectionFlight: flight's values: ");
         System.out.print("departureTime: " + previousFlight.getDepartureTime());
         System.out.print(" departureDate: " + previousFlight.getDepartureDate());
@@ -94,7 +93,7 @@ public class ConnectionFlight {
         //https://test.api.amadeus.com/v1
         //https://api.amadeus.com
         destinationList = new ArrayList<>();
-        Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
+        Unirest.config().defaultBaseUrl("https://api.amadeus.com/v1");
         for (int i = 5; i >= nextDateIndex; nextDateIndex++) {
             try {
                 HttpResponse<JsonNode> flightDestinationResponse = Unirest.get("/shopping/flight-destinations")
@@ -110,7 +109,7 @@ public class ConnectionFlight {
                 if (flightData.has("errors")) {
                     try {
                         this.departureDate = getNextDate(departureDate);
-                        System.out.println("ConnectionFlight.SearchDestinations.Errors.getNextDate: "+ departureDate);
+                        System.out.println("ConnectionFlight.SearchDestinations.Errors.getNextDate: " + departureDate);
                     } catch (ParseException parseException) {
                         return false;
                     }
@@ -123,7 +122,7 @@ public class ConnectionFlight {
                         }
                         System.out.println("ConnectionFlight.SearchDestinations.Origin: " + origin + " destinationListSize: " + destinationList.size());
                         return true;
-                    }else{
+                    } else {
                         return false;
                     }
                 }
@@ -132,7 +131,7 @@ public class ConnectionFlight {
                 return false;
             }
         }
-        System.out.println("All nextDate is finished");
+        System.out.println("All nextDates are finished");
         return false;
     }
 
@@ -173,7 +172,7 @@ public class ConnectionFlight {
     public boolean checkNewDestinationAndDepartureTime() {
         //https://test.api.amadeus.com/v2
         //new API: https://api.amadeus.com
-        Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v2");
+        Unirest.config().defaultBaseUrl("https://api.amadeus.com/v2");
 //        System.out.println(printClassMsg + "checkNewDestinationAndDepartureTime: DepartureDate: " + departureDate + " origin: " + origin);
 
 
