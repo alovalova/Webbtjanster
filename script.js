@@ -130,7 +130,7 @@ function getDestinations() {
             
             /* Tar bort regionen som skrivs ut innan staden och lägger till
                 i en lista som sedan kan itereras över.
-                Svaret vi får från början ser ut såhär: "Europe/Madrid" 
+                Svaret vi får från början ser ut såhär: "Europe/Madrid"  
             */
             var arrCities = []
             for (let i=0; i<response.arrivalCities.length; i++) {
