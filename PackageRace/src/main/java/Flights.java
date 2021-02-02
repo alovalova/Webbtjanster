@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -13,7 +12,7 @@ public class Flights {
     List<ConnectionFlight> flights;
 
     public Flights() {
-        flights = new ArrayList<>();
+        flights = new Stack<>();
     }
 
     public void addFlight(ConnectionFlight flight){

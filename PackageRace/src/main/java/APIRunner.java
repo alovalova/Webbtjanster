@@ -56,7 +56,6 @@ public class APIRunner {
                 System.out.println(response.status());
                 response.body(runner.gson.toJson(controller.getErrorMessages()));
             }
-
             return response;
         });
     }

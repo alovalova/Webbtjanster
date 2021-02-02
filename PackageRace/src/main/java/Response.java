@@ -37,6 +37,7 @@ public class Response {
     }
 
     public void setPackageDeliveryTime(String packageDeliveryTime) {
+
         this.packageDeliveryTime = packageDeliveryTime;
     }
 
