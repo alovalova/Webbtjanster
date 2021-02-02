@@ -70,7 +70,7 @@ function getDestinations() {
         $.ajax({
             method: "GET",
             // Till en route på vår server där vi kommer åt APIet
-            url: "http://localhost:9999/v1/getDestinations",
+            url: "http://localhost:5000/v1/getDestinations",
             // Datan från formuläret skickas
             data: form_data,
             // Berättar för APIet att vi vill ha JSON tillbaka
