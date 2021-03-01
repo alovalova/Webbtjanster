@@ -56,7 +56,9 @@ public class APIController {
      * @return true if the call is successful
      */
     public boolean createPostNordAPIGetRequest(Package aPackage) {
+        System.out.println("kommer hit?");
         Unirest.config().defaultBaseUrl("https://api2.postnord.com/rest/transport");
+        System.out.println("men inte hit?");
         HttpResponse<JsonNode> res = null;
 
         try {
