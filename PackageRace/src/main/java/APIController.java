@@ -56,13 +56,13 @@ public class APIController {
      * @return true if the call is successful
      */
     public boolean createPostNordAPIGetRequest(Package aPackage) {
-        Unirest.config().defaultBaseUrl("http://api2.postnord.com/rest/transport");
+        Unirest.config().defaultBaseUrl("https://api2.postnord.com/rest/transport");
         HttpResponse<JsonNode> res = null;
 
         try {
             if (aPackage.checkPackage()) {
                 res = Unirest.get("/v1/transittime/getTransitTimeInformation.json")
-                        .queryString("apikey", "fdb2ec79dd43fa36ef38b82d9dd0d10e")
+                        .queryString("apikey", "25a3a56f393275f8855069acbc67e196") //fdb2ec79dd43fa36ef38b82d9dd0d10e
                         .queryString("dateOfDeparture", aPackage.getPackageDepartureDate())
                         .queryString("serviceCode", "18")
                         .queryString("serviceGroupCode", aPackage.getDepartureCountry())
@@ -385,8 +385,8 @@ public class APIController {
     public void createAmadeusAuthentication() {
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
 
-        String clientID = "kGBnleJGgXG0nGCrUL305XPVYTtg9pOq";
-        String clientSecretKey = "0vrTAuAHBQmVmGQQ";
+        String clientID = "Ul00G8GNA977r0xYFLte7YIRJkSEsSJ5";
+        String clientSecretKey = "fNaNGQAQNJju8Azy";
 
         HttpResponse<JsonNode> tokenResponse = Unirest.post("/security/oauth2/token")
                 .field("grant_type", "client_credentials")
