@@ -28,8 +28,10 @@ public class PackageRaceRunner {
         aPackage = new Package(packageDepartureDate, departureCountry, arrivalCountry, departureZip, arrivalZip);
         if (aPackage.checkPackage()) {
             System.out.println("PackageRaceRunner.run: " + "Package " + aPackage.getPackageDepartureDate() + " is created");
-            if (controller.createPostNordAPIGetRequest(aPackage) && (controller.startFlying(aPackage))){
-                return true;
+            if (controller.createPostNordAPIGetRequest(aPackage)){
+                if(controller.startFlying(aPackage)){
+                    return true;
+                }
             }else{
                 System.out.println("startFlying is false");
                 return false;

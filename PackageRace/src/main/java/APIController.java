@@ -56,13 +56,15 @@ public class APIController {
      * @return true if the call is successful
      */
     public boolean createPostNordAPIGetRequest(Package aPackage) {
+        System.out.println("innan anrop till PostNord");
         Unirest.config().defaultBaseUrl("http://api2.postnord.com/rest/transport");
         HttpResponse<JsonNode> res = null;
+        System.out.println("efter anrop till PostNord");
 
         try {
             if (aPackage.checkPackage()) {
                 res = Unirest.get("/v1/transittime/getTransitTimeInformation.json")
-                        .queryString("apikey", "fdb2ec79dd43fa36ef38b82d9dd0d10e")
+                        .queryString("apikey", "25a3a56f393275f8855069acbc67e196") //fdb2ec79dd43fa36ef38b82d9dd0d10e
                         .queryString("dateOfDeparture", aPackage.getPackageDepartureDate())
                         .queryString("serviceCode", "18")
                         .queryString("serviceGroupCode", aPackage.getDepartureCountry())
@@ -101,7 +103,6 @@ public class APIController {
         }
         return true;
     }
-
     /**
      * Creates a Flight object for the first flight and a Flights object
      *
@@ -117,19 +118,19 @@ public class APIController {
 
         ConnectionFlight startFlight = new ConnectionFlight("MAD", packageDepartureDate, this); //startFlight skapas med origin mad och depdate som paketet
         if (startFlight.searchDestination(packageDepartureDate)) {
-             //startFlight får ankomstort och ankomsttid
+            //startFlight får ankomstort och ankomsttid
             System.out.print("\n" + printClassMsg + "startFlying: startFlight's values: ");
             System.out.print("departureTime: " + startFlight.getDepartureTime());
             System.out.print(" departureDate: " + startFlight.getDepartureDate());
             System.out.print(" arrivalTime: " + startFlight.getArrivalTime());
             System.out.print(" arrivalDate: " + startFlight.getArrivalDate());
-        }else{
+        } else {
 
             return false;
         }
-        if (checkIfTimeIsLeft(aPackage, startFlight)){
+        if (checkIfTimeIsLeft(aPackage, startFlight)) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -346,9 +347,9 @@ public class APIController {
             res.setPackageRemainingHours(Integer.toString(remainingHours));
             responseDone = true;
             return true;
-        }else{
+        } else {
             responseDone = false;
-            if (createErrorMessageResponse(404,"Flights not found")){
+            if (createErrorMessageResponse(404, "Flights not found")) {
                 return false;
             }
             return false;
@@ -385,8 +386,8 @@ public class APIController {
     public void createAmadeusAuthentication() {
         Unirest.config().defaultBaseUrl("https://test.api.amadeus.com/v1");
 
-        String clientID = "kGBnleJGgXG0nGCrUL305XPVYTtg9pOq";
-        String clientSecretKey = "0vrTAuAHBQmVmGQQ";
+        String clientID = "6cR6VF6yPdPPrijx86KWi4suMfqX62bc";
+        String clientSecretKey = "D5RoVSgLf6nLOwcw";
 
         HttpResponse<JsonNode> tokenResponse = Unirest.post("/security/oauth2/token")
                 .field("grant_type", "client_credentials")
